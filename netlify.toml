@@ -1,6 +1,7 @@
 [build]
     publish = "public"
     command = "echo No build command"
+    functions = "functions"
     node_bundler = "esbuild"
 
 [dev]
@@ -8,6 +9,6 @@
     node_bundler = "esbuild"
 
 [[redirects]]
-    from = "/api/*"
+    from = "/*"
     to = "/.netlify/functions/:splat"
     status = 200
