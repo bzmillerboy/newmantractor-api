@@ -10,5 +10,9 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     body: `Hello ${subject}!`,
+    headers: {
+      "access-control-allow-origin": "https://newmantractorcom.gatsbyjs.io/", // your CORS config here
+      "cache-control": "public, max-age=0, must-revalidate",
+    },
   };
 };
