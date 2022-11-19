@@ -1,7 +1,23 @@
 {
-    "name": "netlify-example-hello-functions",
-    "version": "1.0.0",
-    "description": "A site to show a hello world example of using Netlify Functions",
-    "author": "Netlify",
-    "license": "ISC"
+  "name": "newmantractor api functions",
+  "version": "1.0.0",
+  "description": "Apis to support newmantractor.com",
+  "author": "Brian Miller",
+  "license": "ISC",
+  "dependencies": {
+    "@hubspot/api-client": "^6.0.1-beta.6",
+    "@sanity/client": "^2.0.1",
+    "@sendgrid/client": "^7.4.2",
+    "@sendgrid/mail": "^7.4.2",
+    "@sentry/node": "^6.10.0",
+    "@sentry/serverless": "^6.10.0",
+    "async-sema": "^3.1.0",
+    "dayjs": "^1.9.7",
+    "got": "^11.8.0",
+    "hubspot": "^2.3.14",
+    "logzio-nodejs": "^2.0.2",
+    "netlify-cli": "^2.68.4",
+    "node-fetch": "^2.6.1",
+    "uuid": "^8.3.1"
+  }
 }
