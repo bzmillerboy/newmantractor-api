@@ -1,5 +1,9 @@
-const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME } =
-  process.env;
+const {
+  SENDGRID_API_KEY,
+  SENDGRID_FROM_EMAIL,
+  SENDGRID_FROM_NAME,
+  PORTAL_URL,
+} = process.env;
 const sgMail = require("@sendgrid/mail");
 
 const { createClient } = require("@supabase/supabase-js");
@@ -37,7 +41,7 @@ const sendFinanceApplicationEmail = async (data) => {
   const { first_name, last_name, phone } = user.user.user_metadata;
   const { id: applicationId } = application;
 
-  const link = `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=signup&redirect_to=https://portal.newmantractor.com/applications/create/${applicationId}`;
+  const link = `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=signup&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`;
 
   const msg = {
     to: email,
