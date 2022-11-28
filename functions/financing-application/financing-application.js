@@ -30,7 +30,7 @@ exports.handler = async (event) => {
 
   const payload = JSON.parse(event.body);
   const referring_url = event.headers.referer;
-  const { email, firstName, lastName, phone, hutk } = payload;
+  const { email, firstName, lastName, phone, type, hutk } = payload;
 
   const hubSpotFormData = {
     fields: [
@@ -92,6 +92,7 @@ exports.handler = async (event) => {
   if (data) {
     const applicationData = await lib.createFinanceApplication({
       referring_url,
+      type: type,
       ...data,
     });
     await lib.sendFinanceApplicationEmail({
