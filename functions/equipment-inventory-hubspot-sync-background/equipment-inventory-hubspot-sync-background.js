@@ -11,6 +11,7 @@ Sentry.AWSLambda.init({
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     const payload = JSON.parse(event.body);
+    console.log("payload:", payload);
     const { _id, price, title, slug, mainImage, equipmentCategories } = payload;
 
     const item = {
@@ -31,7 +32,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       debug: true,
     });
     try {
-      await ecommLib.syncProducts([item, "8529636"]);
+      await ecommLib.syncProducts([item], 8529636);
       return {
         statusCode: 200,
         body: `Webhook received`,
