@@ -113,13 +113,12 @@ const syncProducts = async (items, folder) => {
     messages: messages,
   };
 
-  console.log("syncProducts data: ", JSON.stringify(data));
+  // console.log("syncProducts data: ", JSON.stringify(data));
   const hsResponse = await hubspot.apiRequest({
     method: "PUT",
     path: apiPath,
     body: data,
   });
-  console.log("syncProducts hsResponse: ", JSON.stringify(hsResponse));
 
   return data;
 };

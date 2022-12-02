@@ -11,7 +11,7 @@ Sentry.AWSLambda.init({
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     const payload = JSON.parse(event.body);
-    console.log("payload:", payload);
+    // console.log("payload:", payload);
     const { _id, price, title, slug, mainImage, equipmentCategories } = payload;
 
     const item = {
@@ -25,7 +25,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       cms_id: _id,
     };
 
-    console.log("item:", item);
+    // console.log("item:", item);
 
     Sentry.setContext("character", {
       payload: payload,

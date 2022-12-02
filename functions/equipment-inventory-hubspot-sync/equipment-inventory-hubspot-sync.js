@@ -31,7 +31,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     console.log("items:", items);
 
     try {
-      await ecommLib.syncProducts(items, "8529636");
+      await ecommLib.syncProducts(items, 8529636);
       return {
         statusCode: 200,
         body: `Request to sync inventory equipment received.`,
