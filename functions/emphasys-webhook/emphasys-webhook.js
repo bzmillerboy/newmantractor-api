@@ -1,14 +1,7 @@
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
 const sgMail = require("@sendgrid/mail");
-const {
-  SENDGRID_API_KEY,
-  SENDGRID_FROM_EMAIL,
-  SENDGRID_FROM_NAME,
-  HUBSPOT_API_KEY,
-  HUBSPOT_PORTAL_ID,
-  URL,
-} = process.env;
+const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL } = process.env;
 
 Sentry.AWSLambda.init({
   dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/5499762`,
@@ -25,6 +18,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       debug: true,
     });
 
+    sgMail.setApiKey(SENDGRID_API_KEY);
+
     const msg = {
       to: "bzmiller82@gmail.com",
       from: {
@@ -38,10 +33,19 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         payload: payload,
       },
     };
-
-    return {
-      statusCode: 200,
-      body: `Webhook received`,
-    };
+    try {
+      await sgMail.send(msg);
+      return {
+        statusCode: 200,
+        body: `Webhook received`,
+      };
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException(error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
+    }
   }
 );
