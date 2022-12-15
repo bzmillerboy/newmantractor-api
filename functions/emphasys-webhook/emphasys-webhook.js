@@ -29,7 +29,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       to: "bzmiller82@gmail.com",
       from: {
         email: SENDGRID_FROM_EMAIL,
-        name: fromNameValue,
+        name: "Notifications",
       },
       subject: "ERP Webhook Event",
       templateId: "d-c110cc501843478596c4e1c2ed47195d",
