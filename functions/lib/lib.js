@@ -607,7 +607,7 @@ const createEquipment = async (erpData) => {
 
   const equipmentSanity = await client
     .fetch(
-      '*[_type == "inventory" && !(_id in path("drafts.**"))]{_id, _type, title, slug, stockNumber, specification, price, condition, year, model, modelReference, hoursCurrent, serial, equipmentMake, equipmentCategories, location }'
+      '*[_type == "inventory" && !(_id in path("drafts.**"))]{_id, _type, title, slug, stockNumber, specification, price, condition, year, model, modelReference, hoursCurrent, serial, equipmentMake, equipmentCategories, location, deliveryDate, movementDate }'
     )
     .then((currEq) => {
       return currEq.map((eq) => {
@@ -642,6 +642,8 @@ const createEquipment = async (erpData) => {
             _type: "reference",
             _ref: eq.location._ref,
           },
+          ...(eq.deliveryDate && { deliveryDate: eq.deliveryDate }),
+          ...(eq.movementDate && { movementDate: eq.movementDate }),
         };
       });
     });
@@ -680,7 +682,6 @@ const createEquipment = async (erpData) => {
       .trim()}`;
     const specifications = JSON.stringify(eq.Specifications);
     const condition = () => (eq.Used === "Yes" ? "used" : "new");
-    // console.log('start equipmentErp', `${stockNumber}-${condition()}`)
 
     return {
       _id: eq.EquipmentId,
@@ -715,6 +716,8 @@ const createEquipment = async (erpData) => {
         _type: "reference",
         _ref: currentLocation._id,
       },
+      ...(eq.ExpectedDelDate && { deliveryDate: eq.ExpectedDelDate }),
+      ...(eq.MovementDate && { movementDate: eq.MovementDate }),
     };
   });
 
