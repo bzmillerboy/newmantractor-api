@@ -12,6 +12,7 @@
     "@sentry/node": "^6.10.0",
     "@sentry/serverless": "^6.10.0",
     "async-sema": "^3.1.0",
+    "csv-writer": "^1.6.0",
     "dayjs": "^1.9.7",
     "got": "^11.8.0",
     "hubspot": "^2.3.14",

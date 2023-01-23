@@ -21,17 +21,49 @@ const client = sanityClient({
 
 exports.handler = async (event, context) => {
   sgMail.setApiKey(SENDGRID_API_KEY);
-  const query = `count(*[_type == 'inventory'  && !defined(mainImage) && !defined(imageGallery) && location->slug.current == $location])`;
+  const query = `count(*[_type == 'inventory'  && !defined(mainImage) && !defined(imageGallery) && (equipmentCategories->categoryType == $type) && (!(deliveryDate > now()) || deliveryDate == "") && location->slug.current == $location])`;
 
-  bartowCount = await client.fetch(query, { location: "bartow" });
-  veronaCount = await client.fetch(query, { location: "verona" });
-  warsawCount = await client.fetch(query, { location: "warsaw" });
-  richwoodCount = await client.fetch(query, { location: "richwood" });
+  bartowCountAttachment = await client.fetch(query, {
+    location: "bartow",
+    type: "attachment",
+  });
+  bartowCountModel = await client.fetch(query, {
+    location: "bartow",
+    type: "model",
+  });
+  veronaCountAttachment = await client.fetch(query, {
+    location: "verona",
+    type: "attachment",
+  });
+  veronaCountModel = await client.fetch(query, {
+    location: "verona",
+    type: "model",
+  });
+  warsawCountAttachment = await client.fetch(query, {
+    location: "warsaw",
+    type: "attachment",
+  });
+  warsawCountModel = await client.fetch(query, {
+    location: "warsaw",
+    type: "model",
+  });
+  richwoodCountAttachment = await client.fetch(query, {
+    location: "richwood",
+    type: "attachment",
+  });
+  richwoodCountModel = await client.fetch(query, {
+    location: "richwood",
+    type: "model",
+  });
   const counts = {
-    bartow: bartowCount,
-    verona: veronaCount,
-    warsaw: warsawCount,
-    richwood: richwoodCount,
+    bartowAttachment: bartowCountAttachment,
+    bartowModel: bartowCountModel,
+    veronaAttachment: veronaCountAttachment,
+    veronaModel: veronaCountModel,
+    warsawAttachment: warsawCountAttachment,
+    warsawModel: warsawCountModel,
+    richwoodAttachment: richwoodCountAttachment,
+    richwoodModel: richwoodCountModel,
   };
   const notification = {
     to: "bzmiller82+mpr@gmail.com",
@@ -39,7 +71,7 @@ exports.handler = async (event, context) => {
       email: SENDGRID_FROM_EMAIL,
       name: SENDGRID_FROM_NAME,
     },
-    bcc: SENDGRID_PHOTO_REPORT_RECIPIENTS.split(","),
+    // bcc: SENDGRID_PHOTO_REPORT_RECIPIENTS.split(","),
     templateId: "d-002a7d99993c4224a8cff1e962e7a7c6",
     dynamic_template_data: {
       counts: counts,
@@ -52,7 +84,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: { "content-type": "application/json" },
-      body: "Report sent",
+      body: JSON.stringify(counts),
     };
   } catch (e) {
     console.log("error", e);
