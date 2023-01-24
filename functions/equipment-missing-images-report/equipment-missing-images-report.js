@@ -71,7 +71,7 @@ exports.handler = async (event, context) => {
       email: SENDGRID_FROM_EMAIL,
       name: SENDGRID_FROM_NAME,
     },
-    // bcc: SENDGRID_PHOTO_REPORT_RECIPIENTS.split(","),
+    bcc: SENDGRID_PHOTO_REPORT_RECIPIENTS.split(","),
     templateId: "d-002a7d99993c4224a8cff1e962e7a7c6",
     dynamic_template_data: {
       counts: counts,
