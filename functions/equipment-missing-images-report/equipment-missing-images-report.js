@@ -9,6 +9,7 @@ const {
   SENDGRID_PHOTO_REPORT_RECIPIENTS,
 } = process.env;
 const sgMail = require("@sendgrid/mail");
+const dayjs = require("dayjs");
 
 const sanityClient = require("@sanity/client");
 const client = sanityClient({
@@ -65,6 +66,10 @@ exports.handler = async (event, context) => {
     richwoodAttachment: richwoodCountAttachment,
     richwoodModel: richwoodCountModel,
   };
+  const subject = `Missing Photo Report - ${dayjs(
+    new Date().toLocaleString()
+  ).format("MM/DD/YYYY")} | newmantractor.com`;
+
   const notification = {
     to: "bzmiller82+mpr@gmail.com",
     from: {
@@ -73,6 +78,7 @@ exports.handler = async (event, context) => {
     },
     bcc: SENDGRID_PHOTO_REPORT_RECIPIENTS.split(","),
     templateId: "d-002a7d99993c4224a8cff1e962e7a7c6",
+    subject: subject,
     dynamic_template_data: {
       counts: counts,
     },
