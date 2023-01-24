@@ -4,13 +4,13 @@ const {
   SENDGRID_API_KEY,
   SENDGRID_FROM_EMAIL,
   SENDGRID_FROM_NAME,
-  HUBSPOT_API_KEY,
+  HUBSPOT_PRIVATE_APP_TOKEN,
   HUBSPOT_PORTAL_ID,
   URL,
 } = process.env;
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
-  apiKey: HUBSPOT_API_KEY,
+  accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
   checkLimit: false,
 });
 Sentry.AWSLambda.init({

@@ -1,23 +1,23 @@
-const { URL, HUBSPOT_API_KEY, HUBSPOT_DEVELOPER_API_KEY } = process.env;
+const { URL, HUBSPOT_PRIVATE_APP_TOKEN } = process.env;
 const Hubspot = require("hubspot");
 const hubSpotProd = true;
 const hubSpotApiData = hubSpotProd
   ? {
-      apiKey: HUBSPOT_API_KEY,
+      accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
       quoteDealstageId: 20352802,
       rentalDealstageId: 23503170,
       rentalPipelineId: "494104",
       quotePipelineId: "default",
     }
   : {
-      apiKey: HUBSPOT_DEVELOPER_API_KEY,
+      accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
       quoteDealstageId: 20352802,
       rentalDealstageId: 23503170,
       rentalPipelineId: "494104",
       quotePipelineId: "default",
     };
 const hubspot = new Hubspot({
-  apiKey: hubSpotApiData.apiKey,
+  accessToken: hubSpotApiData.accessToken,
   checkLimit: false,
 });
 const storeId = "newmantractor-dotcom-store";

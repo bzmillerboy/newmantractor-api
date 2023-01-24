@@ -1,16 +1,16 @@
-const { HUBSPOT_API_KEY, HUBSPOT_DEVELOPER_API_KEY } = process.env;
+const { HUBSPOT_PRIVATE_APP_TOKEN } = process.env;
 const hubspot = require("@hubspot/api-client");
 const hubSpotProd = true;
 const hubSpotApiData = hubSpotProd
   ? {
-      apiKey: HUBSPOT_API_KEY,
+      accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
       quoteDealstageId: 20352802,
       rentalDealstageId: 23503170,
       rentalPipelineId: "494104",
       quotePipelineId: "default",
     }
   : {
-      apiKey: HUBSPOT_DEVELOPER_API_KEY,
+      accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
       quoteDealstageId: 20352802,
       rentalDealstageId: 23503170,
       rentalPipelineId: "494104",
@@ -18,8 +18,7 @@ const hubSpotApiData = hubSpotProd
     };
 
 const hubspotClient = new hubspot.Client({
-  apiKey: hubSpotApiData.apiKey,
-  developerApiKey: HUBSPOT_DEVELOPER_API_KEY,
+  accessToken: hubSpotApiData.accessToken,
   useLimiter: false,
 });
 // const fs = require('fs')
