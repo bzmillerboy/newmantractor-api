@@ -4,6 +4,7 @@ const {
   SANITY_DATASET,
   SANITY_API_VERSION,
   WEBSITE_URL,
+  CMS_URL,
 } = process.env;
 const { promises: fs } = require("fs");
 const createObjectCsvStringifier =
@@ -20,7 +21,7 @@ const client = sanityClient({
 });
 
 exports.handler = async (event, context) => {
-  const query = `*[_type == 'inventory'  && !defined(mainImage) && !defined(imageGallery) && (!(deliveryDate > now()) || deliveryDate == "")]{_createdAt, deliveryDate, stockNumber, title, 'slug': slug.current, 'location': location->title, 'type': equipmentCategories->categoryType, 'categorySlug': equipmentCategories->slug.current } | order(location asc)`;
+  const query = `*[_type == 'inventory'  && !defined(mainImage) && !defined(imageGallery) && (!(deliveryDate > now()) || deliveryDate == "")]{_id, _createdAt, deliveryDate, stockNumber, title, 'slug': slug.current, 'location': location->title, 'type': equipmentCategories->categoryType, 'categorySlug': equipmentCategories->slug.current } | order(location asc)`;
 
   const data = await client.fetch(query);
 
@@ -29,6 +30,7 @@ exports.handler = async (event, context) => {
     return {
       ...item,
       link: `${WEBSITE_URL}/equipment/${item.categorySlug}/${item.slug}`,
+      cmsLink: `${CMS_URL}/desk/equipment;inventory;${item._id}`,
       deliveryDate: item.deliveryDate
         ? dayjs(item.deliveryDate).format(format)
         : "",
@@ -44,7 +46,8 @@ exports.handler = async (event, context) => {
       { id: "type", title: "Type" },
       { id: "deliveryDate", title: "Delivery Date" },
       { id: "_createdAt", title: "Create Date" },
-      { id: "link", title: "Link" },
+      { id: "cmsLink", title: "CMS Link" },
+      { id: "link", title: "Website Link" },
     ],
   });
 
