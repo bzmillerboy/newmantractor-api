@@ -5,7 +5,7 @@
   "author": "Brian Miller",
   "license": "ISC",
   "dependencies": {
-    "@hubspot/api-client": "^6.0.1-beta.6",
+    "@hubspot/api-client": "^8.4.2",
     "@sanity/client": "^2.0.1",
     "@sendgrid/client": "^7.4.2",
     "@sendgrid/mail": "^7.4.2",
