@@ -1,8 +1,9 @@
-// Use this function to delete products from HubSpot that no longer exist in Sanity(CMS)
+// Use this function to delete ALL products from HubSpot
+// NOTE: this function only runs locally, it will timeout on Netlify
 
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
-const crmLib = require("../lib/crm-lib");
+const cmsLib = require("../lib/cms-lib");
 const lib = require("../lib/lib");
 
 Sentry.AWSLambda.init({
@@ -14,14 +15,10 @@ Sentry.AWSLambda.init({
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     try {
-      const allCmsProducts = await lib.productFetch();
-      console.log(`CMS product count: ${allCmsProducts.length}`);
-      const allCrmProducts = await crmLib.getAllProducts(allCmsProducts);
-      console.log(`CRM product count: ${allCrmProducts.length}`);
-      await crmLib.deleteProducts(allCmsProducts, allCrmProducts);
+      const allCrmProducts = await cmsLib.clearHubSpotId();
       return {
         statusCode: 200,
-        body: `Webhook received`,
+        body: `HubSpot IDs cleared`,
       };
     } catch (e) {
       console.error(e);

@@ -1,9 +1,8 @@
+// Use this function to delete ALL products from HubSpot
+// NOTE: this function only runs locally, it will timeout on Netlify
+
 const Sentry = require("@sentry/serverless");
-const {
-  SENTRY_CLIENT_KEY,
-  ENV_NAME,
-  HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_INVENTORY,
-} = process.env;
+const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
 const crmLib = require("../lib/crm-lib");
 const lib = require("../lib/lib");
 
@@ -15,20 +14,13 @@ Sentry.AWSLambda.init({
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
-    process.on("warning", (warning) => {
-      console.warn("warning stacktrace - " + warning.stack);
-    });
-
-    const inventory = await lib.inventoryProductFetch();
-
     try {
-      await crmLib.syncProducts(
-        inventory,
-        HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_INVENTORY
-      );
+      const allCrmProducts = await crmLib.getAllProducts();
+      console.log(`CRM product count: ${allCrmProducts.length}`);
+      await crmLib.deleteProducts(allCrmProducts);
       return {
         statusCode: 200,
-        body: `Request to sync inventory equipment received.`,
+        body: `Webhook received`,
       };
     } catch (e) {
       console.error(e);

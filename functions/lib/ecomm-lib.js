@@ -1,6 +1,7 @@
 const { URL, HUBSPOT_PRIVATE_APP_TOKEN } = process.env;
 const Hubspot = require("hubspot");
-const hubSpotProd = true;
+// TODO: turn this back on before going live in prod
+const hubSpotProd = false;
 const hubSpotApiData = hubSpotProd
   ? {
       accessToken: HUBSPOT_PRIVATE_APP_TOKEN,

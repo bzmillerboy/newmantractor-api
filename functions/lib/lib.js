@@ -15,7 +15,7 @@ const client = sanityClient({
   useCdn: false,
   apiVersion: SANITY_API_VERSION,
 });
-console.log(SANITY_DATASET);
+console.log("Sanity Dataset:", SANITY_DATASET);
 const photoData = require("../data/photos.json");
 const got = require("got");
 const stream = require("stream");
@@ -817,10 +817,11 @@ const productFetch = async () => {
 
 const inventoryProductFetch = async () => {
   const products = await client.fetch(
-    '*[_type in ["inventory"] && !(_id in path("drafts.**"))][5000..6000] {_id, price, title, slug, mainImage{asset->{url}}, equipmentCategories->{slug}}'
+    '*[_type in ["inventory"] && !(_id in path("drafts.**"))]{_id, "sku": _id, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug}}'
   );
   return products;
 };
+
 const rentalProductFetch = async () => {
   const products = await client.fetch(
     '*[_type in ["equipmentSubCategory"] && !(_id in path("drafts.**"))] {_id, title, slug, mainImage{asset->{url}}, equipmentCategories->{title, slug}}'
@@ -833,6 +834,32 @@ const rentalOptionProductFetch = async () => {
     '*[_type in ["equipmentOptions"] && !(_id in path("drafts.**"))] {_id, title, equipmentCategories->{title, slug}}'
   );
   return products;
+};
+
+const toPlainText = (blocks = []) => {
+  if (!blocks) {
+    return "";
+  }
+  return (
+    blocks
+      // loop through each block
+      .map((block) => {
+        // if this is a parent block, grab the children and pass them to the function
+        if (block.body && block.body.length > 0) {
+          return toPlainText(block.body);
+        }
+        // if it's not a text block with children,
+        // return nothing
+        if (block._type !== "block" || !block.children) {
+          return "";
+        }
+        // loop through the children spans, and join the
+        // text strings
+        return block.children.map((child) => child.text).join("");
+      })
+      // join the paragraphs leaving split by two linebreaks
+      .join(" ")
+  );
 };
 
 module.exports = {
@@ -853,4 +880,5 @@ module.exports = {
   inventoryProductFetch,
   rentalProductFetch,
   rentalOptionProductFetch,
+  toPlainText,
 };
