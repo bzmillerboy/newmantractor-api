@@ -92,11 +92,10 @@ function buildHubSpotProductObject(items) {
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
-    process.on("warning", (warning) => {
-      console.warn("warning stacktrace - " + warning.stack);
-    });
+    const payload = event.body && JSON.parse(event.body);
 
-    const allProducts = await lib.productFetch();
+    // Check if data is passed, otherwise fetch all products
+    const allProducts = payload ? [payload] : await lib.productFetch();
     const existingProducts = allProducts.filter((p) => p.hubSpotProductId);
     const newProducts = allProducts.filter((p) => !p.hubSpotProductId);
     console.log("newProducts to create:", newProducts.length);

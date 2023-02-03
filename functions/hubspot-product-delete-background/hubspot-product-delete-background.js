@@ -14,11 +14,15 @@ Sentry.AWSLambda.init({
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
-    const allCrmProducts = await crmLib.getAllProducts();
+    const payload = event.body && JSON.parse(event.body);
+    // console.log("payload", payload);
+    // transform data and convert to an array to reuse deletedProducts function
+    const deletedProducts = [{ id: payload.hubSpotProductId }];
+    // console.log("deletedProducts", deletedProducts);
 
     try {
-      console.log(`CRM product count: ${allCrmProducts.length}`);
-      await crmLib.deleteProducts(allCrmProducts);
+      console.log(`CRM product count: ${deletedProducts.length}`);
+      await crmLib.deleteProducts(deletedProducts);
       return {
         statusCode: 200,
         body: `Webhook received`,
