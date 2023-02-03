@@ -14,16 +14,6 @@ const client = sanityClient({
 });
 console.log("Sanity Dataset:", SANITY_DATASET);
 
-const fetchEquipmentInventory = async (pageNo, pageSize) => {
-  const start = pageSize * pageNo - pageSize;
-  const end = pageSize * pageNo - 1;
-  console.log(`fetching from ${start} to ${end}`);
-  currentInventory = await client.fetch(
-    `*[_type == "inventory" && !(_id in path("drafts.**")) && !defined(imageGallery.images)] | order(_id asc) [${start}..${end}] {_id, title, serial, mainImage, imageGallery}`
-  );
-  return currentInventory;
-};
-
 const writeHubSpotProductIds = async (hubSpotProductIds) => {
   const createTransaction = (updatedInventory = []) =>
     updatedInventory.reduce(
@@ -45,8 +35,7 @@ const writeHubSpotProductIds = async (hubSpotProductIds) => {
 
 const clearHubSpotId = async () => {
   itemsWithHubSpotId = await client.fetch(
-    `*[_type == "inventory" && defined(hubSpotProductId)] | order(_id asc) {_id, title, hubSpotProductId}`
-    // `*[_type == "inventory" && hubSpotProductId == null] | order(_id asc) {_id, title, hubSpotProductId}`
+    `*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && defined(hubSpotProductId)] | order(_id asc) {_id, title, hubSpotProductId}`
   );
 
   const createTransaction = (items = []) =>
@@ -70,7 +59,6 @@ const clearHubSpotId = async () => {
 };
 
 module.exports = {
-  fetchEquipmentInventory,
   writeHubSpotProductIds,
   clearHubSpotId,
 };

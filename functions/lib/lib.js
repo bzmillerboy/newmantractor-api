@@ -4,6 +4,7 @@ const {
   SANITY_PROJECT_ID,
   SANITY_DATASET,
   SANITY_API_VERSION,
+  WEBSITE_URL,
 } = process.env;
 const fetch = require("node-fetch");
 const { v4: uuidv4 } = require("uuid");
@@ -807,31 +808,13 @@ const deleteEquipment = async (erpDAta) => {
   await commitTransaction(transaction);
   return;
 };
-
+// todo: make sure code using inventoryProductFetch doesn't fail with null fields (ex. equipmentCategories)
 const productFetch = async () => {
+  // todo: temp limited to 9 items for testing
   const products = await client.fetch(
-    '*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions"] && !(_id in path("drafts.**"))] {_id, _type, title}'
-  );
-  return products;
-};
+    `*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))][0...10] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }`
 
-const inventoryProductFetch = async () => {
-  const products = await client.fetch(
-    '*[_type in ["inventory"] && !(_id in path("drafts.**"))]{_id, "sku": _id, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug}}'
-  );
-  return products;
-};
-
-const rentalProductFetch = async () => {
-  const products = await client.fetch(
-    '*[_type in ["equipmentSubCategory"] && !(_id in path("drafts.**"))] {_id, title, slug, mainImage{asset->{url}}, equipmentCategories->{title, slug}}'
-  );
-  return products;
-};
-
-const rentalOptionProductFetch = async () => {
-  const products = await client.fetch(
-    '*[_type in ["equipmentOptions"] && !(_id in path("drafts.**"))] {_id, title, equipmentCategories->{title, slug}}'
+    // *[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))][0...200] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }
   );
   return products;
 };
@@ -877,8 +860,5 @@ module.exports = {
   createModels,
   slugify,
   productFetch,
-  inventoryProductFetch,
-  rentalProductFetch,
-  rentalOptionProductFetch,
   toPlainText,
 };

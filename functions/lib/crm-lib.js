@@ -458,129 +458,67 @@ const updateBatchProductFolder = async (products, folderId) => {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
       : console.error(e);
-  }
-};
-
-const syncProducts = async (products, folderId) => {
-  const existingProducts = products.filter((p) => p.hubSpotProductId);
-  const newProducts = products.filter((p) => !p.hubSpotProductId);
-
-  console.log(`Sync Existing Products: ${existingProducts.length}`);
-  console.log(`Sync New Products: ${newProducts.length}`);
-
-  try {
-    newProducts.length > 0 && (await createProducts(newProducts, folderId));
-    existingProducts.length > 0 &&
-      (await updateProducts(existingProducts, folderId));
     return;
-  } catch (e) {
-    e.message === "HTTP request failed"
-      ? console.error(JSON.stringify(e.response, null, 2))
-      : console.error(e);
   }
 };
 
-async function createProducts(products, folderId) {
-  // console.log("createProducts products:", products);
-  const newProducts = products.map((p) => {
-    return {
-      properties: {
-        ...(p.price && { price: p.price }),
-        name: p.title || "Unknown",
-        description:
-          (p.descriptionBlock && lib.toPlainText(p.descriptionBlock)) || "",
-        hs_images: p.mainImage?.asset?.url || "",
-        hs_url: `${WEBSITE_URL}/equipment/${p.equipmentCategories.slug.current}/${p.slug.current}`,
-        hs_sku: p.sku,
-        cms_id: p._id,
-        hs_folder_id: folderId,
-        hs_product_type: "inventory",
-      },
-    };
-  });
-
+async function createProducts(products) {
   const limit = 100;
   let batchStart = 0;
   let batchEnd = limit;
 
-  //
-
   do {
-    const batch = newProducts.slice(batchStart, batchEnd);
+    const batch = products.slice(batchStart, batchEnd);
     const batchToCreate = {
       inputs: batch,
     };
-    // console.log("batchStart:", batchStart);
-    // console.log("batchEnd:", batchEnd);
-    // console.log("batchToCreate:", JSON.stringify(batchToCreate));
-    console.log("Batch of products to create:", batch.length);
+    console.log("Batch to create:", batch.length);
     try {
       const apiResponse = await hubspotClient.crm.products.batchApi.create(
         batchToCreate
       );
       // console.log("createProducts res:", JSON.stringify(apiResponse, null, 2));
-      console.log("Batch of products created:", apiResponse.results.length);
-      console.log(`Loop ran through ${batchStart} - ${batchEnd} products`);
+      console.log("Batch created:", apiResponse.results.length);
+      console.log(
+        `Create loop ran through ${batchStart} - ${batchEnd} products`
+      );
       cmsLib.writeHubSpotProductIds(apiResponse.results);
       batchStart = batchStart + limit;
       batchEnd = batchEnd + limit;
-      console.log(`Loop ended on ${batchStart} - ${batchEnd} products`);
     } catch (e) {
       // TODO: handle if product already exists
       e.message === "HTTP request failed"
         ? console.error(JSON.stringify(e.response, null, 2))
         : console.error(e);
+      return;
     }
-  } while (newProducts.length >= batchEnd - limit); //1) 200 >= 100? yes 2) 200 >= 200? yes 3) 200 >= 300? no
+  } while (products.length >= batchEnd - limit);
 
   return;
 }
 
-async function updateProducts(products, folderId) {
-  // console.log("updateProducts products:", products);
-  const updatedProducts = products.map((p) => {
-    return {
-      id: p.hubSpotProductId,
-      properties: {
-        ...(p.price && { price: p.price }),
-        name: p.title || "Unknown",
-        description:
-          (p.descriptionBlock && lib.toPlainText(p.descriptionBlock)) || "",
-        hs_images: p.mainImage?.asset?.url || "",
-        hs_url: `${WEBSITE_URL}/equipment/${p.equipmentCategories.slug.current}/${p.slug.current}`,
-        hs_sku: p.sku,
-        cms_id: p._id,
-        hs_folder_id: folderId,
-        hs_product_type: "inventory",
-      },
-    };
-  });
-
-  const inputObj = {
-    inputs: updatedProducts,
-  };
-  // console.log("updateProducts inputObj:", JSON.stringify(inputObj));
-
+async function updateProducts(products) {
   const limit = 100;
   let batchStart = 0;
   let batchEnd = limit;
 
   do {
-    const batch = updatedProducts.slice(batchStart, batchEnd);
+    const batch = products.slice(batchStart, batchEnd);
     const batchToUpdate = {
       inputs: batch,
     };
-    // console.log("batchStart:", batchStart);
-    // console.log("batchEnd:", batchEnd);
-    // console.log("batchToUpdate:", JSON.stringify(batchToUpdate));
-    console.log("Batch of products to update:", batch.length);
+    console.log("Batch to update:", batch.length);
     try {
       const apiResponse = await hubspotClient.crm.products.batchApi.update(
         batchToUpdate
       );
       // console.log("updateProducts res:", JSON.stringify(apiResponse, null, 2));
-      console.log("Batch of products updated:", apiResponse.results.length);
-      return;
+      console.log("Batch updated:", apiResponse.results.length);
+      console.log(
+        `Create loop ran through ${batchStart} - ${batchEnd} products`
+      );
+      batchStart = batchStart + limit;
+      batchEnd = batchEnd + limit;
     } catch (e) {
       // TODO: handle if product id is in CMS but does not exist in HubSpot
       e.message === "HTTP request failed"
@@ -588,7 +526,7 @@ async function updateProducts(products, folderId) {
         : console.error(e);
       return e;
     }
-  } while (newProducts.length <= batchEnd - limit);
+  } while (products.length >= batchEnd - limit);
 }
 
 module.exports = {
@@ -598,5 +536,6 @@ module.exports = {
   deleteProducts,
   getProductsWithNoFolder,
   updateBatchProductFolder,
-  syncProducts,
+  updateProducts,
+  createProducts,
 };
