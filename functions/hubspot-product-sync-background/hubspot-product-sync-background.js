@@ -29,7 +29,7 @@ function buildHubSpotProductObject(items) {
     if (p._type === "inventory") {
       sku = p.sku;
       type = "inventory";
-      folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_INVENTORY;
+      folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_INVENTORY; //sandbox = 9058083
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       url = `${WEBSITE_URL}/equipment/${p.equipmentCategories?.slug?.current}/${p.slug?.current}`;
@@ -39,7 +39,7 @@ function buildHubSpotProductObject(items) {
     } else if (p._type === "equipmentSubCategory") {
       sku = p.sku;
       type = "rental";
-      folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_RENTAL;
+      folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_RENTAL; // sandbox = 9123058
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       url = `${WEBSITE_URL}/rentals/${p.equipmentCategories?.slug?.current}/${p.slug?.current}`;
@@ -55,13 +55,13 @@ function buildHubSpotProductObject(items) {
     } else if (p._type === "ecommerceProduct") {
       sku = p.defaultProductVariant?.sku;
       type = "product";
-      folder = HUBSPOT_PRODUCT_FOLDER_PRODUCT;
+      folder = HUBSPOT_PRODUCT_FOLDER_PRODUCT; // sandbox = 9123056
       price = p.defaultProductVariant?.price;
       image = p.productImage?.image?.asset?.url || "";
     } else if (p._type === "models") {
       sku = p.sku;
       type = "model";
-      folder = HUBSPOT_PRODUCT_FOLDER_MODEL;
+      folder = HUBSPOT_PRODUCT_FOLDER_MODEL; // sandbox = 9125283
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       description = `${p.make?.name} ${p.equipmentCategories?.title} ${
