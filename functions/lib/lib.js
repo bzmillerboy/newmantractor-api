@@ -4,7 +4,6 @@ const {
   SANITY_PROJECT_ID,
   SANITY_DATASET,
   SANITY_API_VERSION,
-  WEBSITE_URL,
 } = process.env;
 const fetch = require("node-fetch");
 const { v4: uuidv4 } = require("uuid");
@@ -812,7 +811,7 @@ const deleteEquipment = async (erpDAta) => {
 const productFetch = async () => {
   // todo: temp limited to 9 items for testing
   const products = await client.fetch(
-    `*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))][0...10] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }`
+    `*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }`
 
     // *[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))][0...200] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }
   );

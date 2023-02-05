@@ -16,9 +16,13 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     const allCrmProducts = await crmLib.getAllProducts();
 
+    const allCrmProductsFromCms = allCrmProducts.filter(
+      (p) => p.properties.cms_id
+    );
+
     try {
-      console.log(`CRM product count: ${allCrmProducts.length}`);
-      await crmLib.deleteProducts(allCrmProducts);
+      console.log(`CRM product count: ${allCrmProductsFromCms.length}`);
+      await crmLib.deleteProducts(allCrmProductsFromCms);
       return {
         statusCode: 200,
         body: `Webhook received`,

@@ -33,7 +33,9 @@ function buildHubSpotProductObject(items) {
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       url = `${WEBSITE_URL}/equipment/${p.equipmentCategories?.slug?.current}/${p.slug?.current}`;
-      description = lib.toPlainText(p.descriptionBlock || []) || "";
+      description = `${p.equipmentCategories?.title} | ${
+        lib.toPlainText(p.descriptionBlock || []) || ""
+      }`;
     } else if (p._type === "equipmentSubCategory") {
       sku = p.sku;
       type = "rental";
@@ -41,6 +43,7 @@ function buildHubSpotProductObject(items) {
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       url = `${WEBSITE_URL}/rentals/${p.equipmentCategories?.slug?.current}/${p.slug?.current}`;
+      description = `Rental | ${p.equipmentCategories?.title}`;
     } else if (p._type === "equipmentOptions") {
       sku = p.sku;
       type = "rental-option";
@@ -48,6 +51,7 @@ function buildHubSpotProductObject(items) {
       price = p.price;
       image = p.mainImage?.asset?.url || "";
       url = "";
+      description = `Rental Option | ${p.equipmentCategories?.title}`;
     } else if (p._type === "ecommerceProduct") {
       sku = p.defaultProductVariant?.sku;
       type = "product";

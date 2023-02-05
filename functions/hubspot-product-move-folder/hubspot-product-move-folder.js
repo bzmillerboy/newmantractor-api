@@ -1,8 +1,6 @@
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
-const ecommLib = require("../lib/ecomm-lib");
 const crmLib = require("../lib/crm-lib");
-const lib = require("../lib/lib");
 
 Sentry.AWSLambda.init({
   dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/5499762`,

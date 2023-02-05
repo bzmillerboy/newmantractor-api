@@ -1,8 +1,5 @@
-const {
-  HUBSPOT_PRIVATE_APP_TOKEN,
-  HUBSPOT_DEVELOPER_PRIVATE_APP_TOKEN,
-  WEBSITE_URL,
-} = process.env;
+const { HUBSPOT_PRIVATE_APP_TOKEN, HUBSPOT_DEVELOPER_PRIVATE_APP_TOKEN } =
+  process.env;
 const hubspot = require("@hubspot/api-client");
 // TODO: turn this back on before going live in prod
 const hubSpotProd = false;
