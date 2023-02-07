@@ -58,7 +58,53 @@ const clearHubSpotId = async () => {
   return transaction;
 };
 
+const addInventoryPhotos = async (imageAssets) => {
+  const createTransaction = (imageAssetsArr) =>
+    imageAssetsArr.reduce((tx, ia) => {
+      console.log("adding image to Sanity", ia.id);
+      const imageGalleryKeyed =
+        ia.imageGallery &&
+        ia.imageGallery.map((img, index) => {
+          return {
+            _key: `${new Date().getTime()}${index}`,
+            _type: "image",
+            asset: {
+              _ref: img.asset._id,
+              _type: "reference",
+            },
+          };
+        });
+      // console.log("imageGalleryKeyed", imageGalleryKeyed);
+      return tx.patch(ia.id, (p) =>
+        p.set({
+          mainImage: {
+            _type: "mainImage",
+            asset: {
+              _type: "reference",
+              _ref: ia.mainImage,
+            },
+          },
+          ...(ia.imageGallery && {
+            imageGallery: {
+              _type: "imageGallery",
+              images: imageGalleryKeyed,
+            },
+          }),
+          ...(ia.photoDate && { photoDate: ia.photoDate }),
+          ...(ia.hoursPhoto && { hoursPhoto: ia.hoursPhoto }),
+        })
+      );
+    }, client.transaction());
+
+  const commitTransaction = (tx) => tx.commit();
+  const transaction = createTransaction(imageAssets);
+  console.log("Inventory Images written to Sanity", imageAssets.length);
+
+  return await commitTransaction(transaction);
+};
+
 module.exports = {
   writeHubSpotProductIds,
   clearHubSpotId,
+  addInventoryPhotos,
 };

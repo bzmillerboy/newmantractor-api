@@ -5,7 +5,8 @@ const {
   SANITY_DATASET,
   SANITY_API_VERSION,
 } = process.env;
-const fetch = require("node-fetch");
+// const fetch = require("node-fetch");
+const fetch = require("node-fetch-retry");
 const { v4: uuidv4 } = require("uuid");
 const sanityClient = require("@sanity/client");
 const client = sanityClient({
@@ -41,6 +42,14 @@ const fetchEquipmentInventory = async (pageNo, pageSize) => {
   console.log(`fetching from ${start} to ${end}`);
   currentInventory = await client.fetch(
     `*[_type == "inventory" && !(_id in path("drafts.**")) && !defined(imageGallery.images)] | order(_id asc) [${start}..${end}] {_id, title, serial, mainImage, imageGallery}`
+  );
+  return currentInventory;
+};
+
+const fetchEquipmentInventory2 = async (start, end) => {
+  console.log(`fetching from ${start} to ${end}`);
+  currentInventory = await client.fetch(
+    `*[_type == "inventory" && !(_id in path("drafts.**"))][${start}..${end}]{_id, slug, equipmentCategories->{slug} }`
   );
   return currentInventory;
 };
@@ -844,6 +853,54 @@ const toPlainText = (blocks = []) => {
   );
 };
 
+const getInventoryImageData = async (urlPageData, _id, url) => {
+  try {
+    const response = await fetch(urlPageData, {
+      retry: 3,
+      pause: 1000,
+      callback: (retry) => {
+        console.log(`Trying: ${retry}`);
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const obj = {
+        id: data.result.data.inventory._id,
+        photoDate: data.result.data.inventory.photoDate,
+        hoursPhoto: data.result.data.inventory.hoursPhoto,
+        mainImage: data.result.data.inventory.mainImage?.asset?._id,
+        imageGallery: data.result.data.inventory.imageGallery?.images,
+        urlPageData: urlPageData,
+        url: url,
+      };
+      return obj;
+    } else {
+      return {
+        id: _id,
+        photoDate: "",
+        hoursPhoto: "",
+        mainImage: "",
+        imageGallery: "",
+        urlPageData: urlPageData,
+        url: url,
+        message: "No image data found",
+      };
+    }
+  } catch (err) {
+    console.log(err.message);
+    return {
+      id: _id,
+      photoDate: "",
+      hoursPhoto: "",
+      mainImage: "",
+      imageGallery: "",
+      urlPageData: urlPageData,
+      url: url,
+      message: err.message,
+    };
+  }
+};
+
 module.exports = {
   equipmentFetch,
   createMakes,
@@ -852,6 +909,7 @@ module.exports = {
   createEquipment,
   deleteEquipment,
   fetchEquipmentInventory,
+  fetchEquipmentInventory2,
   fetchEquipmentPhotos,
   uploadImages,
   addInventoryPhotos,
@@ -860,4 +918,5 @@ module.exports = {
   slugify,
   productFetch,
   toPlainText,
+  getInventoryImageData,
 };

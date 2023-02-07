@@ -19,6 +19,7 @@
     "logzio-nodejs": "^2.0.2",
     "netlify-cli": "^2.68.4",
     "node-fetch": "^2.6.1",
+    "node-fetch-retry": "^2.0.1",
     "uuid": "^8.3.1"
   }
 }
