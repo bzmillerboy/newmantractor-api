@@ -32,6 +32,14 @@ exports.handler = async (event, context) => {
     location: "bartow",
     type: "model",
   });
+  apopkaCountAttachment = await client.fetch(query, {
+    location: "apopka",
+    type: "attachment",
+  });
+  apopkaCountModel = await client.fetch(query, {
+    location: "apopka",
+    type: "model",
+  });
   veronaCountAttachment = await client.fetch(query, {
     location: "verona",
     type: "attachment",
@@ -56,15 +64,28 @@ exports.handler = async (event, context) => {
     location: "richwood",
     type: "model",
   });
+  stClairsvilleCountAttachment = await client.fetch(query, {
+    location: "st-clairsville",
+    type: "attachment",
+  });
+  stClairsvilleCountModel = await client.fetch(query, {
+    location: "st-clairsville",
+    type: "model",
+  });
+
   const counts = {
     bartowAttachment: bartowCountAttachment,
     bartowModel: bartowCountModel,
+    apopkaAttachment: apopkaCountAttachment,
+    apopkaModel: apopkaCountModel,
     veronaAttachment: veronaCountAttachment,
     veronaModel: veronaCountModel,
     warsawAttachment: warsawCountAttachment,
     warsawModel: warsawCountModel,
     richwoodAttachment: richwoodCountAttachment,
     richwoodModel: richwoodCountModel,
+    stClairsvilleCountAttachment: stClairsvilleCountAttachment,
+    stClairsvilleCountModel: stClairsvilleCountModel,
   };
   const subject = `Missing Photo Report - ${dayjs(
     new Date().toLocaleString()
@@ -87,6 +108,7 @@ exports.handler = async (event, context) => {
   try {
     mailSend = await sgMail.send(notification);
     console.log("mailSend", mailSend);
+    console.log("counts", counts);
     return {
       statusCode: 200,
       headers: { "content-type": "application/json" },
