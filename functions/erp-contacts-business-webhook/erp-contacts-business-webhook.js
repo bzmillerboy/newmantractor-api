@@ -1,7 +1,8 @@
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
 const sgMail = require("@sendgrid/mail");
-const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL } = process.env;
+const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, EEMPHASYS_WEBHOOK_APIKEY } =
+  process.env;
 
 Sentry.AWSLambda.init({
   dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/5499762`,
@@ -11,8 +12,16 @@ Sentry.AWSLambda.init({
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
-    const payload = JSON.parse(event);
-    console.log(event);
+    // TODO: enable after testing and before going live
+    // if (event.headers.apikey !== EEMPHASYS_WEBHOOK_APIKEY) {
+    //   return {
+    //     statusCode: 403,
+    //     body: `Access denied`,
+    //   };
+    // }
+
+    const payload = JSON.parse(event.body);
+    console.log("event: ", event);
     Sentry.setContext("character", {
       payload: payload,
       debug: true,

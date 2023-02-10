@@ -11,7 +11,7 @@ Sentry.AWSLambda.init({
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
-    const payload = JSON.parse(event);
+    const payload = JSON.parse(event.body);
     console.log(event);
     Sentry.setContext("character", {
       payload: payload,
