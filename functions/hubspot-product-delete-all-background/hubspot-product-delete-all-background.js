@@ -1,5 +1,4 @@
 // Use this function to delete ALL products from HubSpot
-// NOTE: this function only runs locally, it will timeout on Netlify
 
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;

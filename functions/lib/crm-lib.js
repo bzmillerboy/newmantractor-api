@@ -1,7 +1,6 @@
 const { HUBSPOT_PRIVATE_APP_TOKEN, HUBSPOT_DEVELOPER_PRIVATE_APP_TOKEN } =
   process.env;
 const hubspot = require("@hubspot/api-client");
-// TODO: turn this back on before going live in prod
 const hubSpotProd = true;
 const hubSpotApiData = hubSpotProd
   ? {
@@ -29,87 +28,79 @@ const cmsLib = require("../lib/cms-lib");
 // const fs = require('fs')
 
 const createContact = async (contact, salesContactOwnerId) => {
-  // console.log('createContact:', contact, salesContactOwnerId)
-  const PublicObjectSearchRequest = {
-    filterGroups: [
-      {
-        filters: [
-          {
-            operator: "EQ",
-            propertyName: "email",
-            value: contact.email,
-          },
-        ],
-      },
-    ],
-  };
-
-  try {
-    const apiResponse = await hubspotClient.crm.contacts.searchApi.doSearch(
-      PublicObjectSearchRequest
-    );
-    // console.log(
-    //   'hubspotClient.crm.contacts.searchApi.doSearch:',
-    //   JSON.stringify(apiResponse, null, 2)
-    // )
-    if (apiResponse.total === 0) {
-      const contactId = await createNewContact(contact, salesContactOwnerId);
-      return contactId;
-    } else {
-      const contactId = apiResponse.results[0].id;
-      await updateContact(contact, contactId, salesContactOwnerId);
-      return contactId;
-    }
-  } catch (e) {
-    e.message === "HTTP request failed"
-      ? console.error(JSON.stringify(e.response, null, 2))
-      : console.error(e);
-  }
-};
-
-const createNewContact = async (contact, salesContactOwnerId) => {
   // console.log('createContact contact:', contact)
-  const addressComponents = JSON.parse(contact.addressComponents);
+  const addressComponents =
+    contact.addressComponents && JSON.parse(contact.addressComponents);
   const properties = {
     email: contact.email,
     firstname: contact.firstName,
     lastname: contact.lastName,
     phone: contact.phone || "",
-    county: contact.county,
-    hubspot_owner_id: salesContactOwnerId,
-    address: addressComponents.streetAddress || contact.addressPoBoxStreet,
-    city: addressComponents.city || contact.addressPoBoxCity,
-    state: addressComponents.stateAbbr || contact.addressPoBoxState,
-    zip: addressComponents.postalCode || contact.addressPoBoxZip,
+    ...(contact.county && { county: contact.county }),
+    ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
+    ...(addressComponents && {
+      address: addressComponents.streetAddress || contact.addressPoBoxStreet,
+    }),
+    ...(addressComponents && {
+      city: addressComponents.city || contact.addressPoBoxCity,
+    }),
+    ...(addressComponents && {
+      state: addressComponents.stateAbbr || contact.addressPoBoxState,
+    }),
+    ...(addressComponents && {
+      zip: addressComponents.postalCode || contact.addressPoBoxZip,
+    }),
+    lifecyclestage: contact.lifecyclestage || "lead",
+    source_attribution: contact.source || "Website",
   };
-  const SimplePublicObjectInput = { properties };
-  // console.log('createContact SimplePublicObjectInput:', SimplePublicObjectInput)
+  const input = { properties };
+  // console.log("createContact input:", input);
   try {
-    const apiResponse = await hubspotClient.crm.contacts.basicApi.create(
-      SimplePublicObjectInput
+    const apiResponse = await hubspotClient.crm.contacts.basicApi.create(input);
+    console.log(
+      "hubspotClient.crm.contacts.basicApi.create:",
+      JSON.stringify(apiResponse, null, 2)
     );
-    // console.log('hubspotClient.crm.contacts.basicApi.create:', JSON.stringify(apiResponse, null, 2));
-    return apiResponse.id;
+    const contactId = apiResponse.results[0].id;
+    return contactId;
   } catch (e) {
-    e.message === "HTTP request failed"
-      ? console.error(JSON.stringify(e.response, null, 2))
-      : console.error(e);
+    if (e.code === 409) {
+      console.log("Contact already exists");
+      const contactIdSplit = e.body.message.split("Existing ID: ");
+      const contactId = contactIdSplit[1];
+      // console.log("contactId:", contactId[1]);
+      return await updateContact(contact, contactId, salesContactOwnerId);
+    } else {
+      // console.log("e:", JSON.stringify(e));
+      e.message === "HTTP request failed"
+        ? console.error(JSON.stringify(e.response, null, 2))
+        : console.error(e);
+    }
   }
 };
 
 const updateContact = async (contact, contactId, salesContactOwnerId) => {
-  const addressComponents = JSON.parse(contact.addressComponents || "{}");
+  const addressComponents =
+    contact.addressComponents && JSON.parse(contact.addressComponents);
   const properties = {
     email: contact.email,
     firstname: contact.firstName,
     lastname: contact.lastName,
     phone: contact.phone || "",
-    county: contact.county,
-    hubspot_owner_id: salesContactOwnerId,
-    address: addressComponents.streetAddress || contact.addressPoBoxStreet,
-    city: addressComponents.city || contact.addressPoBoxCity,
-    state: addressComponents.stateAbbr || contact.addressPoBoxState,
-    zip: addressComponents.postalCode || contact.addressPoBoxZip,
+    ...(contact.county && { county: contact.county }),
+    ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
+    ...(addressComponents && {
+      address: addressComponents.streetAddress || contact.addressPoBoxStreet,
+    }),
+    ...(addressComponents && {
+      city: addressComponents.city || contact.addressPoBoxCity,
+    }),
+    ...(addressComponents && {
+      state: addressComponents.stateAbbr || contact.addressPoBoxState,
+    }),
+    ...(addressComponents && {
+      zip: addressComponents.postalCode || contact.addressPoBoxZip,
+    }),
   };
   const SimplePublicObjectInput = { properties };
   // console.log('updateContact SimplePublicObjectInput:', SimplePublicObjectInput)
@@ -119,7 +110,8 @@ const updateContact = async (contact, contactId, salesContactOwnerId) => {
       SimplePublicObjectInput
     );
     // console.log('hubspotClient.crm.contacts.basicApi.update:', JSON.stringify(apiResponse, null, 2));
-    return apiResponse;
+    console.log("Contact updated");
+    return contactId;
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
@@ -258,7 +250,12 @@ const createDealLineItemAssociations = async (id, deal) => {
   const lineItemId = id;
   const toObjectType = "deals";
   const toObjectId = deal;
-  const associationType = "line_item_to_deal";
+  const AssociationSpec = [
+    {
+      associationCategory: "HUBSPOT_DEFINED",
+      associationTypeId: 20, //lineItemToDeal
+    },
+  ];
 
   try {
     const apiResponse =
@@ -266,7 +263,7 @@ const createDealLineItemAssociations = async (id, deal) => {
         lineItemId,
         toObjectType,
         toObjectId,
-        associationType
+        AssociationSpec
       );
     console.log("createAssociation", JSON.stringify(apiResponse, null, 2));
     return "createAssociation complete";
@@ -277,18 +274,24 @@ const createDealLineItemAssociations = async (id, deal) => {
   }
 };
 
-const createDealContactAssociation = async (contactId, deal) => {
-  // const contactId = contactId;
+const createDealContactAssociation = async (contactId, dealId) => {
+  // console.log("createDealContactAssociation:", contactId, dealId);
+  // contactId
   const toObjectType = "deals";
-  const toObjectId = deal;
-  const associationType = "contact_to_deal";
+  const toObjectId = dealId;
+  const AssociationSpec = [
+    {
+      associationCategory: "HUBSPOT_DEFINED",
+      associationTypeId: 4, //contactToDeal
+    },
+  ];
 
   try {
     const apiResponse = await hubspotClient.crm.contacts.associationsApi.create(
       contactId,
       toObjectType,
       toObjectId,
-      associationType
+      AssociationSpec
     );
     console.log(
       "hubspotClient.crm.contacts.associationsApi.create:",

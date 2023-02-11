@@ -4,10 +4,13 @@ const {
   SANITY_PROJECT_ID,
   SANITY_DATASET,
   SANITY_API_VERSION,
+  E_EMPHASYS_API_USERNAME,
+  E_EMPHASYS_API_PASSWORD,
 } = process.env;
 // const fetch = require("node-fetch");
 const fetch = require("node-fetch-retry");
 const { v4: uuidv4 } = require("uuid");
+const base64 = require("base-64");
 const sanityClient = require("@sanity/client");
 const client = sanityClient({
   projectId: SANITY_PROJECT_ID,
@@ -901,6 +904,40 @@ const getInventoryImageData = async (urlPageData, _id, url) => {
   }
 };
 
+const erpContactFetch = async (dataType, lastSyncDate) => {
+  const url =
+    "https://newmantest.eetcld.com:6443/ERPIntegrator.svc/e-Emphasys/Raw/ERPIntegrator/JSONCDATA/HUB";
+  const body = {
+    RequestMethod: dataType,
+    LastSyncDate: lastSyncDate,
+  };
+  const headers = new Headers({
+    Authorization: `Basic ${base64.encode(
+      `${E_EMPHASYS_API_USERNAME}:${E_EMPHASYS_API_PASSWORD}`
+    )}`,
+  });
+
+  let erpContactData;
+  try {
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: headers,
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        erpContactData = data;
+      });
+  } catch (err) {
+    console.log(err);
+    return { statusCode: 500, body: err.toString() };
+  }
+
+  return erpContactData;
+};
+
 module.exports = {
   equipmentFetch,
   createMakes,
@@ -919,4 +956,5 @@ module.exports = {
   productFetch,
   toPlainText,
   getInventoryImageData,
+  erpContactFetch,
 };

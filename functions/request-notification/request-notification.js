@@ -8,9 +8,10 @@ const {
   SALES_FALLBACK_KY,
   SALES_FALLBACK,
   RENTAL_FALLBACK,
+  TERRITORIES_FILE,
 } = process.env;
-const CRMlib = require("../lib/crm-lib.js");
-const territories = require("../data/territories.json");
+const crmLib = require("../lib/crm-lib.js");
+const territories = require(`../data/${TERRITORIES_FILE}`);
 const dayjs = require("dayjs");
 
 Sentry.AWSLambda.init({
@@ -37,6 +38,11 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     // console.log('payload:', payload)
     const { cart, contact, cartType } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
+
+    const source =
+      cartType === "rental"
+        ? "Rental Tool- NT.com"
+        : "Sales Quote Tool- NT.com";
 
     const salesContact = () => {
       const salesPersonMatch =
@@ -101,7 +107,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       },
     };
 
-    // console.log('request salesContact:', salesContact())
+    // console.log("request salesContact:", salesContact());
     // console.log('request notification:', notification)
 
     try {
@@ -109,11 +115,12 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       await sgMail.send(notification);
       await sgMail.send(confirmation);
       // 2) Send data to CRM
-      const contactID = await CRMlib.createContact(
-        payload.contact,
+      const contactID = await crmLib.createContact(
+        { ...contact, source: source, lifecyclestage: "lead" },
         salesContact().hubSpotOwnerId
       );
-      await CRMlib.createDeal(payload, salesContact(), contactID);
+      // console.log("request-notification createContact contactID:", contactID);
+      await crmLib.createDeal(payload, salesContact(), contactID);
 
       Sentry.captureMessage("Quote/Rental request successful");
 
