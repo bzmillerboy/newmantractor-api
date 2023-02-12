@@ -11,11 +11,9 @@ const {
   TERRITORIES_FILE,
 } = process.env;
 const crmLib = require("../lib/crm-lib.js");
+const dayjs = require("dayjs");
 const territoriesProd = require(`../data/territories.json`);
 const territoriesDev = require(`../data/territories-dev.json`);
-const territories = TERRITORIES_FILE;
-const dayjs = require("dayjs");
-
 Sentry.AWSLambda.init({
   dsn: "https://5b66d0cf46fe489bbcc7bbe1a03ba78a@o469784.ingest.sentry.io/5499762",
   tracesSampleRate: 1.0,
@@ -45,6 +43,10 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       cartType === "rental"
         ? "Rental Tool- NT.com"
         : "Sales Quote Tool- NT.com";
+
+    const territories =
+      TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
+    console.log("territories:", JSON.stringify(territories));
 
     const salesContact = () => {
       const salesPersonMatch =
