@@ -11,7 +11,9 @@ const {
   TERRITORIES_FILE,
 } = process.env;
 const crmLib = require("../lib/crm-lib.js");
-const territories = require(`../data/${TERRITORIES_FILE}`);
+const territoriesProd = require(`../data/territories.json`);
+const territoriesDev = require(`../data/territories-dev.json`);
+const territories = TERRITORIES_FILE;
 const dayjs = require("dayjs");
 
 Sentry.AWSLambda.init({
