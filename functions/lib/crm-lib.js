@@ -61,7 +61,13 @@ const createContact = async (contact, salesContactOwnerId) => {
       "hubspotClient.crm.contacts.basicApi.create:",
       JSON.stringify(apiResponse, null, 2)
     );
-    const contactId = apiResponse.results[0].id;
+    if (contact.companyId) {
+      await createContactToCompanyAssociation(
+        apiResponse.id,
+        contact.companyId
+      );
+    }
+    const contactId = apiResponse.id;
     return contactId;
   } catch (e) {
     if (e.code === 409) {
@@ -103,15 +109,53 @@ const updateContact = async (contact, contactId, salesContactOwnerId) => {
     }),
   };
   const SimplePublicObjectInput = { properties };
-  // console.log('updateContact SimplePublicObjectInput:', SimplePublicObjectInput)
   try {
     const apiResponse = await hubspotClient.crm.contacts.basicApi.update(
       contactId,
       SimplePublicObjectInput
     );
-    // console.log('hubspotClient.crm.contacts.basicApi.update:', JSON.stringify(apiResponse, null, 2));
+    console.log(
+      "hubspotClient.crm.contacts.basicApi.update:",
+      JSON.stringify(apiResponse, null, 2)
+    );
+    if (contact.companyId) {
+      await createContactToCompanyAssociation(
+        apiResponse.id,
+        contact.companyId
+      );
+    }
     console.log("Contact updated");
     return contactId;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
+const createContactToCompanyAssociation = async (contactId, companyId) => {
+  console.log("createContactToCompanyAssociation:", contactId, companyId);
+  // contactId
+  const toObjectType = "company";
+  const toObjectId = companyId;
+  const AssociationSpec = [
+    {
+      associationCategory: "HUBSPOT_DEFINED",
+      associationTypeId: 279, //contactToCompany
+    },
+  ];
+
+  try {
+    const apiResponse = await hubspotClient.crm.contacts.associationsApi.create(
+      contactId,
+      toObjectType,
+      toObjectId,
+      AssociationSpec
+    );
+    console.log(
+      "hubspotClient.crm.contacts.associationsApi.create:",
+      JSON.stringify(apiResponse.body, null, 2)
+    );
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
@@ -529,6 +573,115 @@ async function updateProducts(products) {
   } while (products.length >= batchEnd - limit);
 }
 
+const createCompany = async (company) => {
+  console.log("createCompany:", company);
+
+  const properties = {
+    name: company.name,
+    phone: company.phone || "",
+    erp_id: company.erp_id || "",
+    address: company.address || "",
+    city: company.city || "",
+    state: company.state || "",
+    zip: company.zip || "",
+    country: company.country || "",
+    county: company.county || "",
+    lifecyclestage: company.lifecyclestage || "lead",
+    // hs_analytics_latest_source_data_1: company.source || "Website",
+  };
+  const input = { properties };
+  // console.log("createcompany input:", input);
+  try {
+    const apiResponse = await hubspotClient.crm.companies.basicApi.create(
+      input
+    );
+    console.log(
+      "hubspotClient.crm.companies.basicApi.create:",
+      JSON.stringify(apiResponse, null, 2)
+    );
+    const companyId = apiResponse.id;
+    return companyId;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
+const updateCompany = async (company, companyId) => {
+  console.log("updateCompany:", companyId);
+
+  const properties = {
+    name: company.name,
+    phone: company.phone || "",
+    erp_id: company.erp_id || "",
+    address: company.address || "",
+    city: company.city || "",
+    state: company.state || "",
+    zip: company.zip || "",
+    country: company.country || "",
+    county: company.county || "",
+    lifecyclestage: company.lifecyclestage || "lead",
+  };
+  const input = { properties };
+  const idProperty = undefined;
+
+  // console.log("createcompany input:", input);
+  try {
+    const apiResponse = await hubspotClient.crm.companies.basicApi.update(
+      companyId,
+      input,
+      idProperty
+    );
+    console.log(
+      "hubspotClient.crm.companies.basicApi.update:",
+      JSON.stringify(apiResponse, null, 2)
+    );
+    return apiResponse.id;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
+const doesCompanyExist = async (erpId) => {
+  console.log("doesCompanyExist:", erpId);
+  const input = {
+    filterGroups: [
+      {
+        filters: [
+          {
+            value: erpId,
+            propertyName: "erp_id",
+            operator: "EQ",
+          },
+        ],
+      },
+    ],
+    limit: 1,
+  };
+
+  try {
+    const apiResponse = await hubspotClient.crm.companies.searchApi.doSearch(
+      input
+    );
+    console.log(
+      JSON.stringify(
+        "hubspotClient.crm.companies.searchApi.doSearch:",
+        apiResponse.body,
+        null,
+        2
+      )
+    );
+    return apiResponse.results[0]?.id || null;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
 module.exports = {
   createDeal,
   createContact,
@@ -538,4 +691,7 @@ module.exports = {
   updateBatchProductFolder,
   updateProducts,
   createProducts,
+  createCompany,
+  updateCompany,
+  doesCompanyExist,
 };

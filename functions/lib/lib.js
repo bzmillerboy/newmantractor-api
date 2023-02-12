@@ -819,13 +819,10 @@ const deleteEquipment = async (erpDAta) => {
   await commitTransaction(transaction);
   return;
 };
-// todo: make sure code using inventoryProductFetch doesn't fail with null fields (ex. equipmentCategories)
+
 const productFetch = async () => {
-  // todo: temp limited to 9 items for testing
   const products = await client.fetch(
     `*[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }`
-
-    // *[_type in ["inventory", "ecommerceProduct", "equipmentSubCategory", "equipmentOptions", "models"] && !(_id in path("drafts.**"))][0...200] {_id, "sku": _id, _type, descriptionBlock, price, title, slug, hubSpotProductId, mainImage{asset->{url}}, equipmentCategories->{slug, title}, defaultProductVariant{price, sku}, 'productImage': defaultProductVariant{'image':images[0]{asset->{url}}}, "make": equipmentMake->{name, slug} }
   );
   return products;
 };
