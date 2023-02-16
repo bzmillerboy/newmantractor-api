@@ -5,6 +5,7 @@
   "author": "Brian Miller",
   "license": "ISC",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.27",
     "@hubspot/api-client": "^8.5.0",
     "@sanity/client": "^2.0.1",
     "@sendgrid/client": "^7.4.2",

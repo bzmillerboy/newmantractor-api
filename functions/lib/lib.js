@@ -6,6 +6,12 @@ const {
   SANITY_API_VERSION,
   E_EMPHASYS_API_USERNAME,
   E_EMPHASYS_API_PASSWORD,
+  GOOGLE_MAPS_API_KEY,
+  SALES_FALLBACK_FL,
+  SALES_FALLBACK_KY,
+  SALES_FALLBACK,
+  RENTAL_FALLBACK,
+  TERRITORIES_FILE,
 } = process.env;
 // const fetch = require("node-fetch");
 const fetch = require("node-fetch-retry");
@@ -25,6 +31,11 @@ const got = require("got");
 const stream = require("stream");
 const erpSampleData = require("../data/sample-erp-data.json");
 const { eq } = require("lodash");
+const { Client } = require("@googlemaps/google-maps-services-js");
+const geoClient = new Client({});
+const territoriesProd = require(`../data/territories.json`);
+const territoriesDev = require(`../data/territories-dev.json`);
+
 // const fs = require('fs')
 
 //TODO: move these back to their functions since I'm replicating in createEquipment || figure out how to append the new item after it gets created
@@ -935,6 +946,56 @@ const erpContactFetch = async (dataType, lastSyncDate) => {
   return erpContactData;
 };
 
+const geocodeAddress = async (address) => {
+  let params = {
+    address: address,
+    components: "country:US",
+    key: GOOGLE_MAPS_API_KEY,
+  };
+
+  console.log("retrieving geocode data for " + address);
+  const data = await geoClient
+    .geocode({
+      params: params,
+    })
+    .then((response) => {
+      console.log("status: " + response.data.status);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log("error retrieving geocoded results");
+      console.log("error:", error);
+      return error;
+    });
+  return data;
+};
+
+const salesContact = (county, state, cartType) => {
+  const territories =
+    TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
+  // console.log("territories:", JSON.stringify(territories));
+
+  const salesPersonMatch =
+    county &&
+    territories.find((c) => c.countyName === county && c.state === state);
+  if (salesPersonMatch) {
+    console.log("found matching sales rep");
+    return salesPersonMatch;
+  } else if (cartType === "rental") {
+    console.log("fallback to rental sales rep");
+    return JSON.parse(RENTAL_FALLBACK);
+  } else if (state === "Florida") {
+    console.log("fallback to fl sales rep");
+    return JSON.parse(SALES_FALLBACK_FL);
+  } else if (state === "Kentucky") {
+    console.log("fallback to ky sales rep");
+    return JSON.parse(SALES_FALLBACK_KY);
+  } else {
+    console.log("no sales contact found");
+    return JSON.parse(SALES_FALLBACK);
+  }
+};
+
 module.exports = {
   equipmentFetch,
   createMakes,
@@ -954,4 +1015,6 @@ module.exports = {
   toPlainText,
   getInventoryImageData,
   erpContactFetch,
+  geocodeAddress,
+  salesContact,
 };

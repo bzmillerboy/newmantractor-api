@@ -586,8 +586,9 @@ const createCompany = async (company) => {
     zip: company.zip || "",
     country: company.country || "",
     county: company.county || "",
+    hubspot_owner_id: company.ownerId || "",
     lifecyclestage: company.lifecyclestage || "lead",
-    // hs_analytics_latest_source_data_1: company.source || "Website",
+    source_attribution: company.source || "Website",
   };
   const input = { properties };
   // console.log("createcompany input:", input);
