@@ -6,6 +6,10 @@ exports.handler = async (event, context) => {
   const dataType =
     payload.BusinessPartners?.length > 0 ? "businessPartner" : "contact";
 
+  if (payload.BusinessPartners?.length == 0 && payload.Contacts?.length == 0) {
+    return { statusCode: 400, body: "No data provided" };
+  }
+
   if (dataType === "businessPartner") {
     const company = payload.BusinessPartners[0];
     const address = company.AddressInfo[0];
@@ -32,7 +36,7 @@ exports.handler = async (event, context) => {
 
     const companyData = {
       name: company.LongName,
-      phone: company.Telephone || company.Telephone2 || company.Fax || "",
+      phone: address.Telephone || address.Telephone2 || address.Fax || "",
       erp_id: company.BusinessPartnerId,
       source: "ERP",
       lifecyclestage: "customer",
@@ -68,7 +72,13 @@ exports.handler = async (event, context) => {
 
     const businessPartnerId =
       contact.RelatedBussinessPartnerIDs[0].BussinessPartner;
-    const companyId = await crmLib.doesCompanyExist(businessPartnerId);
+    const companyInfo = await crmLib.doesCompanyExist(businessPartnerId);
+    // console.log("companyInfo:", companyInfo);
+
+    const salesContactOwnerId =
+      businessPartnerId && companyInfo
+        ? companyInfo?.properties?.hubspot_owner_id || ""
+        : "";
 
     const contactData = {
       email: contact.Email,
@@ -78,10 +88,8 @@ exports.handler = async (event, context) => {
         contact.CellNumber || contact.Telephone || contact.DirectDial || "",
       source: "ERP",
       lifecyclestage: "customer",
-      companyId: businessPartnerId ? companyId : "",
-      // BirthDate - excluding since records have a value
-      // Business - will include this if one exist that matches the ERP business partner id
+      companyId: businessPartnerId && companyInfo ? companyInfo?.id : "",
     };
-    await crmLib.createContact(contactData, null);
+    await crmLib.createContact(contactData, salesContactOwnerId);
   }
 };

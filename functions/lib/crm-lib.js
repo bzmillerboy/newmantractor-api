@@ -647,7 +647,7 @@ const updateCompany = async (company, companyId) => {
 };
 
 const doesCompanyExist = async (erpId) => {
-  console.log("doesCompanyExist:", erpId);
+  console.log("doesCompanyExist?:", erpId);
   const input = {
     filterGroups: [
       {
@@ -660,6 +660,7 @@ const doesCompanyExist = async (erpId) => {
         ],
       },
     ],
+    properties: ["name", "createdate", "hubspot_owner_id", "phone"],
     limit: 1,
   };
 
@@ -675,12 +676,13 @@ const doesCompanyExist = async (erpId) => {
         2
       )
     );
-    return apiResponse.results[0]?.id || null;
+    return apiResponse.results[0] || null;
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
       : console.error(e);
   }
+  return;
 };
 
 module.exports = {
