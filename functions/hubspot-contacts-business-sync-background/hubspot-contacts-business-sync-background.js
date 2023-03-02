@@ -89,6 +89,7 @@ exports.handler = async (event, context) => {
       source: "ERP",
       lifecyclestage: "customer",
       companyId: businessPartnerId && companyInfo ? companyInfo?.id : "",
+      erp_id: contact.ContactCode,
     };
     await crmLib.createContact(contactData, salesContactOwnerId);
   }

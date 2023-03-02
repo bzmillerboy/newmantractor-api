@@ -36,6 +36,7 @@ const createContact = async (contact, salesContactOwnerId) => {
     firstname: contact.firstName,
     lastname: contact.lastName,
     phone: contact.phone || "",
+    erp_id: contact.erp_id || "",
     ...(contact.county && { county: contact.county }),
     ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
     ...(addressComponents && {
@@ -154,12 +155,40 @@ const createContactToCompanyAssociation = async (contactId, companyId) => {
     );
     console.log(
       "hubspotClient.crm.contacts.associationsApi.create:",
-      JSON.stringify(apiResponse.body, null, 2)
+      JSON.stringify(apiResponse, null, 2)
     );
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
       : console.error(e);
+  }
+};
+
+const createContactToCompanyBatch = async (data) => {
+  const BatchInputPublicAssociation = {
+    inputs: [
+      {
+        _from: { id: "53628" },
+        to: { id: "12726" },
+        type: "contact_to_company",
+      },
+    ],
+  };
+  const fromObjectType = "fromObjectType";
+  const toObjectType = "toObjectType";
+
+  try {
+    const apiResponse = await hubspotClient.crm.associations.batchApi.create(
+      fromObjectType,
+      toObjectType,
+      BatchInputPublicAssociation
+    );
+    console.log(JSON.stringify(apiResponse, null, 2));
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+    return e;
   }
 };
 
@@ -339,7 +368,7 @@ const createDealContactAssociation = async (contactId, dealId) => {
     );
     console.log(
       "hubspotClient.crm.contacts.associationsApi.create:",
-      JSON.stringify(apiResponse.body, null, 2)
+      JSON.stringify(apiResponse, null, 2)
     );
   } catch (e) {
     e.message === "HTTP request failed"
@@ -466,7 +495,7 @@ const getProductsWithNoFolder = async () => {
     );
     console.log(
       "getProductsWithNoFolder:",
-      JSON.stringify(apiResponse.body, null, 2)
+      JSON.stringify(apiResponse, null, 2)
     );
     return apiResponse;
   } catch (e) {
@@ -496,7 +525,7 @@ const updateBatchProductFolder = async (products, folderId) => {
     const apiResponse = await hubspotClient.crm.products.batchApi.update(
       BatchInputSimplePublicObjectBatchInput
     );
-    console.log(JSON.stringify(apiResponse.body, null, 2));
+    console.log(JSON.stringify(apiResponse, null, 2));
     return apiResponse;
   } catch (e) {
     e.message === "HTTP request failed"
@@ -609,6 +638,124 @@ const createCompany = async (company) => {
   }
 };
 
+const createCompanyBatch = async (companies) => {
+  const properties = companies.map((company) => {
+    return {
+      properties: {
+        name: company.name,
+        phone: company.phone || "",
+        erp_id: company.erp_id || "",
+        address: company.address || "",
+        city: company.city || "",
+        state: company.state || "",
+        zip: company.zip || "",
+        country: company.country || "",
+        county: company.county || "",
+        latitude: company.latitude || "",
+        longitude: company.longitude || "",
+        hubspot_owner_id: company.ownerId || "",
+        lifecyclestage: company.lifecyclestage || "lead",
+        source_attribution: company.source || "Website",
+      },
+    };
+  });
+
+  const BatchInput = {
+    inputs: properties,
+  };
+
+  try {
+    const apiResponse = await hubspotClient.crm.companies.batchApi.create(
+      BatchInput
+    );
+    console.log("hubspotClient.crm.companies.batchApi.create completed");
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
+const createContactBatch = async (contacts) => {
+  // console.log('createContact contact:', contact)
+
+  const properties = contacts.map((contact) => {
+    return {
+      properties: {
+        email: contact.email,
+        firstname: contact.firstName,
+        lastname: contact.lastName,
+        phone: contact.phone || "",
+        ...(contact.ownerId && { hubspot_owner_id: contact.ownerId }),
+        lifecyclestage: contact.lifecyclestage || "lead",
+        source_attribution: contact.source || "Website",
+        erp_id: contact.erp_id || "",
+      },
+    };
+  });
+
+  const BatchInput = {
+    inputs: properties,
+  };
+
+  // console.log("BatchInput:", JSON.stringify(BatchInput));
+
+  try {
+    const apiResponse = await hubspotClient.crm.contacts.batchApi.create(
+      BatchInput
+    );
+    // console.log(
+    //   "hubspotClient.crm.contacts.basicApi.create completed",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
+    return apiResponse;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
+};
+
+const updateContactBatch = async (contacts) => {
+  const properties = contacts.map((contact) => {
+    return {
+      id: contact.hubSpotId,
+      properties: {
+        email: contact.email,
+        firstname: contact.firstName,
+        lastname: contact.lastName,
+        phone: contact.phone || "",
+        ...(contact.ownerId && { hubspot_owner_id: contact.ownerId }),
+        erp_id: contact.erp_id || "",
+        lifecyclestage: contact.lifecyclestage || "lead",
+        source_attribution: contact.source || "Website",
+      },
+    };
+  });
+
+  const BatchInput = {
+    inputs: properties,
+  };
+
+  // console.log("BatchInput:", JSON.stringify(BatchInput));
+
+  try {
+    const apiResponse = await hubspotClient.crm.contacts.batchApi.update(
+      BatchInput
+    );
+    // console.log(
+    //   "hubspotClient.crm.contacts.basicApi.create completed",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
+    return apiResponse;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+    return e;
+  }
+};
+
 const updateCompany = async (company, companyId) => {
   console.log("updateCompany:", companyId);
 
@@ -671,7 +818,7 @@ const doesCompanyExist = async (erpId) => {
     console.log(
       JSON.stringify(
         "hubspotClient.crm.companies.searchApi.doSearch:",
-        apiResponse.body,
+        apiResponse,
         null,
         2
       )
@@ -685,9 +832,79 @@ const doesCompanyExist = async (erpId) => {
   return;
 };
 
+const doesCompanyExistBatch = async (contacts) => {
+  const inputs = contacts.map((contact) => {
+    return { id: contact.RelatedBussinessPartnerIDs[0].BussinessPartner };
+  });
+
+  const BatchReadInputSimplePublicObjectId = {
+    properties: ["erp_id"],
+    idProperty: "erp_id",
+    inputs: inputs,
+  };
+  const archived = false;
+  // console.log(
+  //   "BatchReadInputSimplePublicObjectId:",
+  //   JSON.stringify(BatchReadInputSimplePublicObjectId)
+  // );
+
+  try {
+    const apiResponse = await hubspotClient.crm.companies.batchApi.read(
+      BatchReadInputSimplePublicObjectId,
+      archived
+    );
+    console.log(
+      "hubspotClient.crm.contacts.batchApi.read:",
+      JSON.stringify(apiResponse, null, 2)
+    );
+    return apiResponse.results;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+    return e;
+  }
+};
+
+const doesContactExistBatch = async (contacts) => {
+  const inputs = contacts.map((contact) => {
+    return { id: contact.email };
+  });
+
+  const BatchReadInputSimplePublicObjectId = {
+    properties: ["email"],
+    idProperty: "email",
+    inputs: inputs,
+  };
+  const archived = false;
+  // console.log(
+  //   "BatchReadInputSimplePublicObjectId:",
+  //   JSON.stringify(BatchReadInputSimplePublicObjectId)
+  // );
+
+  try {
+    const apiResponse = await hubspotClient.crm.contacts.batchApi.read(
+      BatchReadInputSimplePublicObjectId,
+      archived
+    );
+    // console.log(
+    //   "hubspotClient.crm.contacts.batchApi.read:",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
+    return apiResponse.results;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+    return e;
+  }
+};
+
 module.exports = {
   createDeal,
   createContact,
+  createContactBatch,
+  updateContactBatch,
   getAllProducts,
   deleteProducts,
   getProductsWithNoFolder,
@@ -695,6 +912,10 @@ module.exports = {
   updateProducts,
   createProducts,
   createCompany,
+  createCompanyBatch,
   updateCompany,
   doesCompanyExist,
+  doesContactExistBatch,
+  doesCompanyExistBatch,
+  createContactToCompanyBatch,
 };
