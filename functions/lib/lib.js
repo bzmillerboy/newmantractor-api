@@ -881,7 +881,7 @@ const updateSoldEquipment = async (erpData) => {
 
   const updateSoldArr = await client
     .fetch(
-      `*[_type == "inventory" && _id in ${JSON.stringify(
+      `*[_type == "inventory" && status != 'sold' && _id in ${JSON.stringify(
         erpDataSoldIds
       )} ] {_id}`
     )
