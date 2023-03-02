@@ -22,7 +22,7 @@ const client = sanityClient({
 
 exports.handler = async (event, context) => {
   sgMail.setApiKey(SENDGRID_API_KEY);
-  const query = `count(*[_type == 'inventory'  && !defined(mainImage) && !defined(imageGallery) && (equipmentCategories->categoryType == $type) && (!(deliveryDate > now()) || deliveryDate == "") && location->slug.current == $location])`;
+  const query = `count(*[_type == 'inventory' && status == "stock"  && !defined(mainImage) && !defined(imageGallery) && (equipmentCategories->categoryType == $type) && (!(deliveryDate > now()) || deliveryDate == "") && location->slug.current == $location])`;
 
   bartowCountAttachment = await client.fetch(query, {
     location: "bartow",
