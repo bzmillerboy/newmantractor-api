@@ -253,6 +253,49 @@ const equipmentFetch = async (pageNo, pageSize) => {
   return erpDataFiltered;
 };
 
+const equipmentFetchSold = async (pageNo, pageSize) => {
+  const url =
+    "https://erpintegration.newmantractor.com:6443/ERPIntegrator.svc/e-Emphasys/Raw/ERPIntegrator/JsonCDATA/EQPAPI";
+  const body = `{\n"APIKey": "${E_EMPHASYS_API_KEY}", \n"PageNo": ${pageNo},\n"PageSize": ${pageSize}\n}`;
+  let erpData;
+  try {
+    await fetch(url, {
+      method: "POST",
+      body: body,
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        erpData = data;
+      });
+  } catch (err) {
+    console.log(err);
+    return { statusCode: 500, body: err.toString() };
+  }
+
+  console.log("erpData count:", erpData.equipmentData.length);
+
+  const excludedCategories = [
+    "FLEET",
+    "CCBC",
+    "CCBL",
+    "CCF",
+    "FIXED ASSETS",
+    "FIXED ASSETS PRODUCT CATEGORY",
+  ];
+  const erpDataFiltered = await erpData.equipmentData.filter((d) => {
+    return (
+      !excludedCategories.includes(d.ProductCategoryDesc) &&
+      d.EquipmentStatus === "Sold"
+    );
+  });
+
+  console.log("erpDataFiltered count:", erpDataFiltered.length);
+
+  return erpDataFiltered;
+};
+
 const triggerBuild = async () => {
   const url = "https://api.netlify.com/build_hooks/5fa766fba4fba86fdd418617";
   try {
@@ -630,7 +673,7 @@ const createEquipment = async (erpData) => {
 
   const equipmentSanity = await client
     .fetch(
-      '*[_type == "inventory" && !(_id in path("drafts.**"))]{_id, _type, title, slug, stockNumber, specification, price, condition, year, model, modelReference, hoursCurrent, serial, equipmentMake, equipmentCategories, location, deliveryDate, movementDate }'
+      '*[_type == "inventory" && !(_id in path("drafts.**"))]{_id, _type, title, slug, stockNumber, specification, price, condition, year, model, modelReference, hoursCurrent, serial, equipmentMake, equipmentCategories, location, status, deliveryDate, movementDate }'
     )
     .then((currEq) => {
       return currEq.map((eq) => {
@@ -665,6 +708,7 @@ const createEquipment = async (erpData) => {
             _type: "reference",
             _ref: eq.location._ref,
           },
+          ...(eq.status && { status: eq.status }),
           ...(eq.deliveryDate && { deliveryDate: eq.deliveryDate }),
           ...(eq.movementDate && { movementDate: eq.movementDate }),
         };
@@ -739,6 +783,7 @@ const createEquipment = async (erpData) => {
         _type: "reference",
         _ref: currentLocation._id,
       },
+      ...(eq.EquipmentStatus && { status: "stock" }),
       ...(eq.ExpectedDelDate && { deliveryDate: eq.ExpectedDelDate }),
       ...(eq.MovementDate && { movementDate: eq.MovementDate }),
     };
@@ -829,6 +874,38 @@ const deleteEquipment = async (erpDAta) => {
   const transaction = createTransaction(deleteArr);
   await commitTransaction(transaction);
   return;
+};
+
+const updateSoldEquipment = async (erpData) => {
+  const erpDataSoldIds = erpData.map((item) => item.EquipmentId);
+
+  const updateSoldArr = await client
+    .fetch(
+      `*[_type == "inventory" && _id in ${JSON.stringify(
+        erpDataSoldIds
+      )} ] {_id}`
+    )
+    .then((currInv) => {
+      return currInv;
+    });
+
+  console.log("# cms items to be updated:", updateSoldArr.length);
+  console.log("cms items to be updated", JSON.stringify(updateSoldArr));
+
+  const createTransaction = (updateSoldArr) =>
+    updateSoldArr.reduce((tx, ia) => {
+      // console.log("updating to sold:", ia._id);
+      return tx.patch(ia._id, (p) =>
+        p.set({
+          status: "sold",
+        })
+      );
+    }, client.transaction());
+
+  const commitTransaction = (tx) => tx.commit();
+  const transaction = createTransaction(updateSoldArr);
+
+  return await commitTransaction(transaction);
 };
 
 const productFetch = async () => {
@@ -998,11 +1075,13 @@ const salesContact = (county, state, cartType) => {
 
 module.exports = {
   equipmentFetch,
+  equipmentFetchSold,
   createMakes,
   createLocations,
   createCategories,
   createEquipment,
   deleteEquipment,
+  updateSoldEquipment,
   fetchEquipmentInventory,
   fetchEquipmentInventory2,
   fetchEquipmentPhotos,
