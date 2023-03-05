@@ -1073,6 +1073,19 @@ const salesContact = (county, state, cartType) => {
   }
 };
 
+const uniqueBy = (data, field) => {
+  const hasEmail = data.filter((item) => item.Email !== "");
+  const noEmail = data.filter((item) => item.Email === "");
+
+  var dataArr = hasEmail.map((item) => {
+    return item.Email === "" || [item[field], item];
+  });
+  var maparr = new Map(dataArr);
+  var result = [...maparr.values()];
+
+  return [...noEmail, ...result];
+};
+
 module.exports = {
   equipmentFetch,
   equipmentFetchSold,
@@ -1096,4 +1109,5 @@ module.exports = {
   erpContactFetch,
   geocodeAddress,
   salesContact,
+  uniqueBy,
 };

@@ -75,33 +75,52 @@ exports.handler = async (event, context) => {
 
   if (dataType === "contact") {
     console.log("# of contact:", payload.Contacts.length);
-    const filteredUsableContacts = payload.Contacts.filter((c) => {
-      return (
-        (c.CellNumber !== "" || c.Telephone !== "" || c.Email !== "") &&
-        (c.FirstName !== "" || c.LastName !== "")
-      );
-    }).slice(0, 5);
+
+    const filterDuplicateEmailContacts = lib.uniqueBy(
+      payload.Contacts,
+      "Email"
+    );
+    console.log("# of unique contact:", filterDuplicateEmailContacts.length);
+    // console.log(
+    //   "filterDuplicateEmailContacts:",
+    //   JSON.stringify(filterDuplicateEmailContacts, null, 2)
+    // );
+
+    const filteredUsableContacts = filterDuplicateEmailContacts
+      .filter((c) => {
+        return (
+          (c.CellNumber !== "" || c.Telephone !== "" || c.Email !== "") &&
+          (c.FirstName !== "" || c.LastName !== "")
+        );
+      })
+      .slice(0, 5);
 
     console.log("# of usable contact:", filteredUsableContacts.length);
-    // console.log("usable contacts:", JSON.stringify(filteredUsableContacts));
+    // console.log(
+    //   "filteredUsableContacts:",
+    //   JSON.stringify(filteredUsableContacts)
+    // );
 
-    // **** Left off here *****/
     const existingCompanies = await crmLib.doesCompanyExistBatch(
       filteredUsableContacts
     );
-    console.log("existingCompanies:", existingCompanies);
+    console.log("# of existing contact companies:", existingCompanies.length);
+    // console.log(
+    //   "existingCompanies:",
+    //   JSON.stringify(existingCompanies, null, 2)
+    // );
 
     const contactData = await Promise.all(
       filteredUsableContacts.map(async (contact) => {
-        const businessPartnerId =
-          contact.RelatedBussinessPartnerIDs[0].BussinessPartner;
+        const ownerId = existingCompanies.find(
+          (ec) =>
+            ec.properties.erp_id ===
+            contact.RelatedBussinessPartnerIDs[0].BussinessPartner
+        )?.properties?.hubspot_owner_id;
 
-        //TODO: this will likely fail due to api limits, improve this
-        // const companyInfo = await crmLib.doesCompanyExist(businessPartnerId);
-        // const salesContactOwnerId =
-        //   businessPartnerId && companyInfo
-        //     ? companyInfo?.properties?.hubspot_owner_id || ""
-        //     : "";
+        // console.log(
+        //   `${contact.FirstName} ${contact.LastName} has company ${contact.RelatedBussinessPartnerIDs[0].BussinessPartner} and owner ${ownerId}`
+        // );
 
         return {
           email: contact.Email,
@@ -112,20 +131,22 @@ exports.handler = async (event, context) => {
           erp_id: contact.ContactCode,
           source: "ERP",
           lifecyclestage: "customer",
-          // companyId: businessPartnerId && companyInfo ? companyInfo?.id : "",
-          // ownerId: salesContactOwnerId || "",
+          ownerId: ownerId || "",
         };
       })
     );
 
-    // console.log("contactData:", contactData);
-
+    // Filter to contacts with only emails and use to create new contacts array
     const contactDataWithEmails = contactData.filter((c) => c.email !== "");
+    console.log("# of contact with emails:", contactDataWithEmails.length);
+    // const uniqueContacts = lib.uniqueBy(contactDataWithEmails, "email");
+    // console.log("# of unique contact:", uniqueContacts.length);
     const existingContacts = await crmLib.doesContactExistBatch(
       contactDataWithEmails
     );
+    console.log("# of existing contacts:", existingContacts.length);
 
-    const contactDataExisting = contactDataWithEmails
+    const contactDataExisting = existingContacts
       .filter((c) =>
         existingContacts.some((ex) => ex.properties.email === c.email)
       )
@@ -154,96 +175,41 @@ exports.handler = async (event, context) => {
     // console.log("creatContactBatchRes:", creatContactBatchRes);
     // console.log("updateContactBatchRes:", updateContactBatchRes);
 
-    // Use existingCompanies response:
-    // [
-    //   SimplePublicObject {
-    //     id: '14916419400',
-    //     properties: {
-    //       createdate: '2023-03-01T15:39:15.253Z',
-    //       erp_id: 'BP0001440',
-    //       hs_lastmodifieddate: '2023-03-01T15:42:19.265Z',
-    //       hs_object_id: '14916419400'
-    //     },
-    //     createdAt: 2023-03-01T15:39:15.253Z,
-    //     updatedAt: 2023-03-01T15:42:19.265Z,
-    //     archived: false
-    //   }
-    // ]
-    // Use creatContactBatchRes & updateContactBatchRes response:
-    // {
-    //   "id": "10301",
-    //   "properties": {
-    //     "closedate": "2023-03-01T18:01:42.577Z",
-    //     "createdate": "2023-03-01T18:01:42.577Z",
-    //     "days_to_close": "1",
-    //     "erp_id": "CN0000004",
-    //     "firstname": "MIKE",
-    //     "hs_all_contact_vids": "10301",
-    //     "hs_calculated_phone_number": "+15132271572",
-    //     "hs_calculated_phone_number_country_code": "US",
-    //     "hs_is_contact": "true",
-    //     "hs_is_unworked": "true",
-    //     "hs_lifecyclestage_customer_date": "2023-03-01T18:01:42.577Z",
-    //     "hs_marketable_status": "false",
-    //     "hs_marketable_until_renewal": "false",
-    //     "hs_object_id": "10301",
-    //     "hs_pipeline": "contacts-lifecycle-pipeline",
-    //     "hs_searchable_calculated_phone_number": "5132271572",
-    //     "hs_time_between_contact_creation_and_deal_close": "0",
-    //     "lastmodifieddate": "2023-03-01T18:01:42.577Z",
-    //     "lastname": "DEDDEN",
-    //     "lifecyclestage": "customer",
-    //     "phone": "513-227-1572",
-    //     "source_attribution": "ERP"
-    //   },
-    //   "createdAt": "2023-03-01T18:01:42.577Z",
-    //   "updatedAt": "2023-03-01T18:01:42.577Z",
-    //   "archived": false
-    // }
-    // match contact by 'ERP CN ID', get HS ID
-    // match company by 'ERP ID', get HS ID
-
     const combinedContactResponses = [
       ...creatContactBatchRes.results,
       ...updateContactBatchRes.results,
     ];
-    console.log("combined responses", JSON.stringify(combinedContactResponses));
 
     const contactsToCompanyAssociations = combinedContactResponses.map(
       (contact) => {
         // search existingCompanies & filteredUsableContacts and match bp id to hs erp_id
-        const hubSpotCompanyId = existingCompanies.find(
-          (ec) => ec.properties.erp_id === contact.properties.erp_id
-        ); //?.id;
+
+        const erpContact = filteredUsableContacts.find(
+          (fc) => fc.ContactCode === contact.properties.erp_id
+        );
+
         const hubSpotContactId = filteredUsableContacts.find(
           (fc) => fc.ContactCode === contact.properties.erp_id
         );
 
+        const hubSpotCompanyId = existingCompanies.find(
+          (ec) =>
+            ec.properties.erp_id ===
+            erpContact.RelatedBussinessPartnerIDs[0].BussinessPartner
+        );
+
         return {
-          companyId: hubSpotCompanyId,
+          companyId: hubSpotCompanyId.id,
           contactId: hubSpotContactId ? contact.id : "",
         };
       }
     );
 
+    const createContactToCompanyBatchRes =
+      await crmLib.createContactToCompanyBatch(contactsToCompanyAssociations);
     console.log(
-      "contactsToCompanyAssociations:",
-      contactsToCompanyAssociations
+      "# of createContactToCompanyBatchRes:",
+      createContactToCompanyBatchRes.length
     );
-
-    // await crmLib.createContactToCompanyBatch(contactIdsAndCompanyIds);
   }
 };
-
-// Used for testing
-// fs.writeFile(
-//   "filtered-contacts-data.json",
-//   JSON.stringify(contactData),
-//   (err) => {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-//     //file written successfully
-//   }
-// );

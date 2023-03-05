@@ -165,17 +165,19 @@ const createContactToCompanyAssociation = async (contactId, companyId) => {
 };
 
 const createContactToCompanyBatch = async (data) => {
+  const inputs = data.map((item) => {
+    return {
+      _from: { id: item.contactId },
+      to: { id: item.companyId },
+      type: "contact_to_company",
+    };
+  });
+
   const BatchInputPublicAssociation = {
-    inputs: [
-      {
-        _from: { id: "53628" },
-        to: { id: "12726" },
-        type: "contact_to_company",
-      },
-    ],
+    inputs: inputs,
   };
-  const fromObjectType = "fromObjectType";
-  const toObjectType = "toObjectType";
+  const fromObjectType = "contact";
+  const toObjectType = "company";
 
   try {
     const apiResponse = await hubspotClient.crm.associations.batchApi.create(
@@ -183,7 +185,12 @@ const createContactToCompanyBatch = async (data) => {
       toObjectType,
       BatchInputPublicAssociation
     );
-    console.log(JSON.stringify(apiResponse, null, 2));
+    // console.log(
+    //   "hubspotClient.crm.associations.batchApi.create:",
+    //   JSON.stringify(apiResponse)
+    // );
+    console.log("hubspotClient.crm.associations.batchApi.create completed");
+    return apiResponse.results;
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
@@ -838,7 +845,7 @@ const doesCompanyExistBatch = async (contacts) => {
   });
 
   const BatchReadInputSimplePublicObjectId = {
-    properties: ["erp_id"],
+    properties: ["erp_id", "hubspot_owner_id"],
     idProperty: "erp_id",
     inputs: inputs,
   };
@@ -853,10 +860,10 @@ const doesCompanyExistBatch = async (contacts) => {
       BatchReadInputSimplePublicObjectId,
       archived
     );
-    console.log(
-      "hubspotClient.crm.contacts.batchApi.read:",
-      JSON.stringify(apiResponse, null, 2)
-    );
+    // console.log(
+    //   "hubspotClient.crm.contacts.batchApi.read:",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
     return apiResponse.results;
   } catch (e) {
     e.message === "HTTP request failed"
@@ -877,10 +884,6 @@ const doesContactExistBatch = async (contacts) => {
     inputs: inputs,
   };
   const archived = false;
-  // console.log(
-  //   "BatchReadInputSimplePublicObjectId:",
-  //   JSON.stringify(BatchReadInputSimplePublicObjectId)
-  // );
 
   try {
     const apiResponse = await hubspotClient.crm.contacts.batchApi.read(
@@ -891,6 +894,7 @@ const doesContactExistBatch = async (contacts) => {
     //   "hubspotClient.crm.contacts.batchApi.read:",
     //   JSON.stringify(apiResponse, null, 2)
     // );
+    console.log("hubspotClient.crm.contacts.batchApi.read completed");
     return apiResponse.results;
   } catch (e) {
     e.message === "HTTP request failed"
