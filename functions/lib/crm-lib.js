@@ -17,11 +17,17 @@ const hubSpotApiData = hubSpotProd
       rentalPipelineId: "494104",
       quotePipelineId: "default",
     };
-
+const DEFAULT_LIMITER_OPTIONS = {
+  minTime: 1000 / 9,
+  maxConcurrent: 6,
+  id: "hubspot-client-limiter",
+};
 const hubspotClient = new hubspot.Client({
   accessToken: hubSpotApiData.accessToken,
-  useLimiter: false,
+  limiterOptions: DEFAULT_LIMITER_OPTIONS,
+  // useLimiter: false,
 });
+
 const lib = require("../lib/lib");
 const cmsLib = require("../lib/cms-lib");
 
@@ -894,7 +900,7 @@ const doesContactExistBatch = async (contacts) => {
     //   "hubspotClient.crm.contacts.batchApi.read:",
     //   JSON.stringify(apiResponse, null, 2)
     // );
-    console.log("hubspotClient.crm.contacts.batchApi.read completed");
+    // console.log("hubspotClient.crm.contacts.batchApi.read completed");
     return apiResponse.results;
   } catch (e) {
     e.message === "HTTP request failed"

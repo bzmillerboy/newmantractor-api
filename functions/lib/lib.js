@@ -1030,13 +1030,12 @@ const geocodeAddress = async (address) => {
     key: GOOGLE_MAPS_API_KEY,
   };
 
-  console.log("retrieving geocode data for " + address);
+  // console.log("retrieving geocode data for " + address);
   const data = await geoClient
     .geocode({
       params: params,
     })
     .then((response) => {
-      console.log("status: " + response.data.status);
       return response.data;
     })
     .catch((error) => {
@@ -1056,19 +1055,19 @@ const salesContact = (county, state, cartType) => {
     county &&
     territories.find((c) => c.countyName === county && c.state === state);
   if (salesPersonMatch) {
-    console.log("found matching sales rep");
+    // console.log("found matching sales rep");
     return salesPersonMatch;
   } else if (cartType === "rental") {
-    console.log("fallback to rental sales rep");
+    // console.log("fallback to rental sales rep");
     return JSON.parse(RENTAL_FALLBACK);
   } else if (state === "Florida") {
-    console.log("fallback to fl sales rep");
+    // console.log("fallback to fl sales rep");
     return JSON.parse(SALES_FALLBACK_FL);
   } else if (state === "Kentucky") {
-    console.log("fallback to ky sales rep");
+    // console.log("fallback to ky sales rep");
     return JSON.parse(SALES_FALLBACK_KY);
   } else {
-    console.log("no sales contact found");
+    // console.log("no sales contact found");
     return JSON.parse(SALES_FALLBACK);
   }
 };
@@ -1078,13 +1077,16 @@ const uniqueBy = (data, field) => {
   const noEmail = data.filter((item) => item.Email === "");
 
   var dataArr = hasEmail.map((item) => {
-    return item.Email === "" || [item[field], item];
+    return item.Email === "" || [item[field].toLowerCase(), item];
   });
   var maparr = new Map(dataArr);
   var result = [...maparr.values()];
 
   return [...noEmail, ...result];
 };
+
+const wait = (timeToDelay) =>
+  new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
 module.exports = {
   equipmentFetch,
@@ -1110,4 +1112,5 @@ module.exports = {
   geocodeAddress,
   salesContact,
   uniqueBy,
+  wait,
 };
