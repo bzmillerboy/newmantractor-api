@@ -14,7 +14,6 @@ exports.handler = async (event, context) => {
     const company = payload.BusinessPartners[0];
     const address = company.AddressInfo[0];
     const fullAddress = `${address.Address} ${address.City}, ${address.State} ${address.ZipCode}`;
-    // const fullAddress = "9638 Shane Lane, Union, KY 41091"; //`${address.ZipCode}`;
 
     if (!company.LongName) {
       return { statusCode: 400, body: "No company name provided" };

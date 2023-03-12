@@ -100,6 +100,7 @@ const updateContact = async (contact, contactId, salesContactOwnerId) => {
     firstname: contact.firstName,
     lastname: contact.lastName,
     phone: contact.phone || "",
+    erp_id: contact.erp_id || "",
     ...(contact.county && { county: contact.county }),
     ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
     ...(addressComponents && {
@@ -770,8 +771,6 @@ const updateContactBatch = async (contacts) => {
 };
 
 const updateCompany = async (company, companyId) => {
-  console.log("updateCompany:", companyId);
-
   const properties = {
     name: company.name,
     phone: company.phone || "",
@@ -787,7 +786,8 @@ const updateCompany = async (company, companyId) => {
   const input = { properties };
   const idProperty = undefined;
 
-  // console.log("createcompany input:", input);
+  console.log("updateCompany companyId:", companyId);
+  console.log("updateCompany input:", input);
   try {
     const apiResponse = await hubspotClient.crm.companies.basicApi.update(
       companyId,
@@ -807,7 +807,7 @@ const updateCompany = async (company, companyId) => {
 };
 
 const doesCompanyExist = async (erpId) => {
-  console.log("doesCompanyExist?:", erpId);
+  // console.log("doesCompanyExist?:", erpId);
   const input = {
     filterGroups: [
       {

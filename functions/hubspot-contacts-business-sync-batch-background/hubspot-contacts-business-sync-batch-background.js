@@ -89,6 +89,7 @@ exports.handler = async (event, context) => {
       console.log(`${i + 1} batch complete, waiting 10 seconds...`);
       lib.wait(10000);
     }
+    console.log(`All batches complete.`);
   }
 
   if (dataType === "contact") {
@@ -158,8 +159,9 @@ exports.handler = async (event, context) => {
         contactDataWithEmails
       );
       console.log("# of existing contacts:", existingContacts.length);
+      console.log("existing contacts:", JSON.stringify(existingContacts));
 
-      const contactDataExisting = existingContacts
+      const contactDataExisting = contactData
         .filter((c) =>
           existingContacts.some((ex) => ex.properties.email === c.email)
         )
@@ -181,12 +183,12 @@ exports.handler = async (event, context) => {
       const updateContactBatchRes = await crmLib.updateContactBatch(
         contactDataExisting
       );
-      const creatContactBatchRes = await crmLib.createContactBatch(
-        contactDataNew
-      );
+      // const creatContactBatchRes = await crmLib.createContactBatch(
+      //   contactDataNew
+      // );
 
       const combinedContactResponses = [
-        ...creatContactBatchRes.results,
+        // ...creatContactBatchRes.results,
         ...updateContactBatchRes.results,
       ];
 
