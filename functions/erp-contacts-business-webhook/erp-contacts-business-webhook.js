@@ -20,8 +20,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     // const apiKey = JSON.parse(event.headers["x-api-key"]);
     // if ( !headers.hasOwnProperty('x-api-key') || (headers.hasOwnProperty('x-api-key') && headers['x-api-key'][0].value!="mykey")) {
 
-    console.log("apiKey:", event?.headers?.authorization);
-    console.log("EEMPHASYS_WEBHOOK_APIKEY:", EEMPHASYS_WEBHOOK_APIKEY);
+    // console.log("apiKey:", event?.headers?.authorization);
+    // console.log("EEMPHASYS_WEBHOOK_APIKEY:", EEMPHASYS_WEBHOOK_APIKEY);
 
     if (event?.headers?.authorization !== EEMPHASYS_WEBHOOK_APIKEY) {
       return { statusCode: 401, body: "Not authorized." };
