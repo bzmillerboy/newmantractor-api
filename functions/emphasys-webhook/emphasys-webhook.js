@@ -140,7 +140,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       subject: "ERP Webhook Event",
       templateId: "d-c110cc501843478596c4e1c2ed47195d",
       dynamic_template_data: {
-        payloadString: JSON.stringify(payload),
+        payloadString: JSON.stringify(event),
         payload: payload,
       },
     };
