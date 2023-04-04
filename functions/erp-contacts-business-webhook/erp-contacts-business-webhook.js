@@ -1,6 +1,6 @@
 const Sentry = require("@sentry/serverless");
 const { SENTRY_CLIENT_KEY, ENV_NAME } = process.env;
-const sgMail = require("@sendgrid/mail");
+// const sgMail = require("@sendgrid/mail");
 const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, EEMPHASYS_WEBHOOK_APIKEY } =
   process.env;
 const crmLib = require("../lib/crm-lib.js");
@@ -129,24 +129,24 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       await crmLib.createContact(contactData, salesContactOwnerId);
     }
 
-    sgMail.setApiKey(SENDGRID_API_KEY);
+    // sgMail.setApiKey(SENDGRID_API_KEY);
 
-    const msg = {
-      to: "bzmiller82@gmail.com",
-      from: {
-        email: SENDGRID_FROM_EMAIL,
-        name: "Notifications",
-      },
-      subject: "ERP Webhook Event",
-      templateId: "d-c110cc501843478596c4e1c2ed47195d",
-      dynamic_template_data: {
-        payloadString: JSON.stringify(payload),
-        payload: payload,
-      },
-    };
+    // const msg = {
+    //   to: "bzmiller82@gmail.com",
+    //   from: {
+    //     email: SENDGRID_FROM_EMAIL,
+    //     name: "Notifications",
+    //   },
+    //   subject: "ERP Webhook Event",
+    //   templateId: "d-c110cc501843478596c4e1c2ed47195d",
+    //   dynamic_template_data: {
+    //     payloadString: JSON.stringify(payload),
+    //     payload: payload,
+    //   },
+    // };
 
     try {
-      await sgMail.send(msg);
+      // await sgMail.send(msg);
       return {
         statusCode: 200,
         body: `Webhook received`,
