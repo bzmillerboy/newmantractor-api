@@ -12,16 +12,16 @@ const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const createFinanceApplication = async (data) => {
-  // console.log("createFinanceApplication props", data);
+  console.log("createFinanceApplication props", data);
   const { referring_url, type } = data;
   const { id: userId } = data.user;
   const applicationsRes = await supabase
     .from("applications")
     .insert({
-      contact_customer: userId,
-      status: 1,
+      // contact_customer: userId,
+      status_id: 1,
       referring_url: referring_url,
-      type: type,
+      type_id: type,
     })
     .select()
     .single();
