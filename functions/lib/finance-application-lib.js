@@ -18,7 +18,7 @@ const createFinanceApplication = async (data) => {
   const applicationsRes = await supabase
     .from("applications")
     .insert({
-      // contact_customer: userId,
+      contact_id: userId,
       status_id: 1,
       referring_url: referring_url,
       type_id: type,
