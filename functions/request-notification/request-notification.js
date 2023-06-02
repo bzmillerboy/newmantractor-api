@@ -1,16 +1,9 @@
 const sgMail = require("@sendgrid/mail");
 const Sentry = require("@sentry/serverless");
-const {
-  SENDGRID_API_KEY,
-  SENDGRID_FROM_EMAIL,
-  SENDGRID_FROM_NAME,
-  SALES_FALLBACK_FL,
-  SALES_FALLBACK_KY,
-  SALES_FALLBACK,
-  RENTAL_FALLBACK,
-} = process.env;
-const CRMlib = require("../lib/crm-lib.js");
-const territories = require("../data/territories.json");
+const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME } =
+  process.env;
+const crmLib = require("../lib/crm-lib.js");
+const lib = require("../lib/lib.js");
 const dayjs = require("dayjs");
 
 Sentry.AWSLambda.init({
@@ -38,33 +31,19 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     const { cart, contact, cartType } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
 
-    const salesContact = () => {
-      const salesPersonMatch =
-        contact.county &&
-        territories.find(
-          (c) => c.countyName === contact.county && c.state === contact.state
-        );
-      if (salesPersonMatch) {
-        return salesPersonMatch;
-      } else if (cartType === "rental") {
-        return JSON.parse(RENTAL_FALLBACK);
-      } else if (
-        contact.addressComponents.state &&
-        contact.addressComponents.state === "Florida"
-      ) {
-        return JSON.parse(SALES_FALLBACK_FL);
-      } else if (
-        contact.addressComponents.state &&
-        contact.addressComponents.state === "Kentucky"
-      ) {
-        return JSON.parse(SALES_FALLBACK_KY);
-      } else {
-        return JSON.parse(SALES_FALLBACK);
-      }
-    };
+    const source =
+      cartType === "rental"
+        ? "Rental Tool- NT.com"
+        : "Sales Quote Tool- NT.com";
+
+    const salesContact = lib.salesContact(
+      contact.county,
+      contact.state,
+      cartType
+    );
 
     const notification = {
-      to: salesContact().contactEmail,
+      to: salesContact.contactEmail,
       from: {
         email: SENDGRID_FROM_EMAIL,
         name: SENDGRID_FROM_NAME,
@@ -88,7 +67,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         email: SENDGRID_FROM_EMAIL,
         name: SENDGRID_FROM_NAME,
       },
-      replyTo: salesContact().contactEmail,
+      replyTo: salesContact.contactEmail,
       bcc: ["bzmiller82+ntbcc@gmail.com"],
       templateId: "d-323aec4e28d4421f8b315b23f7fadde9",
       dynamic_template_data: {
@@ -101,19 +80,17 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       },
     };
 
-    // console.log('request salesContact:', salesContact())
-    // console.log('request notification:', notification)
-
     try {
       // 1) Send notification message
       await sgMail.send(notification);
       await sgMail.send(confirmation);
       // 2) Send data to CRM
-      const contactID = await CRMlib.createContact(
-        payload.contact,
-        salesContact().hubSpotOwnerId
+      const contactID = await crmLib.createContact(
+        { ...contact, source: source, lifecyclestage: "lead" },
+        salesContact.hubSpotOwnerId
       );
-      await CRMlib.createDeal(payload, salesContact(), contactID);
+      // console.log("request-notification createContact contactID:", contactID);
+      await crmLib.createDeal(payload, salesContact, contactID);
 
       Sentry.captureMessage("Quote/Rental request successful");
 
