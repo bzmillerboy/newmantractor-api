@@ -20,6 +20,8 @@ const createFinanceApplication = async (data) => {
     .insert({
       contact_id: userId,
       status_id: 1,
+      credit_line_status_id: 1,
+      loan_status_id: 1,
       referring_url: referring_url,
       type_id: type,
     })
