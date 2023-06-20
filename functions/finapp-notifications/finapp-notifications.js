@@ -20,7 +20,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async (event) => {
   // const payload = JSON.parse(event);
-  console.log("finapp-notifications payload:", payload);
+  console.log("finapp-notifications payload:", event);
   // sgMail.setApiKey(SENDGRID_API_KEY);
 
   // const { data: applications, error: applicationsError } = await supabase
