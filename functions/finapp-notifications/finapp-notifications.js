@@ -18,16 +18,20 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-exports.handler = async (event) => {
-  // const payload = JSON.parse(event);
-  console.log("finapp-notifications payload:", event);
+exports.handler = async (event, context) => {
+  const payload = JSON.parse(event.body);
+  console.log("finapp-notifications payload:", JSON.stringify(payload));
+  console.log("finapp-notifications context:", JSON.stringify(context));
+  const appId = payload.record.application_id;
   // sgMail.setApiKey(SENDGRID_API_KEY);
 
-  // const { data: applications, error: applicationsError } = await supabase
-  //   .from("applications")
-  //   .select("*")
-  //   .eq("id", payload.record.id)
-  //   .single();
+  const { data: applications, error: applicationsError } = await supabase
+    .from("applications")
+    .select("*")
+    .eq("id", appId)
+    .single();
+
+  console.log("applications:", JSON.stringify(applications));
 
   try {
     // sgMail.setApiKey(SENDGRID_API_KEY);
