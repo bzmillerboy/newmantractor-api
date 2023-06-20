@@ -19,9 +19,9 @@ const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async (event) => {
-  const payload = JSON.parse(event);
+  // const payload = JSON.parse(event);
   console.log("finapp-notifications payload:", payload);
-  sgMail.setApiKey(SENDGRID_API_KEY);
+  // sgMail.setApiKey(SENDGRID_API_KEY);
 
   // const { data: applications, error: applicationsError } = await supabase
   //   .from("applications")
@@ -34,7 +34,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: `Finance application sent: ${JSON.stringify(data)}`,
+      body: `Finapp notification sent`,
     };
   } catch (e) {
     console.error(e);
