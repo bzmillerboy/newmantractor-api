@@ -1,3 +1,5 @@
+//TODO: make CTA button dynamic based on PORTAL_URL
+
 const {
   HUBSPOT_PORTAL_ID,
   HUBSPOT_PRIVATE_APP_TOKEN,
@@ -21,11 +23,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async (event) => {
   const payload = JSON.parse(event.body);
-  console.log("finapp-notifications payload:", JSON.stringify(payload));
+  // console.log("finapp-notifications payload:", JSON.stringify(payload));
   const appId = payload.record.application_id;
   const activityName = payload.record.name;
-  const apiKey = JSON.parse(event.queryStringParameters).apiKey;
-  console.log("apiKey:", apiKey);
+  console.log("apiKey:", event.queryStringParameters.apiKey);
   // TODO: check apiky and return 401 if not valid
 
   sgMail.setApiKey(SENDGRID_API_KEY);
@@ -33,14 +34,14 @@ exports.handler = async (event) => {
   const { data: application, error: applicationsError } = await supabase
     .from("applications")
     .select(
-      "contact:contact_id(email, first_name, last_name), type:type_id(id, name) *"
+      "contact:contact_id(email, first_name, last_name), type:type_id(id, name), *"
     )
     .eq("id", appId)
     .single();
 
   console.log("application:", JSON.stringify(application));
 
-  const { contact, type } = payload;
+  const { contact, type, application_id } = application;
 
   const { first_name, last_name, email } = contact;
   const { id: typeId } = type;
@@ -48,9 +49,9 @@ exports.handler = async (event) => {
   const bccEmail = () => {
     let bccEmail = "";
     const shouldBCC = payload.record.name === "application submitted";
-    if (applications.type_id === 1 && shouldBCC) {
+    if (typeId === 1 && shouldBCC) {
       bccEmail = "finance@newmantractor.com";
-    } else if (applications.type_id === 2 && shouldBCC) {
+    } else if (typeId === 2 && shouldBCC) {
       bccEmail = "credit@newmantractor.com";
     }
 
@@ -58,10 +59,20 @@ exports.handler = async (event) => {
   };
   const subject = `Financing Application Submitted | Ref #${application.application_id} | Newman Tractor`; //TODO: make this more dynamic based on application_activity.name
   const templateId = "d-8e9c9cf1077b4278a413f33c68a7bdca"; //TODO: make this more dynamic based on application_activity.name
-  const fromImage =
-    "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop"; //TODO: make this more dynamic based on application_activity.name
-  const fromPhone = "(859) 393-5405"; // TODO: make this more dynamic based on application_activity.name
 
+  //TODO: improe these to have a fallback for emails that come from notifications@newmantractor.com
+  const fromFirstName = typeId === 1 ? "Matt" : "Caroll";
+  const fromLastName = typeId === 1 ? "Salyers" : "Smith";
+  const fromEmail =
+    typeId === 1 ? "matt@newmantractor.com" : "caroll@newmantractor.com";
+  const fromPhone = typeId === 1 ? "(859) 393-5405" : "(859) 802-5298";
+  const fromJobTitle = typeId === 1 ? "Finance Manager" : "Credit Manager";
+  const fromImage =
+    typeId === 1
+      ? "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop"
+      : "https://cdn.sanity.io/images/agnoplrn/production/3d170bc7cf16b0fb8f7d9095fbece08f5bba1266-3310x3310.jpg?w=600&h=480&q=75&auto=format&fit=crop";
+
+  const ctaLink = `${PORTAL_URL}/my-applications`;
   const msg = {
     to: email,
     from: {
@@ -76,16 +87,17 @@ exports.handler = async (event) => {
       email: email,
       firstName: first_name,
       lastName: last_name,
-      type: type,
       applicationId: application.application_id,
       fromImage: fromImage,
       fromPhone: fromPhone,
-      fromFirstName: "MattFT",
-      fromLastName: "SalyersFT",
-      fromPhone: "(859) 393-5405FT",
-      fromEmail: "matt@newmantractor.comFT",
-      fromJobTitle: "Finance ManagerFT",
-      type: typeId,
+      fromFirstName: fromFirstName,
+      fromLastName: fromLastName,
+      fromPhone: fromPhone,
+      fromEmail: fromEmail,
+      fromJobTitle: fromJobTitle,
+      typeId: typeId,
+      applicationId: application_id,
+      ctaLink: ctaLink,
     },
   };
 
