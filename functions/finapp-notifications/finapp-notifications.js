@@ -12,8 +12,8 @@ exports.handler = async (event) => {
   }
   const payload = JSON.parse(event.body);
   const appId = payload.record.application_id;
+  const activityMetaData = payload.record.metadata;
   const activityName = payload.record.name;
-  const toEmail = payload?.record?.metadata?.to_email || "";
 
   const { data: application, error: applicationsError } = await supabase
     .from("applications")
@@ -32,15 +32,11 @@ exports.handler = async (event) => {
 
   console.log("application:", JSON.stringify(application));
 
-  // ToEmail
-  // activityName
-  // Should send multiple based on acitivity type
-
   try {
     await emailLib.sendFinanceApplicationEmail(
       activityName,
       application,
-      toEmail
+      activityMetaData
     );
     return { statusCode: 200 };
   } catch (e) {

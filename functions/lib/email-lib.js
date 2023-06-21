@@ -1,12 +1,8 @@
 const {
-  HUBSPOT_PORTAL_ID,
-  HUBSPOT_PRIVATE_APP_TOKEN,
   SENDGRID_API_KEY,
   SENDGRID_FROM_EMAIL,
-  SENDGRID_FINAPP_REPLYTO_EMAIL,
   SENDGRID_FROM_NAME,
   PORTAL_URL,
-  SUPABASE_URL,
 } = process.env;
 
 const sgMail = require("@sendgrid/mail");
@@ -14,7 +10,7 @@ const sgMail = require("@sendgrid/mail");
 const sendFinanceApplicationEmail = async (
   activityName,
   application,
-  toEmailValue
+  activityMetaData
 ) => {
   sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -69,6 +65,24 @@ const sendFinanceApplicationEmail = async (
       fromJobTitle = "Credit Manager";
       fromImage =
         "https://cdn.sanity.io/images/agnoplrn/production/3d170bc7cf16b0fb8f7d9095fbece08f5bba1266-3310x3310.jpg?w=600&h=480&q=75&auto=format&fit=crop";
+      ctaButtonLink = `${PORTAL_URL}/my-applications`;
+      ctaButtonText = "VIEW MY APPLICATION";
+    } else if (activityName === "send to lender") {
+      //TODO: include notes in email
+      //TODO: update to new template id
+      templateId = "d-8f19bf394e2c4c518636551836b346d9";
+      toEmail = activityMetaData?.lender_email;
+      subject = `Financing Application Under Lender Review | Ref #${application.application_id} | Newman Tractor`;
+      fromEmail = "bzmiller82+matt@gmail.com";
+      fromName = "Matt Salyers";
+      replyToEmail = "bzmiller82+matt@gmail.com";
+      bccEmail = "finance@newmantractor.com";
+      fromFirstName = "Matt";
+      fromLastName = "Salyers";
+      fromPhone = "(859) 393-5405";
+      fromJobTitle = "Finance Manager";
+      fromImage =
+        "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop";
       ctaButtonLink = `${PORTAL_URL}/my-applications`;
       ctaButtonText = "VIEW MY APPLICATION";
     } else if (activityName === "sent to lender") {
