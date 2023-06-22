@@ -39,9 +39,9 @@ const sendFinanceApplicationEmail = async (
       templateId = "d-8e9c9cf1077b4278a413f33c68a7bdca";
       toEmail = contactEmail;
       subject = `Financing Application Submitted | Ref #${application.application_id} | Newman Tractor`;
-      fromEmail = "bzmiller82+matt@gmail.com";
+      fromEmail = "notifications+matt@newmantractor.com";
       fromName = "Matt Salyers";
-      replyToEmail = "bzmiller82+matt@gmail.com";
+      replyToEmail = "notifications+matt@newmantractor.com";
       bccEmail = "finance@newmantractor.com";
       fromFirstName = "Matt";
       fromLastName = "Salyers";
@@ -55,9 +55,9 @@ const sendFinanceApplicationEmail = async (
       templateId = "d-8e9c9cf1077b4278a413f33c68a7bdca";
       toEmail = contactEmail;
       subject = `Financing Application Submitted | Ref #${application.application_id} | Newman Tractor`;
-      fromEmail = "bzmiller82+caroll@gmail.com";
+      fromEmail = "notifications+caroll@newmantractor.com";
       fromName = "Caroll Smith";
-      replyToEmail = "bzmiller82+caroll@gmail.com";
+      replyToEmail = "notifications+caroll@newmantractor.com";
       bccEmail = "credit@newmantractor.com";
       fromFirstName = "Caroll";
       fromLastName = "Smith";
@@ -73,9 +73,9 @@ const sendFinanceApplicationEmail = async (
       templateId = "d-8f19bf394e2c4c518636551836b346d9";
       toEmail = activityMetaData?.lender_email;
       subject = `Financing Application Under Lender Review | Ref #${application.application_id} | Newman Tractor`;
-      fromEmail = "bzmiller82+matt@gmail.com";
+      fromEmail = "notifications+matt@newmantractor.com";
       fromName = "Matt Salyers";
-      replyToEmail = "bzmiller82+matt@gmail.com";
+      replyToEmail = "notifications+matt@newmantractor.com";
       bccEmail = "finance@newmantractor.com";
       fromFirstName = "Matt";
       fromLastName = "Salyers";
@@ -90,9 +90,9 @@ const sendFinanceApplicationEmail = async (
       templateId = "d-8f19bf394e2c4c518636551836b346d9";
       toEmail = contactEmail;
       subject = `Financing Application Under Lender Review | Ref #${application.application_id} | Newman Tractor`;
-      fromEmail = "bzmiller82+matt@gmail.com";
+      fromEmail = "notifications+matt@newmantractor.com";
       fromName = "Matt Salyers";
-      replyToEmail = "bzmiller82+matt@gmail.com";
+      replyToEmail = "notifications+matt@newmantractor.com";
       bccEmail = "finance@newmantractor.com";
       fromFirstName = "Matt";
       fromLastName = "Salyers";
@@ -114,7 +114,8 @@ const sendFinanceApplicationEmail = async (
       name: fromName || SENDGRID_FROM_NAME,
     },
     replyTo: replyToEmail || SENDGRID_FROM_EMAIL,
-    bcc: [bccEmail],
+    // TODO: uncomment when ready for prod
+    // bcc: [bccEmail],
     subject: subject,
     templateId: templateId,
     dynamic_template_data: {

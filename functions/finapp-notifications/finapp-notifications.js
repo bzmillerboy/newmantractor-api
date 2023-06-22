@@ -42,8 +42,8 @@ exports.handler = async (event) => {
   } catch (e) {
     console.error(e);
     return {
-      statusCode: e.statusCode,
-      body: `${e.message} - ${JSON.stringify(e?.response)}`,
+      statusCode: e.code,
+      body: `${e.message} - ${JSON.stringify(e?.response.body)}`,
     };
   }
 };
