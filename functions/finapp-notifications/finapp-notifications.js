@@ -10,7 +10,17 @@ exports.handler = async (event) => {
   // reject if apikey is not present or incorrect
   console.log(
     "event.queryStringParameters.apikey:",
-    event.queryStringParameters.apikey
+    event.queryStringParameters.apikey,
+    typeof event.queryStringParameters.apikey
+  );
+  console.log(
+    "process.env.NEWMANTRACTOR_APIKEY:",
+    process.env.NEWMANTRACTOR_APIKEY,
+    typeof process.env.NEWMANTRACTOR_APIKEY
+  );
+  console.log(
+    "apikey matches?",
+    event.queryStringParameters.apikey === process.env.NEWMANTRACTOR_APIKEY
   );
   if (event.queryStringParameters.apiKey !== process.env.NEWMANTRACTOR_APIKEY) {
     console.log("Not Authorized - Invalid API Key");
