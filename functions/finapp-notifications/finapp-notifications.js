@@ -6,8 +6,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const emailLib = require("../lib/email-lib.js");
 
 exports.handler = async (event) => {
+  console.log("event:", JSON.stringify(event));
   // reject if apikey is not present or incorrect
   if (event.queryStringParameters.apiKey !== process.env.NEWMANTRACTOR_APIKEY) {
+    console.log("Not Authorized - Invalid API Key");
     return { statusCode: 401, body: "Unauthorized" };
   }
   const payload = JSON.parse(event.body);

@@ -17,3 +17,7 @@
     from = "/*"
     to = "/.netlify/functions/:splat"
     status = 200
+
+[functions]
+    [functions.persistSession]
+    persistSession = false
