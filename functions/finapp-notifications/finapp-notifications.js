@@ -7,22 +7,14 @@ const emailLib = require("../lib/email-lib.js");
 
 exports.handler = async (event) => {
   console.log("event:", event);
+  const { apikey } = event.queryStringParameters;
+  const validApiKey = process.env.NEWMANTRACTOR_APIKEY;
   // reject if apikey is not present or incorrect
-  console.log(
-    "event.queryStringParameters.apikey:",
-    event.queryStringParameters.apikey,
-    typeof event.queryStringParameters.apikey
-  );
-  console.log(
-    "process.env.NEWMANTRACTOR_APIKEY:",
-    process.env.NEWMANTRACTOR_APIKEY,
-    typeof process.env.NEWMANTRACTOR_APIKEY
-  );
-  console.log(
-    "apikey matches?",
-    event.queryStringParameters.apikey === process.env.NEWMANTRACTOR_APIKEY
-  );
-  if (event.queryStringParameters.apiKey !== process.env.NEWMANTRACTOR_APIKEY) {
+  console.log("event.queryStringParameters.apikey:", apikey, typeof apikey);
+  console.log("validApiKey:", validApiKey, typeof validApiKey);
+  console.log("apikey matches?", apikey === validApiKey);
+  console.log("apikey different?", apikey !== validApiKey);
+  if (apikey !== validApiKey) {
     console.log("Not Authorized - Invalid API Key");
     return { statusCode: 401, body: "Unauthorized" };
   }
