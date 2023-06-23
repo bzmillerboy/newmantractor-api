@@ -8,7 +8,9 @@ const emailLib = require("../lib/email-lib.js");
 exports.handler = async (event) => {
   console.log("event:", JSON.stringify(event));
   // reject if apikey is not present or incorrect
-  if (event.queryStringParameters.apiKey !== process.env.NEWMANTRACTOR_APIKEY) {
+  console.log("apikey type:", typeof event.queryStringParameters.apiKey);
+  console.log("apikey env var type:", typeof process.env.NEWMANTRACTOR_APIKEY);
+  if (event.queryStringParameters.apiKey != process.env.NEWMANTRACTOR_APIKEY) {
     console.log("Not Authorized - Invalid API Key");
     return { statusCode: 401, body: "Unauthorized" };
   }
