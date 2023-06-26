@@ -61,12 +61,12 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     toFirstName = first_name;
     toLastName = last_name;
   } else if (activityName === "send to lender") {
-    emailNotificationId = 3;
+    emailNotificationId = 4;
     toEmail = activityMetaData?.lender_email;
     toFirstName = activityMetaData?.lender_first_name;
     toLastName = activityMetaData?.lender_last_name;
   } else if (activityName === "sent to lender") {
-    emailNotificationId = 4;
+    emailNotificationId = 3;
     toEmail = contactEmail;
     toFirstName = first_name;
     toLastName = last_name;

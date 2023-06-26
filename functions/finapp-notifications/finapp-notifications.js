@@ -6,7 +6,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const emailLib = require("../lib/email-lib.js");
 
 exports.handler = async (event) => {
-  console.log("event:", JSON.stringify(event));
+  // console.log("event:", JSON.stringify(event));
   const { apikey } = event.queryStringParameters;
   const validApiKey = process.env.NEWMANTRACTOR_APIKEY;
   if (apikey !== validApiKey) {
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
     };
   }
 
-  console.log("application:", JSON.stringify(application));
+  // console.log("application:", JSON.stringify(application));
 
   try {
     await emailLib.sendFinanceApplicationEmail(payload.record, application);
