@@ -42,7 +42,7 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
   const activityNote = activityRecord.note_text;
 
   // Extract data from application fetch
-  const { contact, type, application_id } = application;
+  const { id: appId, contact, type, application_id } = application;
   const { first_name, last_name, email: contactEmail } = contact;
   const { id: typeId } = type;
 
@@ -198,7 +198,7 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       typeId: typeId,
       applicationId: application_id,
       ctaButtonText: dynamic_content.ctaButtonText,
-      ctaButtonLink: dynamic_content.ctaButtonLink,
+      ctaButtonLink: eval("`" + dynamic_content.ctaButtonLink + "`"),
       noteText: activityNote,
     },
   };
