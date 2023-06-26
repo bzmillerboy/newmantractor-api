@@ -72,7 +72,8 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     toLastName = last_name;
   } else if (
     activityName === "lender approved" ||
-    activityName === "finance manager approved"
+    activityName === "finance manager approved" ||
+    activityName === "approved"
   ) {
     emailNotificationId = 5;
     toEmail = contactEmail;
@@ -80,20 +81,44 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     toLastName = last_name;
   } else if (
     activityName === "lender denied" ||
-    activityName === "finance manager denied"
+    activityName === "finance manager denied" ||
+    activityName === "denied"
   ) {
     emailNotificationId = 6;
     toEmail = contactEmail;
     toFirstName = first_name;
     toLastName = last_name;
+  } else if (activityName === "sales rep assigned") {
+    emailNotificationId = 7;
+    toEmail = application.sales_rep.email;
+    toFirstName = application.sales_rep.first_name;
+    toLastName = application.sales_rep.last_name;
+  } else if (activityName === "rental rep assigned") {
+    emailNotificationId = 7;
+    toEmail = application.rental_rep.email;
+    toFirstName = application.rental_rep.first_name;
+    toLastName = application.rental_rep.last_name;
+  } else {
+    throw new Error("No email notification found for this activity");
   }
 
   const emailNotification = await getFinanceApplicationEmailContent(
     emailNotificationId
   );
 
+  const defaultFromContact = {
+    first_name: SENDGRID_FROM_NAME,
+    last_name: "",
+    email: SENDGRID_FROM_EMAIL,
+    phone: "",
+    metadata: {
+      emailSignatureJobTitle: "",
+      emailSignatureProfilePicture: "",
+    },
+  };
+
   const {
-    from_contact,
+    from_contact = defaultFromContact,
     template_id: templateId,
     subject,
     bcc,
