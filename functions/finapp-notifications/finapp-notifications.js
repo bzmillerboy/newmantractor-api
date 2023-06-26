@@ -6,14 +6,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const emailLib = require("../lib/email-lib.js");
 
 exports.handler = async (event) => {
-  console.log("event:", event);
+  // console.log("event:", JSON.stringify(event));
   const { apikey } = event.queryStringParameters;
   const validApiKey = process.env.NEWMANTRACTOR_APIKEY;
-  // reject if apikey is not present or incorrect
-  console.log("event.queryStringParameters.apikey:", apikey, typeof apikey);
-  console.log("validApiKey:", validApiKey, typeof validApiKey);
-  console.log("apikey matches?", apikey === validApiKey);
-  console.log("apikey different?", apikey !== validApiKey);
   if (apikey !== validApiKey) {
     console.log("Not Authorized - Invalid API Key");
     return { statusCode: 401, body: "Unauthorized" };
@@ -38,7 +33,8 @@ exports.handler = async (event) => {
     };
   }
 
-  console.log("application:", JSON.stringify(application));
+  const emailContent = emailLib.getFinanceApplicationEmailContent(1);
+  // console.log("application:", JSON.stringify(application));
 
   try {
     await emailLib.sendFinanceApplicationEmail(
