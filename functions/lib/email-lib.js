@@ -70,6 +70,22 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     toEmail = contactEmail;
     toFirstName = first_name;
     toLastName = last_name;
+  } else if (
+    activityName === "lender approved" ||
+    activityName === "finance manager approved"
+  ) {
+    emailNotificationId = 5;
+    toEmail = contactEmail;
+    toFirstName = first_name;
+    toLastName = last_name;
+  } else if (
+    activityName === "lender denied" ||
+    activityName === "finance manager denied"
+  ) {
+    emailNotificationId = 6;
+    toEmail = contactEmail;
+    toFirstName = first_name;
+    toLastName = last_name;
   }
 
   const emailNotification = await getFinanceApplicationEmailContent(
