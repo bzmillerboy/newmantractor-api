@@ -6,7 +6,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const emailLib = require("../lib/email-lib.js");
 
 exports.handler = async (event) => {
-  // console.log("event:", JSON.stringify(event));
+  console.log("event:", JSON.stringify(event));
   const { apikey } = event.queryStringParameters;
   const validApiKey = process.env.NEWMANTRACTOR_APIKEY;
   if (apikey !== validApiKey) {
@@ -15,8 +15,6 @@ exports.handler = async (event) => {
   }
   const payload = JSON.parse(event.body);
   const appId = payload.record.application_id;
-  const activityMetaData = payload.record.metadata;
-  const activityName = payload.record.name;
 
   const { data: application, error: applicationsError } = await supabase
     .from("applications")
@@ -33,15 +31,10 @@ exports.handler = async (event) => {
     };
   }
 
-  const emailContent = emailLib.getFinanceApplicationEmailContent(1);
-  // console.log("application:", JSON.stringify(application));
+  console.log("application:", JSON.stringify(application));
 
   try {
-    await emailLib.sendFinanceApplicationEmail(
-      activityName,
-      application,
-      activityMetaData
-    );
+    await emailLib.sendFinanceApplicationEmail(payload.record, application);
     return { statusCode: 200 };
   } catch (e) {
     console.error(e);
