@@ -98,6 +98,22 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     toEmail = application.rental_rep.email;
     toFirstName = application.rental_rep.first_name;
     toLastName = application.rental_rep.last_name;
+  } else if (
+    activityName === "credit manager approved" ||
+    activityName === "approved"
+  ) {
+    emailNotificationId = 8;
+    toEmail = contactEmail;
+    toFirstName = first_name;
+    toLastName = last_name;
+  } else if (
+    activityName === "credit manager denied" ||
+    activityName === "denied"
+  ) {
+    emailNotificationId = 9;
+    toEmail = contactEmail;
+    toFirstName = first_name;
+    toLastName = last_name;
   } else {
     throw new Error("No email notification found for this activity");
   }
