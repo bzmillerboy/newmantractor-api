@@ -19,6 +19,7 @@
     "dayjs": "^1.9.7",
     "got": "^11.8.0",
     "hubspot": "^2.3.14",
+    "libphonenumber-js": "^1.10.14",
     "logzio-nodejs": "^2.0.2",
     "netlify-cli": "^2.68.4",
     "node-fetch": "^2.6.1",
