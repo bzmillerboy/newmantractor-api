@@ -1,4 +1,9 @@
-const { HUBSPOT_DEVELOPER_PORTAL_ID, HUBSPOT_DEVELOPER_API_KEY } = process.env;
+const {
+  HUBSPOT_DEVELOPER_PORTAL_ID,
+  HUBSPOT_DEVELOPER_API_KEY,
+  SUPABASE_URL,
+  SUPABASE_KEY_SERVICE_KEY,
+} = process.env;
 const lib = require("../lib/finance-application-lib.js");
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
@@ -7,8 +12,8 @@ const hubspot = new Hubspot({
 });
 
 const { createClient } = require("@supabase/supabase-js");
-const supabaseUrl = "https://vfihmsdvctcwwbtxrhfl.supabase.co";
-const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
+const supabaseUrl = SUPABASE_URL;
+const supabaseKey = SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const parsePhoneNumber = require("libphonenumber-js").parsePhoneNumber;
@@ -63,8 +68,14 @@ exports.handler = async (event) => {
 
   const phoneNumber = parsePhoneNumber(phone, "US").number;
 
+  // Check if user already exists and send login link instead of signup link
+  const { data: contact, error: userError } = await supabase
+    .from("contacts")
+    .select("id")
+    .eq("email", email)
+    .single();
   const { data, error } = await supabase.auth.admin.generateLink({
-    type: "signup",
+    type: contact ? "magiclink" : "signup",
     email: email,
     options: {
       password: "password",
@@ -79,17 +90,14 @@ exports.handler = async (event) => {
 
   if (error) {
     console.log("generateLink error: ", error);
-    // TODO: handle when auth user already exists
     return {
       statusCode: error.status || 500,
-      headers: {
-        "access-control-allow-origin": "*",
-      },
       body: JSON.stringify(error.message),
     };
   }
 
   if (data) {
+    // console.log("generateLink data: ", data);
     const applicationData = await lib.createFinanceApplication({
       referring_url,
       type: type,
@@ -98,6 +106,7 @@ exports.handler = async (event) => {
     await lib.sendFinanceApplicationEmail({
       user: data,
       application: applicationData,
+      existingUser: contact ? true : false,
     });
 
     hutk &&
@@ -109,9 +118,6 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: {
-        "access-control-allow-origin": "*",
-      },
       body: JSON.stringify({ message: "success" }),
     };
   }

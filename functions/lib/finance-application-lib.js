@@ -3,16 +3,18 @@ const {
   SENDGRID_FROM_EMAIL,
   SENDGRID_FROM_NAME,
   PORTAL_URL,
+  SUPABASE_URL,
+  SUPABASE_KEY_SERVICE_KEY,
 } = process.env;
 const sgMail = require("@sendgrid/mail");
 
 const { createClient } = require("@supabase/supabase-js");
-const supabaseUrl = "https://vfihmsdvctcwwbtxrhfl.supabase.co";
-const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
+const supabaseUrl = SUPABASE_URL;
+const supabaseKey = SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const createFinanceApplication = async (data) => {
-  console.log("createFinanceApplication props", data);
+  // console.log("createFinanceApplication props", data);
   const { referring_url, type } = data;
   const { id: userId } = data.user;
   const applicationsRes = await supabase
@@ -37,13 +39,15 @@ const createFinanceApplication = async (data) => {
 
 const sendFinanceApplicationEmail = async (data) => {
   sgMail.setApiKey(SENDGRID_API_KEY);
-  const { user, application } = data;
+  const { user, application, existingUser } = data;
   const { action_link, hashed_token, redirect_to } = user.properties;
   const { id, email } = user.user;
   const { first_name, last_name, phone } = user.user.user_metadata;
   const { id: applicationId } = application;
 
-  const link = `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=signup&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`;
+  const link = `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=${
+    existingUser ? "magiclink" : "signup"
+  }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`;
 
   const msg = {
     to: email,
