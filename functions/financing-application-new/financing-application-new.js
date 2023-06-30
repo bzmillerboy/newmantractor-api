@@ -76,7 +76,7 @@ exports.handler = async (event) => {
     .single();
   const { data, error } = await supabase.auth.admin.generateLink({
     type: contact ? "magiclink" : "signup",
-    email: email,
+    email: email.toLowerCase(),
     options: {
       password: "password",
       redirectTo: "https://portal.newmantractor.com",
