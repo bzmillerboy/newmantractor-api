@@ -92,6 +92,9 @@ exports.handler = async (event) => {
     console.log("generateLink error: ", error);
     return {
       statusCode: error.status || 500,
+      headers: {
+        "access-control-allow-origin": "*",
+      },
       body: JSON.stringify(error.message),
     };
   }
@@ -118,6 +121,9 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
+      headers: {
+        "access-control-allow-origin": "*",
+      },
       body: JSON.stringify({ message: "success" }),
     };
   }
