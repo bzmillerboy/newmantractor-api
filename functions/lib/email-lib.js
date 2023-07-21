@@ -11,6 +11,36 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const sgMail = require("@sendgrid/mail");
 
+const generateAuthLink = async (email, firstName, lastName) => {
+  const { data, error } = await supabase.auth.admin.generateLink({
+    type: "signup",
+    email: email.toLowerCase(),
+    options: {
+      password: "password",
+      redirectTo: "https://portal.newmantractor.com/my-applications",
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+      },
+    },
+  });
+
+  if (error) {
+    console.log("generateLink error: ", error);
+    return {
+      statusCode: error.status || 500,
+      headers: {
+        "access-control-allow-origin": "*",
+      },
+      body: JSON.stringify(error.message),
+    };
+  }
+
+  console.log("generateLink data: ", data);
+
+  return data.properties.action_link;
+};
+
 const getFinanceApplicationEmailContent = async (emailNotificationId) => {
   const { data: emailNotification, error: emailNotificationError } =
     await supabase
@@ -50,77 +80,89 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
   let toEmail = "";
   let toFirstName = "";
   let toLastName = "";
-  if (activityName === "application submitted" && typeId === 1) {
-    emailNotificationId = 1;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (activityName === "application submitted" && typeId === 2) {
-    emailNotificationId = 2;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (activityName === "send to lender") {
-    emailNotificationId = 4;
-    toEmail = activityMetaData?.lender_email;
-    toFirstName = activityMetaData?.lender_first_name;
-    toLastName = activityMetaData?.lender_last_name;
-  } else if (activityName === "sent to lender") {
-    emailNotificationId = 3;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (activityName === "signatures requested") {
-    emailNotificationId = 10;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (
-    activityName === "lender approved" ||
-    activityName === "finance manager approved" ||
-    activityName === "approved"
-  ) {
-    emailNotificationId = 5;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (
-    activityName === "lender denied" ||
-    activityName === "finance manager denied" ||
-    activityName === "denied"
-  ) {
-    emailNotificationId = 6;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (activityName === "sales rep assigned") {
-    emailNotificationId = 7;
-    toEmail = application.sales_rep.email;
-    toFirstName = application.sales_rep.first_name;
-    toLastName = application.sales_rep.last_name;
-  } else if (activityName === "rental rep assigned") {
-    emailNotificationId = 7;
-    toEmail = application.rental_rep.email;
-    toFirstName = application.rental_rep.first_name;
-    toLastName = application.rental_rep.last_name;
-  } else if (
-    activityName === "credit manager approved" ||
-    activityName === "approved"
-  ) {
-    emailNotificationId = 8;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else if (
-    activityName === "credit manager denied" ||
-    activityName === "denied"
-  ) {
-    emailNotificationId = 9;
-    toEmail = contactEmail;
-    toFirstName = first_name;
-    toLastName = last_name;
-  } else {
-    throw new Error("No email notification found for this activity");
+  let ctaButtonLinkAuth = "";
+  switch (activityName) {
+    case "application submitted":
+      if (typeId === 1) {
+        emailNotificationId = 1;
+        toEmail = contactEmail;
+        toFirstName = first_name;
+        toLastName = last_name;
+      } else if (typeId === 2) {
+        emailNotificationId = 2;
+        toEmail = contactEmail;
+        toFirstName = first_name;
+        toLastName = last_name;
+      }
+      break;
+    case "send to lender":
+      emailNotificationId = 4;
+      toEmail = activityMetaData?.lender_email;
+      toFirstName = activityMetaData?.lender_first_name;
+      toLastName = activityMetaData?.lender_last_name;
+      break;
+    case "sent to lender":
+      emailNotificationId = 3;
+      toEmail = contactEmail;
+      toFirstName = first_name;
+      toLastName = last_name;
+      break;
+    case "signatures requested":
+      emailNotificationId = 10;
+      // TODO: update to be the guarantor's email not the contact's email
+      toEmail = activityMetaData?.guarantor_email;
+      toFirstName = activityMetaData?.guarantor_first_name;
+      toLastName = activityMetaData?.guarantor_last_name;
+      ctaButtonLinkAuth = await generateAuthLink(
+        activityMetaData?.guarantor_email,
+        activityMetaData?.guarantor_first_name,
+        activityMetaData?.guarantor_last_name
+      );
+      break;
+    case "lender approved":
+    case "finance manager approved":
+    case "approved":
+      emailNotificationId = 5;
+      toEmail = contactEmail;
+      toFirstName = first_name;
+      toLastName = last_name;
+      break;
+    case "lender denied":
+    case "finance manager denied":
+    case "denied":
+      emailNotificationId = 6;
+      toEmail = contactEmail;
+      toFirstName = first_name;
+      toLastName = last_name;
+      break;
+    case "sales rep assigned":
+      emailNotificationId = 7;
+      toEmail = application.sales_rep.email;
+      toFirstName = application.sales_rep.first_name;
+      toLastName = application.sales_rep.last_name;
+      break;
+    case "rental rep assigned":
+      emailNotificationId = 7;
+      toEmail = application.rental_rep.email;
+      toFirstName = application.rental_rep.first_name;
+      toLastName = application.rental_rep.last_name;
+      break;
+    case "credit manager approved":
+    case "approved":
+      emailNotificationId = 8;
+      toEmail = contactEmail;
+      toFirstName = first_name;
+      toLastName = last_name;
+      break;
+    case "credit manager denied":
+    case "denied":
+      emailNotificationId = 9;
+      toEmail = contactEmail;
+      toFirstName = first_name;
+      toLastName = last_name;
+      break;
+    default:
+      throw new Error("No email notification found for this activity");
   }
 
   const emailNotification = await getFinanceApplicationEmailContent(
@@ -160,80 +202,6 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     emailSignatureProfilePicture: fromImage,
   } = metadata;
 
-  // Set variables based on application type and activity name
-  // const setVariables = async () => {
-  //   if (activityName === "application submitted" && typeId === 1) {
-  //     templateId = "d-8e9c9cf1077b4278a413f33c68a7bdca";
-  //     toEmail = contactEmail;
-  //     subject = `Financing Application Submitted | Ref #${application.application_id} | Newman Tractor`;
-  //     fromEmail = "notifications+matt@newmantractor.com";
-  //     fromName = "Matt Salyers";
-  //     replyToEmail = "notifications+matt@newmantractor.com";
-  //     bccEmail = "finance@newmantractor.com";
-  //     fromFirstName = "Matt";
-  //     fromLastName = "Salyers";
-  //     fromPhone = "(859) 393-5405";
-  //     fromJobTitle = "Finance Manager";
-  //     fromImage =
-  //       "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop";
-  //     ctaButtonLink = `${PORTAL_URL}/my-applications`;
-  //     ctaButtonText = "VIEW MY APPLICATION";
-  //   } else if (activityName === "application submitted" && typeId === 2) {
-  //     templateId = "d-8e9c9cf1077b4278a413f33c68a7bdca";
-  //     toEmail = contactEmail;
-  //     subject = `Financing Application Submitted | Ref #${application.application_id} | Newman Tractor`;
-  //     fromEmail = "notifications+caroll@newmantractor.com";
-  //     fromName = "Caroll Smith";
-  //     replyToEmail = "notifications+caroll@newmantractor.com";
-  //     bccEmail = "credit@newmantractor.com";
-  //     fromFirstName = "Caroll";
-  //     fromLastName = "Smith";
-  //     fromPhone = "(859) 802-5298";
-  //     fromJobTitle = "Credit Manager";
-  //     fromImage =
-  //       "https://cdn.sanity.io/images/agnoplrn/production/3d170bc7cf16b0fb8f7d9095fbece08f5bba1266-3310x3310.jpg?w=600&h=480&q=75&auto=format&fit=crop";
-  //     ctaButtonLink = `${PORTAL_URL}/my-applications`;
-  //     ctaButtonText = "VIEW MY APPLICATION";
-  //   } else if (activityName === "send to lender") {
-  //     //TODO: include notes in email
-  //     //TODO: update to new template id
-  //     templateId = "d-8f19bf394e2c4c518636551836b346d9";
-  //     toEmail = activityMetaData?.lender_email;
-  //     subject = `Financing Application Needs Review | Ref #${application.application_id} | Newman Tractor`;
-  //     fromEmail = "notifications+matt@newmantractor.com";
-  //     fromName = "Matt Salyers";
-  //     replyToEmail = "notifications+matt@newmantractor.com";
-  //     bccEmail = "finance@newmantractor.com";
-  //     fromFirstName = "Matt";
-  //     fromLastName = "Salyers";
-  //     fromPhone = "(859) 393-5405";
-  //     fromJobTitle = "Finance Manager";
-  //     fromImage =
-  //       "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop";
-  //     ctaButtonLink = `${PORTAL_URL}/my-applications`;
-  //     ctaButtonText = "VIEW MY APPLICATION";
-  //   } else if (activityName === "sent to lender") {
-  //     //TODO: include notes in email
-  //     templateId = "d-8f19bf394e2c4c518636551836b346d9";
-  //     toEmail = contactEmail;
-  //     subject = `Financing Application Under Lender Review | Ref #${application.application_id} | Newman Tractor`;
-  //     fromEmail = "notifications+matt@newmantractor.com";
-  //     fromName = "Matt Salyers";
-  //     replyToEmail = "notifications+matt@newmantractor.com";
-  //     bccEmail = "finance@newmantractor.com";
-  //     fromFirstName = "Matt";
-  //     fromLastName = "Salyers";
-  //     fromPhone = "(859) 393-5405";
-  //     fromJobTitle = "Finance Manager";
-  //     fromImage =
-  //       "https://cdn.sanity.io/images/agnoplrn/production/73629f66aaedcf2e9cd482f077520d6af2fe5bc2-3522x3522.jpg?w=600&h=480&q=75&auto=format&fit=crop";
-  //     ctaButtonLink = `${PORTAL_URL}/my-applications`;
-  //     ctaButtonText = "VIEW MY APPLICATION";
-  //   }
-  // };
-
-  // await setVariables();
-
   const msg = {
     to: toEmail,
     from: {
@@ -259,8 +227,11 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       fromJobTitle: fromJobTitle,
       typeId: typeId,
       applicationId: application_id,
-      ctaButtonText: dynamic_content.ctaButtonText,
-      ctaButtonLink: eval("`" + dynamic_content.ctaButtonLink + "`"),
+      ctaButtonText: dynamic_content?.ctaButtonText || "",
+      ctaButtonLink: dynamic_content?.ctaButtonLink
+        ? eval("`" + dynamic_content?.ctaButtonLink + "`")
+        : "",
+      ctaButtonLinkAuth: ctaButtonLinkAuth,
       noteText: activityNote,
     },
   };
