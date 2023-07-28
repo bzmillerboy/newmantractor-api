@@ -72,15 +72,20 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
   const activityNote = activityRecord.note_text;
 
   // Extract data from application fetch
-  const { id: appId, contact, type, application_id } = application;
+  const { id: appId, contact, type, application_id, company } = application;
   const { first_name, last_name, email: contactEmail } = contact;
-  const { id: typeId } = type;
+  const { id: typeId, primary_contact } = type;
+  const primaryContactEmail = primary_contact?.email;
+  const primaryContactFirstName = primary_contact?.email;
+  const primaryContactLastName = primary_contact?.email;
 
   let emailNotificationId = "";
   let toEmail = "";
   let toFirstName = "";
   let toLastName = "";
   let ctaButtonLinkAuth = "";
+  let contactName = "";
+  let companyName = "";
   switch (activityName) {
     case "application submitted":
       if (typeId === 1) {
@@ -161,6 +166,14 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       toFirstName = first_name;
       toLastName = last_name;
       break;
+    case "document added":
+      emailNotificationId = 11;
+      toEmail = primaryContactEmail;
+      toFirstName = primaryContactFirstName;
+      toLastName = primaryContactLastName;
+      contactName = `${first_name} ${last_name}`;
+      companyName = company?.business_dba || company?.business_name;
+      break;
     default:
       throw new Error("No email notification found for this activity");
   }
@@ -233,6 +246,9 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
         : "",
       ctaButtonLinkAuth: ctaButtonLinkAuth,
       noteText: activityNote,
+      contactName: contactName,
+      companyName: companyName,
+      fileName: activityMetaData?.fileName || "",
     },
   };
 
