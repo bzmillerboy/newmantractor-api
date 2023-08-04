@@ -115,7 +115,7 @@ exports.handler = async (event) => {
     hutk &&
       (await hubspot.forms.submit(
         HUBSPOT_DEVELOPER_PORTAL_ID,
-        "06b43cab-dc84-42fa-8a9e-b4fa7397b034", // Current prod form ID '3f9e682b-bb9a-40bf-9b9b-69ee97c82960',
+        "3f9e682b-bb9a-40bf-9b9b-69ee97c82960",
         hubSpotFormData
       ));
 
