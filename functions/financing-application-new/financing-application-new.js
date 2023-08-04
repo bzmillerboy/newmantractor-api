@@ -1,13 +1,13 @@
 const {
-  HUBSPOT_DEVELOPER_PORTAL_ID,
-  HUBSPOT_DEVELOPER_API_KEY,
+  HUBSPOT_PORTAL_ID,
+  HUBSPOT_PRIVATE_APP_TOKEN,
   SUPABASE_URL,
   SUPABASE_KEY_SERVICE_KEY,
 } = process.env;
 const lib = require("../lib/finance-application-lib.js");
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
-  apiKey: HUBSPOT_DEVELOPER_API_KEY, // HUBSPOT_API_KEY,
+  accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
   checkLimit: false,
 });
 
@@ -114,7 +114,7 @@ exports.handler = async (event) => {
 
     hutk &&
       (await hubspot.forms.submit(
-        HUBSPOT_DEVELOPER_PORTAL_ID,
+        HUBSPOT_PORTAL_ID,
         "3f9e682b-bb9a-40bf-9b9b-69ee97c82960",
         hubSpotFormData
       ));
