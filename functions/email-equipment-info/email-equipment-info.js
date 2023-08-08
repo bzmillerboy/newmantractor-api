@@ -88,7 +88,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
 
     const eventData = {
       email: email,
-      eventName: "pe20095799_email_equipment_info",
+      eventName: `pe${HUBSPOT_PORTAL_ID}_email_equipment_info`,
       properties: {
         year: year,
         equipmentmaketitle: equipmentMakeTitle,
@@ -133,7 +133,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
           body: eventData,
         });
         await sgMail.send(msg);
-        Sentry.captureMessage("Quote email sent successfully");
+        // Sentry.captureMessage("Quote email sent successfully");
         return {
           statusCode: 200,
           body: `Message sent`,
