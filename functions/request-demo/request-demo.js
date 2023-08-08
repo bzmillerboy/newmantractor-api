@@ -1,4 +1,8 @@
-const { HUBSPOT_PRIVATE_APP_TOKEN, HUBSPOT_PORTAL_ID } = process.env;
+const {
+  HUBSPOT_PRIVATE_APP_TOKEN,
+  HUBSPOT_PORTAL_ID,
+  HUBSPOT_FORM_DEMO_REQUEST,
+} = process.env;
 const rentalTerritories = require("../data/territories.json");
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
@@ -75,7 +79,7 @@ exports.handler = async (event) => {
   try {
     await hubspot.forms.submit(
       HUBSPOT_PORTAL_ID,
-      "15269a77-1b0e-4bb9-a3e4-12daacfcf751",
+      HUBSPOT_FORM_DEMO_REQUEST,
       data
     );
     await hubspot.contacts.createOrUpdate(contact.email, contactOwnerData);

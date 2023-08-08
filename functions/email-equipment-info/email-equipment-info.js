@@ -6,6 +6,7 @@ const {
   SENDGRID_FROM_NAME,
   HUBSPOT_PRIVATE_APP_TOKEN,
   HUBSPOT_PORTAL_ID,
+  HUBSPOT_FORM_EQUIPMENT_INFO,
   URL,
 } = process.env;
 const Hubspot = require("hubspot");
@@ -123,7 +124,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         // await hubspot.subscriptions.subscribeToAll(email)
         await hubspot.forms.submit(
           HUBSPOT_PORTAL_ID,
-          "d24af600-1186-4270-9560-2398ab01047c",
+          HUBSPOT_FORM_EQUIPMENT_INFO,
           data
         );
         await hubspot.apiRequest({
