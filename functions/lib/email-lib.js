@@ -17,7 +17,7 @@ const generateAuthLink = async (email, firstName, lastName) => {
     email: email.toLowerCase(),
     options: {
       password: "password",
-      redirectTo: "https://portal.newmantractor.com/my-applications",
+      redirectTo: `${PORTAL_URL}/home`,
       data: {
         first_name: firstName,
         last_name: lastName,
