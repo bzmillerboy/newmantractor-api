@@ -7,7 +7,7 @@ const {
   HUBSPOT_PRIVATE_APP_TOKEN,
   HUBSPOT_PORTAL_ID,
   HUBSPOT_FORM_EQUIPMENT_INFO,
-  URL,
+  WEBSITE_URL,
 } = process.env;
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
@@ -96,7 +96,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         model: model,
         price: price,
         stocknumber: stockNumber,
-        url: URL + slug,
+        url: WEBSITE_URL + slug,
         fromemail: replyToEmailValue,
       },
     };
