@@ -29,6 +29,9 @@ exports.handler = async (event) => {
   const { data, error } = await supabase.auth.admin.generateLink({
     type: "magiclink",
     email: email.toLowerCase(),
+    options: {
+      redirectTo: PORTAL_URL,
+    },
   });
 
   if (error) {
