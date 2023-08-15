@@ -1,5 +1,9 @@
-const { SUPABASE_URL, SUPABASE_KEY_SERVICE_KEY, NEWMANTRACTOR_APIKEY } =
-  process.env;
+const {
+  SUPABASE_URL,
+  SUPABASE_KEY_SERVICE_KEY,
+  NEWMANTRACTOR_APIKEY,
+  PORTAL_URL,
+} = process.env;
 
 const { createClient } = require("@supabase/supabase-js");
 const supabaseUrl = SUPABASE_URL;
@@ -20,21 +24,11 @@ exports.handler = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
   const payload = JSON.parse(event.body);
-  console.log("payload: ", payload);
-  const referring_url = event.headers.referer;
-  const { email, firstName, lastName } = payload;
+  const { email } = payload;
 
   const { data, error } = await supabase.auth.admin.generateLink({
     type: "magiclink",
     email: email.toLowerCase(),
-    options: {
-      password: "password",
-      redirectTo: "https://staging-portal.newmantractor.com",
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-      },
-    },
   });
 
   if (error) {
@@ -55,7 +49,7 @@ exports.handler = async (event) => {
       headers: {
         "access-control-allow-origin": "*",
       },
-      body: JSON.stringify(data?.properties?.action_link),
+      body: data?.properties?.action_link,
     };
   }
 };
