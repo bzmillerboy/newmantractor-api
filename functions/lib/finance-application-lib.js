@@ -45,7 +45,7 @@ const sendFinanceApplicationEmail = async (data) => {
   const { first_name, last_name, phone } = user.user.user_metadata;
   const { id: applicationId } = application;
 
-  const link = `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=${
+  const link = `${PORTAL_URL}?confirmationUrl=${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=${
     existingUser ? "magiclink" : "signup"
   }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`;
 
@@ -55,8 +55,7 @@ const sendFinanceApplicationEmail = async (data) => {
       email: SENDGRID_FROM_EMAIL,
       name: SENDGRID_FROM_NAME,
     },
-    bcc: ["bzmiller82@gmail.com"],
-    subject: "Financing Application | Newman Tractor",
+    subject: `Complete Your Financing Application | Ref #${application.application_id} | | Newman Tractor`,
     templateId: "d-872664c1622349a081ab390bdffbfce3",
     dynamic_template_data: {
       email: email,

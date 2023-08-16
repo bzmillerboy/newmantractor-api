@@ -4,6 +4,7 @@ const {
   HUBSPOT_FORM_APPLY_FOR_FINANCING,
   SUPABASE_URL,
   SUPABASE_KEY_SERVICE_KEY,
+  PORTAL_URL,
 } = process.env;
 const lib = require("../lib/finance-application-lib.js");
 const Hubspot = require("hubspot");
@@ -80,7 +81,7 @@ exports.handler = async (event) => {
     email: email.toLowerCase(),
     options: {
       password: "password",
-      redirectTo: "https://portal.newmantractor.com",
+      redirectTo: PORTAL_URL,
       data: {
         first_name: firstName,
         last_name: lastName,
