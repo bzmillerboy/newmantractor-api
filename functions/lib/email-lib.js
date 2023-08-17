@@ -201,6 +201,8 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
     dynamic_content,
   } = emailNotification;
 
+  console.log("emailNotification:", JSON.stringify(emailNotification));
+
   const subjectEval = eval("`" + subject + "`");
 
   const {
@@ -222,8 +224,7 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       name: `${fromFirstName} ${fromLastName}` || SENDGRID_FROM_NAME,
     },
     replyTo: fromEmail || SENDGRID_FROM_EMAIL,
-    // TODO: uncomment when ready for prod
-    // bcc: [bccEmail],
+    bcc: bcc,
     subject: subjectEval,
     templateId: templateId,
     dynamic_template_data: {
