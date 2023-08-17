@@ -16,11 +16,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const createFinanceApplication = async (data) => {
   // console.log("createFinanceApplication props", data);
   const { referring_url, type } = data;
-  const { id: userId } = data.user;
   const applicationsRes = await supabase
     .from("applications")
     .insert({
-      contact_id: userId,
+      contact_id: data.contactId,
       status_id: 1,
       referring_url: referring_url,
       type_id: type,
@@ -52,8 +51,6 @@ const sendFinanceApplicationEmail = async (data) => {
         existingUser ? "magiclink" : "signup"
       }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`
     );
-
-  console.log("link", link);
 
   const msg = {
     to: email,

@@ -76,19 +76,20 @@ exports.handler = async (event) => {
     .select("id")
     .eq("email", email)
     .single();
-  const { data, error } = await supabase.auth.admin.generateLink({
-    type: contact ? "magiclink" : "signup",
-    email: email.toLowerCase(),
-    options: {
-      password: "password",
-      redirectTo: PORTAL_URL,
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        phone: phoneNumber,
+
+  const { data: generateLinkData, error } =
+    await supabase.auth.admin.generateLink({
+      type: contact ? "magiclink" : "signup",
+      email: email.toLowerCase(),
+      options: {
+        redirectTo: PORTAL_URL,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          phone: phoneNumber,
+        },
       },
-    },
-  });
+    });
 
   if (error) {
     console.log("generateLink error: ", error);
@@ -101,15 +102,15 @@ exports.handler = async (event) => {
     };
   }
 
-  if (data) {
-    // console.log("generateLink data: ", data);
+  if (generateLinkData) {
     const applicationData = await lib.createFinanceApplication({
       referring_url,
+      contactId: contact?.id,
       type: type,
-      ...data,
+      ...generateLinkData,
     });
     await lib.sendFinanceApplicationEmail({
-      user: data,
+      user: generateLinkData,
       application: applicationData,
       existingUser: contact ? true : false,
     });
