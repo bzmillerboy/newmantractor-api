@@ -45,8 +45,6 @@ const sendFinanceApplicationEmail = async (data) => {
   const { first_name, last_name, phone } = user.user.user_metadata;
   const { id: applicationId } = application;
 
-  "&url=" + encodeURIComponent("http://a.com/?q=query&n=10");
-
   const link =
     `${PORTAL_URL}/applications/start?confirmationUrl=` +
     encodeURIComponent(
