@@ -45,9 +45,17 @@ const sendFinanceApplicationEmail = async (data) => {
   const { first_name, last_name, phone } = user.user.user_metadata;
   const { id: applicationId } = application;
 
-  const link = `${PORTAL_URL}/applications/start?confirmationUrl=${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=${
-    existingUser ? "magiclink" : "signup"
-  }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`;
+  "&url=" + encodeURIComponent("http://a.com/?q=query&n=10");
+
+  const link =
+    `${PORTAL_URL}/applications/start?confirmationUrl=` +
+    encodeURIComponent(
+      `${supabaseUrl}/auth/v1/verify?token=${hashed_token}&type=${
+        existingUser ? "magiclink" : "signup"
+      }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`
+    );
+
+  console.log("link", link);
 
   const msg = {
     to: email,
