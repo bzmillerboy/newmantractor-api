@@ -82,6 +82,7 @@ exports.handler = async (event) => {
       type: contact ? "magiclink" : "signup",
       email: email.toLowerCase(),
       options: {
+        password: "password",
         redirectTo: PORTAL_URL,
         data: {
           first_name: firstName,
