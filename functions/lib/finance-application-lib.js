@@ -52,6 +52,8 @@ const sendFinanceApplicationEmail = async (data) => {
       }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`
     );
 
+  console.log("msg", msg);
+
   const msg = {
     to: email,
     from: {

@@ -36,6 +36,8 @@ exports.handler = async (event) => {
   }
 
   const payload = JSON.parse(event.body);
+  console.log("payload", payload);
+
   const referring_url = event.headers.referer;
   const { email, firstName, lastName, phone, type, hutk } = payload;
 
@@ -76,6 +78,7 @@ exports.handler = async (event) => {
     .select("id")
     .eq("email", email)
     .single();
+  console.log("contact", contact);
 
   const { data: generateLinkData, error } =
     await supabase.auth.admin.generateLink({
@@ -92,6 +95,8 @@ exports.handler = async (event) => {
       },
     });
 
+  console.log("generateLinkData", generateLinkData);
+
   if (error) {
     console.log("generateLink error: ", error);
     return {
@@ -106,10 +111,12 @@ exports.handler = async (event) => {
   if (generateLinkData) {
     const applicationData = await lib.createFinanceApplication({
       referring_url,
-      contactId: contact?.id,
+      contactId: contact?.id || generateLinkData.user.id,
       type: type,
       ...generateLinkData,
     });
+    console.log("applicationData", applicationData);
+
     await lib.sendFinanceApplicationEmail({
       user: generateLinkData,
       application: applicationData,
