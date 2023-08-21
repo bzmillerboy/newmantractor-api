@@ -52,8 +52,6 @@ const sendFinanceApplicationEmail = async (data) => {
       }&redirect_to=${PORTAL_URL}/applications/create/${applicationId}`
     );
 
-  console.log("msg", msg);
-
   const msg = {
     to: email,
     from: {
@@ -71,6 +69,8 @@ const sendFinanceApplicationEmail = async (data) => {
       lastName: last_name,
     },
   };
+
+  console.log("msg", msg);
 
   const sgMailRes = await sgMail.send(msg);
   return "email sent";
