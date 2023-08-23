@@ -74,10 +74,11 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
   // Extract data from application fetch
   const { id: appId, contact, type, application_id, company } = application;
   const { first_name, last_name, email: contactEmail } = contact;
-  const { id: typeId, primary_contact } = type;
+  const { id: typeId, name: typeName, primary_contact } = type;
   const primaryContactEmail = primary_contact?.email;
-  const primaryContactFirstName = primary_contact?.email;
-  const primaryContactLastName = primary_contact?.email;
+  const primaryContactFirstName = primary_contact?.first_name;
+  const primaryContactLastName = primary_contact?.last_name;
+  const companyName = company?.business_dba || company?.business_name || "";
 
   let emailNotificationId = "";
   let toEmail = "";
@@ -85,7 +86,6 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
   let toLastName = "";
   let ctaButtonLinkAuth = "";
   let contactName = "";
-  let companyName = "";
   switch (activityName) {
     case "application submitted":
       if (typeId === 1) {
@@ -172,7 +172,6 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       toFirstName = primaryContactFirstName;
       toLastName = primaryContactLastName;
       contactName = `${first_name} ${last_name}`;
-      companyName = company?.business_dba || company?.business_name;
       break;
     default:
       throw new Error("No email notification found for this activity");
@@ -250,6 +249,9 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
       contactName: contactName,
       companyName: companyName,
       fileName: activityMetaData?.fileName || "",
+      primaryContactFirstName: primaryContactFirstName || "",
+      primaryContactLastName: primaryContactLastName || "",
+      applicationType: typeName || "",
     },
   };
 
