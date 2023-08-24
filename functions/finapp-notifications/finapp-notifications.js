@@ -34,7 +34,7 @@ exports.handler = async (event) => {
   // console.log("application:", JSON.stringify(application));
 
   try {
-    await emailLib.sendFinanceApplicationEmail(payload.record, application);
+    await emailLib.compileFinanceApplicationEmail(payload.record, application);
     return { statusCode: 200 };
   } catch (e) {
     console.error(e);

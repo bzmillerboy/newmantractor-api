@@ -8,6 +8,7 @@ const { createClient } = require("@supabase/supabase-js");
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+const lib = require("../lib/lib.js");
 
 const sgMail = require("@sendgrid/mail");
 
@@ -41,7 +42,11 @@ const generateAuthLink = async (email, firstName, lastName) => {
   return data.properties.action_link;
 };
 
-const getFinanceApplicationEmailContent = async (emailNotificationId) => {
+const getFinanceApplicationEmailContent = async (
+  emailNotificationId,
+  applicationNumber
+) => {
+  const applicationId = applicationNumber;
   const { data: emailNotification, error: emailNotificationError } =
     await supabase
       .from("email_notifications")
@@ -60,198 +65,301 @@ const getFinanceApplicationEmailContent = async (emailNotificationId) => {
     };
   }
   console.log("emailNotification:", JSON.stringify(emailNotification));
+  if (emailNotification) {
+    const emailNotificationData = {
+      templateId: emailNotification?.template_id || "",
+      fromFirstName:
+        emailNotification?.from_contact?.first_name || SENDGRID_FROM_NAME || "",
+      fromLastName: emailNotification?.from_contact?.last_name || "",
+      fromEmail:
+        emailNotification?.from_contact?.email || SENDGRID_FROM_EMAIL || "",
+      fromPhone: emailNotification?.from_contact?.phone || "",
+      subject: eval("`" + emailNotification?.subject + "`"),
+      fromJobTitle:
+        emailNotification?.from_contact?.metadata?.emailSignatureJobTitle || "",
+      fromImage:
+        emailNotification?.from_contact?.metadata
+          ?.emailSignatureProfilePicture || "",
+      ctaButtonText: emailNotification?.dynamic_content?.ctaButtonText || "",
+      ctaButtonLink: emailNotification?.dynamic_content?.ctaButtonLink || "",
+      ctaButtonLinkAuth:
+        emailNotification?.dynamic_content?.ctaButtonLinkAuth || "",
+    };
 
-  return emailNotification;
+    return emailNotificationData;
+  } else {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Error retrieving email notifications data",
+      }),
+    };
+  }
 };
 
-const sendFinanceApplicationEmail = async (activityRecord, application) => {
-  sgMail.setApiKey(SENDGRID_API_KEY);
+const compileFinanceApplicationEmail = async (activityRecord, application) => {
+  let sourceData = {
+    activityMetaData: activityRecord.metadata,
+    activityName: activityRecord.name,
+    activityNote: activityRecord.note_text,
+    appId: application?.id,
+    applicationId: application?.application_id,
+    contactFirstName: application?.contact?.first_name,
+    contactLastName: application?.contact?.last_name,
+    contactEmail: application?.contact?.email,
+    typeId: application?.type?.id,
+    typeName: application?.type?.name,
+    primaryContactEmail: application?.type?.primary_contact?.email,
+    primaryContactFirstName: application?.type?.primary_contact?.first_name,
+    primaryContactLastName: application?.type?.primary_contact?.last_name,
+    companyName:
+      application?.company?.business_dba ||
+      application?.company?.business_name ||
+      "",
+  };
+  console.log("sourceData:", JSON.stringify(sourceData));
 
-  const activityMetaData = activityRecord.metadata;
-  const activityName = activityRecord.name;
-  const activityNote = activityRecord.note_text;
-
-  // Extract data from application fetch
-  const { id: appId, contact, type, application_id, company } = application;
-  const { first_name, last_name, email: contactEmail } = contact;
-  const { id: typeId, name: typeName, primary_contact } = type;
-  const primaryContactEmail = primary_contact?.email;
-  const primaryContactFirstName = primary_contact?.first_name;
-  const primaryContactLastName = primary_contact?.last_name;
-  const companyName = company?.business_dba || company?.business_name || "";
-
-  let emailNotificationId = "";
-  let toEmail = "";
-  let toFirstName = "";
-  let toLastName = "";
-  let ctaButtonLinkAuth = "";
-  let contactName = "";
-  switch (activityName) {
+  let toDataCustomer = {};
+  let toDataRep = {};
+  let toDataManager = {};
+  let toDataLender = {};
+  switch (sourceData.activityName) {
     case "application submitted":
-      if (typeId === 1) {
-        emailNotificationId = 1;
-        toEmail = contactEmail;
-        toFirstName = first_name;
-        toLastName = last_name;
-      } else if (typeId === 2) {
-        emailNotificationId = 2;
-        toEmail = contactEmail;
-        toFirstName = first_name;
-        toLastName = last_name;
-      }
+      toDataCustomer = {
+        // when app submitted, if credit send from Credit Manager, if finance send from Finance Manager
+        emailNotificationId: sourceData?.typeId === 1 ? 1 : 2,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      // send to finance/credit manager
+      toDataManager = {
+        emailNotificationId: 13,
+        toEmail: sourceData?.primaryContactEmail,
+        toFirstName: sourceData?.primaryContactFirstName,
+        toLastName: sourceData?.primaryContactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
-    case "send to lender":
-      emailNotificationId = 4;
-      toEmail = activityMetaData?.lender_email;
-      toFirstName = activityMetaData?.lender_first_name;
-      toLastName = activityMetaData?.lender_last_name;
+    case "sales rep assigned":
+      toDataRep = {
+        emailNotificationId: 7,
+        toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataRep);
       break;
-    case "sent to lender":
-      emailNotificationId = 3;
-      toEmail = contactEmail;
-      toFirstName = first_name;
-      toLastName = last_name;
-      break;
-    case "signatures requested":
-      emailNotificationId = 10;
-      // TODO: update to be the guarantor's email not the contact's email
-      toEmail = activityMetaData?.guarantor_email;
-      toFirstName = activityMetaData?.guarantor_first_name;
-      toLastName = activityMetaData?.guarantor_last_name;
-      ctaButtonLinkAuth = await generateAuthLink(
-        activityMetaData?.guarantor_email,
-        activityMetaData?.guarantor_first_name,
-        activityMetaData?.guarantor_last_name
-      );
+    case "rental rep assigned":
+      toDataRep = {
+        emailNotificationId: 7,
+        toEmail: application.rental_rep.email,
+        toFirstName: application.rental_rep.first_name,
+        toLastName: application.rental_rep.last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataRep);
       break;
     case "lender approved":
     case "finance manager approved":
     case "approved":
-      emailNotificationId = 5;
-      toEmail = contactEmail;
-      toFirstName = first_name;
-      toLastName = last_name;
+      // Send to customer
+      toDataCustomer = {
+        emailNotificationId: 5,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      // Send to sales rep
+      toDataRep = {
+        emailNotificationId: 12,
+        toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      if (sourceData.activityName !== "finance manager approved") {
+        // Send to finance manager
+        sendFinanceApplicationEmail(application, sourceData, toDataRep);
+        toDataManager = {
+          emailNotificationId: 12,
+          toEmail: sourceData?.primaryContactEmail,
+          toFirstName: sourceData?.primaryContactFirstName,
+          toLastName: sourceData?.primaryContactLastName,
+        };
+        sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      }
       break;
     case "lender denied":
     case "finance manager denied":
     case "denied":
-      emailNotificationId = 6;
-      toEmail = contactEmail;
-      toFirstName = first_name;
-      toLastName = last_name;
-      break;
-    case "sales rep assigned":
-      emailNotificationId = 7;
-      toEmail = application.sales_rep.email;
-      toFirstName = application.sales_rep.first_name;
-      toLastName = application.sales_rep.last_name;
-      break;
-    case "rental rep assigned":
-      emailNotificationId = 7;
-      toEmail = application.rental_rep.email;
-      toFirstName = application.rental_rep.first_name;
-      toLastName = application.rental_rep.last_name;
+      // Send to customer
+      toDataCustomer = {
+        emailNotificationId: 6,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      // Send to sales rep
+      toDataRep = {
+        emailNotificationId: 14,
+        toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
+      };
+      if (sourceData.activityName !== "finance manager denied") {
+        // Send to finance manager
+        sendFinanceApplicationEmail(application, sourceData, toDataRep);
+        toDataManager = {
+          emailNotificationId: 14,
+          toEmail: sourceData?.primaryContactEmail,
+          toFirstName: sourceData?.primaryContactFirstName,
+          toLastName: sourceData?.primaryContactLastName,
+        };
+        sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      }
       break;
     case "credit manager approved":
     case "approved":
-      emailNotificationId = 8;
-      toEmail = contactEmail;
-      toFirstName = first_name;
-      toLastName = last_name;
+      // Send to customer
+      toDataCustomer = {
+        emailNotificationId: 8,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      // Send to sales rep
+      toDataRep = {
+        emailNotificationId: 12,
+        toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataRep);
       break;
     case "credit manager denied":
     case "denied":
-      emailNotificationId = 9;
-      toEmail = contactEmail;
-      toFirstName = first_name;
-      toLastName = last_name;
+      // Send to customer
+      toDataCustomer = {
+        emailNotificationId: 9,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      // Send to sales rep
+      toDataRep = {
+        emailNotificationId: 14,
+        toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      break;
+    case "send to lender":
+      // Send to lender
+      toDataLender = {
+        emailNotificationId: 4,
+        toEmail: sourceData?.activityMetaData?.lender_email,
+        toFirstName: sourceData?.activityMetaData?.lender_first_name,
+        toLastName: sourceData?.activityMetaData?.lender_last_name,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataLender);
+      // Send to customer
+      toDataCustomer = {
+        emailNotificationId: 3,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      break;
+    case "signatures requested":
+      // Send to signer customer
+      toDataCustomer = {
+        emailNotificationId: 10,
+        toEmail: sourceData?.activityMetaData?.guarantor_email,
+        toFirstName: sourceData?.activityMetaData?.guarantor_first_name,
+        toLastName: sourceData?.activityMetaData?.guarantor_last_name,
+        ctaButtonLinkAuth: await generateAuthLink(
+          sourceData?.activityMetaData?.guarantor_email,
+          sourceData?.activityMetaData?.guarantor_first_name,
+          sourceData?.activityMetaData?.guarantor_last_name
+        ),
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
       break;
     case "document added":
-      emailNotificationId = 11;
-      toEmail = primaryContactEmail;
-      toFirstName = primaryContactFirstName;
-      toLastName = primaryContactLastName;
-      contactName = `${first_name} ${last_name}`;
+      // Send to finance/credit manager
+      toDataManager = {
+        emailNotificationId: 11,
+        toEmail: primaryContactEmail,
+        toFirstName: primaryContactFirstName,
+        toLastName: primaryContactLastName,
+      };
+      sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
     default:
       throw new Error("No email notification found for this activity");
   }
+};
 
-  const emailNotification = await getFinanceApplicationEmailContent(
-    emailNotificationId
+const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
+  sgMail.setApiKey(SENDGRID_API_KEY);
+
+  const notificationData = await getFinanceApplicationEmailContent(
+    toData?.emailNotificationId,
+    sourceData?.applicationId
   );
 
-  const defaultFromContact = {
-    first_name: SENDGRID_FROM_NAME,
-    last_name: "",
-    email: SENDGRID_FROM_EMAIL,
-    phone: "",
-    metadata: {
-      emailSignatureJobTitle: "",
-      emailSignatureProfilePicture: "",
-    },
-  };
-
-  const {
-    from_contact = defaultFromContact,
-    template_id: templateId,
-    subject,
-    bcc,
-    dynamic_content,
-  } = emailNotification;
-
-  console.log("emailNotification:", JSON.stringify(emailNotification));
-
-  const subjectEval = eval("`" + subject + "`");
-
-  const {
-    first_name: fromFirstName,
-    last_name: fromLastName,
-    email: fromEmail,
-    phone: fromPhone,
-    metadata,
-  } = from_contact;
-  const {
-    emailSignatureJobTitle: fromJobTitle,
-    emailSignatureProfilePicture: fromImage,
-  } = metadata;
+  const appId = sourceData?.appId;
 
   const msg = {
-    to: toEmail,
+    to: toData?.toEmail,
     from: {
       email: "notifications@newmantractor.com" || SENDGRID_FROM_EMAIL,
-      name: `${fromFirstName} ${fromLastName}` || SENDGRID_FROM_NAME,
+      name:
+        `${notificationData?.fromFirstName} ${notificationData?.fromLastName}` ||
+        SENDGRID_FROM_NAME,
     },
-    replyTo: fromEmail || SENDGRID_FROM_EMAIL,
-    bcc: bcc,
-    subject: subjectEval,
-    templateId: templateId,
+    replyTo: notificationData?.fromEmail || SENDGRID_FROM_EMAIL,
+    bcc: notificationData?.bcc,
+    subject: notificationData?.subject,
+    templateId: notificationData?.templateId,
     dynamic_template_data: {
-      email: toEmail,
-      firstName: toFirstName,
-      lastName: toLastName,
-      applicationId: application.application_id,
-      fromImage: fromImage,
-      fromPhone: fromPhone,
-      fromFirstName: fromFirstName,
-      fromLastName: fromLastName,
-      fromPhone: fromPhone,
-      fromEmail: fromEmail,
-      fromJobTitle: fromJobTitle,
-      typeId: typeId,
-      applicationId: application_id,
-      ctaButtonText: dynamic_content?.ctaButtonText || "",
-      ctaButtonLink: dynamic_content?.ctaButtonLink
-        ? eval("`" + dynamic_content?.ctaButtonLink + "`")
+      applicantFirstName: sourceData?.contactFirstName,
+      applicantLastName: sourceData?.contactLastName,
+      companyName: sourceData?.companyName,
+      email: toData?.toEmail,
+      firstName: toData?.toFirstName,
+      lastName: toData?.toLastName,
+      applicationId: sourceData?.applicationId,
+      fromImage: notificationData?.fromImage,
+      fromPhone: lib.formatPhoneNumber(notificationData?.fromPhone),
+      fromFirstName: notificationData?.fromFirstName,
+      fromLastName: notificationData?.fromLastName,
+      fromEmail: notificationData?.fromEmail,
+      fromJobTitle: notificationData?.fromJobTitle,
+      typeId: sourceData?.typeId,
+      ctaButtonText: notificationData?.ctaButtonText || "",
+      ctaButtonLink: notificationData?.ctaButtonLink
+        ? eval("`" + notificationData?.ctaButtonLink + "`")
         : "",
-      ctaButtonLinkAuth: ctaButtonLinkAuth,
-      noteText: activityNote,
-      contactName: contactName,
-      companyName: companyName,
-      fileName: activityMetaData?.fileName || "",
-      primaryContactFirstName: primaryContactFirstName || "",
-      primaryContactLastName: primaryContactLastName || "",
-      applicationType: typeName || "",
+      ctaButtonLinkAuth: notificationData?.ctaButtonLinkAuth,
+      noteText: sourceData?.activityNote,
+      contactName: toData?.contactName,
+      fileName: sourceData?.activityMetaData?.fileName || "",
+      primaryContactFirstName: sourceData?.primaryContactFirstName || "",
+      primaryContactLastName: sourceData?.primaryContactLastName || "",
+      applicationType: sourceData?.typeName || "",
+      lenderCompanyName:
+        sourceData?.activityMetaData?.lender_company_name || "",
+      lenderName:
+        `${sourceData?.activityMetaData?.lender_first_name} ${sourceData?.activityMetaData?.lender_last_name}` ||
+        "",
     },
   };
 
@@ -261,6 +369,6 @@ const sendFinanceApplicationEmail = async (activityRecord, application) => {
 };
 
 module.exports = {
-  sendFinanceApplicationEmail,
+  compileFinanceApplicationEmail,
   getFinanceApplicationEmailContent,
 };

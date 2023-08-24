@@ -50,6 +50,28 @@ const toTitleCase = (str) =>
     .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
     .join(" ");
 
+const formatPhoneNumber = (number) => {
+  if (number) {
+    const formatPhoneNumber = (str) => {
+      const removeCountryCode = str.slice(-10);
+
+      //Filter only numbers from the input
+      const cleaned = ("" + removeCountryCode).replace(/\D/g, "");
+
+      //Check if the input is of correct length
+      const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+
+      if (match) {
+        return "(" + match[1] + ") " + match[2] + "-" + match[3];
+      }
+    };
+
+    return formatPhoneNumber(number);
+  }
+
+  return null;
+};
+
 const fetchEquipmentInventory = async (pageNo, pageSize) => {
   const start = pageSize * pageNo - pageSize;
   const end = pageSize * pageNo - 1;
@@ -1113,4 +1135,5 @@ module.exports = {
   salesContact,
   uniqueBy,
   wait,
+  formatPhoneNumber,
 };
