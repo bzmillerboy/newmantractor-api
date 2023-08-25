@@ -46,7 +46,7 @@ const getFinanceApplicationEmailContent = async (
   emailNotificationId,
   applicationNumber
 ) => {
-  const applicationId = applicationNumber;
+  // const applicationId = applicationNumber;
   const { data: emailNotification, error: emailNotificationError } =
     await supabase
       .from("email_notifications")
@@ -73,7 +73,7 @@ const getFinanceApplicationEmailContent = async (
       fromEmail:
         emailNotification?.from_contact?.email || SENDGRID_FROM_EMAIL || "",
       fromPhone: emailNotification?.from_contact?.phone || "",
-      subject: eval("`" + emailNotification?.subject + "`"),
+      // subject: eval("`" + emailNotification?.subject + "`"),
       fromJobTitle:
         emailNotification?.from_contact?.metadata?.emailSignatureJobTitle || "",
       fromImage:
@@ -94,6 +94,73 @@ const getFinanceApplicationEmailContent = async (
       }),
     };
   }
+};
+
+const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
+  sgMail.setApiKey(SENDGRID_API_KEY);
+
+  console.log("toData:", JSON.stringify(toData));
+
+  const notificationData = await getFinanceApplicationEmailContent(
+    toData?.emailNotificationId,
+    sourceData?.applicationId
+  );
+
+  console.log("notificationData:", JSON.stringify(notificationData));
+
+  const appId = sourceData?.appId;
+
+  const msg = {
+    to: toData?.toEmail,
+    from: {
+      email: "notifications@newmantractor.com" || SENDGRID_FROM_EMAIL,
+      name:
+        `${notificationData?.fromFirstName} ${notificationData?.fromLastName}` ||
+        SENDGRID_FROM_NAME,
+    },
+    replyTo: notificationData?.fromEmail || SENDGRID_FROM_EMAIL,
+    bcc: notificationData?.bcc,
+    // subject: notificationData?.subject,
+    templateId: notificationData?.templateId,
+    dynamic_template_data: {
+      applicantFirstName: sourceData?.contactFirstName,
+      applicantLastName: sourceData?.contactLastName,
+      companyName: sourceData?.companyName,
+      email: toData?.toEmail,
+      firstName: toData?.toFirstName,
+      lastName: toData?.toLastName,
+      applicationId: sourceData?.applicationId,
+      fromImage: notificationData?.fromImage,
+      fromPhone: lib.formatPhoneNumber(notificationData?.fromPhone),
+      fromFirstName: notificationData?.fromFirstName,
+      fromLastName: notificationData?.fromLastName,
+      fromEmail: notificationData?.fromEmail,
+      fromJobTitle: notificationData?.fromJobTitle,
+      typeId: sourceData?.typeId,
+      ctaButtonText: notificationData?.ctaButtonText || "",
+      ctaButtonLink: notificationData?.ctaButtonLink
+        ? eval("`" + notificationData?.ctaButtonLink + "`")
+        : "",
+      ctaButtonLinkAuth: toData?.ctaButtonLinkAuth || "",
+      noteText: sourceData?.activityNote || "",
+      contactName: toData?.contactName || "",
+      fileName: sourceData?.activityMetaData?.fileName || "",
+      primaryContactFirstName: sourceData?.primaryContactFirstName || "",
+      primaryContactLastName: sourceData?.primaryContactLastName || "",
+      applicationType: sourceData?.typeName || "",
+      lenderCompanyName:
+        sourceData?.activityMetaData?.lender_company_name || "",
+      lenderName:
+        `${sourceData?.activityMetaData?.lender_first_name} ${sourceData?.activityMetaData?.lender_last_name}` ||
+        "",
+    },
+  };
+
+  console.log("msg:", JSON.stringify(msg));
+
+  await sgMail.send(msg);
+
+  return;
 };
 
 const compileFinanceApplicationEmail = async (activityRecord, application) => {
@@ -125,6 +192,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
   let toDataLender = {};
   switch (sourceData.activityName) {
     case "application submitted":
+      // send to customer
       toDataCustomer = {
         // when app submitted, if credit send from Credit Manager, if finance send from Finance Manager
         emailNotificationId: sourceData?.typeId === 1 ? 1 : 2,
@@ -374,71 +442,6 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
     default:
       throw new Error("No email notification found for this activity");
   }
-};
-
-const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
-  sgMail.setApiKey(SENDGRID_API_KEY);
-
-  console.log("toData:", JSON.stringify(toData));
-
-  const notificationData = await getFinanceApplicationEmailContent(
-    toData?.emailNotificationId,
-    sourceData?.applicationId
-  );
-
-  console.log("notificationData:", JSON.stringify(notificationData));
-
-  const appId = sourceData?.appId;
-
-  const msg = {
-    to: toData?.toEmail,
-    from: {
-      email: "notifications@newmantractor.com" || SENDGRID_FROM_EMAIL,
-      name:
-        `${notificationData?.fromFirstName} ${notificationData?.fromLastName}` ||
-        SENDGRID_FROM_NAME,
-    },
-    replyTo: notificationData?.fromEmail || SENDGRID_FROM_EMAIL,
-    bcc: notificationData?.bcc,
-    subject: notificationData?.subject,
-    templateId: notificationData?.templateId,
-    dynamic_template_data: {
-      applicantFirstName: sourceData?.contactFirstName,
-      applicantLastName: sourceData?.contactLastName,
-      companyName: sourceData?.companyName,
-      email: toData?.toEmail,
-      firstName: toData?.toFirstName,
-      lastName: toData?.toLastName,
-      applicationId: sourceData?.applicationId,
-      fromImage: notificationData?.fromImage,
-      fromPhone: lib.formatPhoneNumber(notificationData?.fromPhone),
-      fromFirstName: notificationData?.fromFirstName,
-      fromLastName: notificationData?.fromLastName,
-      fromEmail: notificationData?.fromEmail,
-      fromJobTitle: notificationData?.fromJobTitle,
-      typeId: sourceData?.typeId,
-      ctaButtonText: notificationData?.ctaButtonText || "",
-      ctaButtonLink: notificationData?.ctaButtonLink
-        ? eval("`" + notificationData?.ctaButtonLink + "`")
-        : "",
-      ctaButtonLinkAuth: toData?.ctaButtonLinkAuth || "",
-      noteText: sourceData?.activityNote || "",
-      contactName: toData?.contactName || "",
-      fileName: sourceData?.activityMetaData?.fileName || "",
-      primaryContactFirstName: sourceData?.primaryContactFirstName || "",
-      primaryContactLastName: sourceData?.primaryContactLastName || "",
-      applicationType: sourceData?.typeName || "",
-      lenderCompanyName:
-        sourceData?.activityMetaData?.lender_company_name || "",
-      lenderName:
-        `${sourceData?.activityMetaData?.lender_first_name} ${sourceData?.activityMetaData?.lender_last_name}` ||
-        "",
-    },
-  };
-
-  console.log("msg:", JSON.stringify(msg));
-
-  await sgMail.send(msg);
 };
 
 module.exports = {
