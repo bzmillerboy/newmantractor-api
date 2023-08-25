@@ -12,12 +12,12 @@ const lib = require("../lib/lib.js");
 
 const sgMail = require("@sendgrid/mail");
 
-const generateAuthLink = async (email, firstName, lastName) => {
+const generateLink = async (email, firstName, lastName, existingUser) => {
   const { data, error } = await supabase.auth.admin.generateLink({
-    type: "signup",
+    type: existingUser ? "magiclink" : "signup",
     email: email.toLowerCase(),
     options: {
-      password: "password",
+      password: "nt" + email.toLowerCase() + firstName + lastName,
       redirectTo: `${PORTAL_URL}/home`,
       data: {
         first_name: firstName,
@@ -37,9 +37,34 @@ const generateAuthLink = async (email, firstName, lastName) => {
     };
   }
 
-  console.log("generateLink link: ", data?.properties?.action_link);
+  console.log("generateLink link: ", data);
 
   return data?.properties?.action_link;
+};
+
+const generateAuthLink = async (
+  email,
+  firstName,
+  lastName,
+  knownExistingUser
+) => {
+  if (knownExistingUser) {
+    // console.log("knownExistingUser", knownExistingUser);
+    return generateLink(email, firstName, lastName, true);
+  } else {
+    // console.log("NO knownExistingUser", knownExistingUser);
+    //1. Check if user exists
+    const { data: contact, error: userError } = await supabase
+      .from("contacts")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    // console.log("does contact exist?", contact);
+
+    //2. Generate link
+    return generateLink(email, firstName, lastName, contact || false);
+  }
 };
 
 const getFinanceApplicationEmailContent = async (
@@ -158,7 +183,7 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
 
   console.log("msg:", JSON.stringify(msg));
 
-  await sgMail.send(msg);
+  // await sgMail.send(msg);
 
   return;
 };
