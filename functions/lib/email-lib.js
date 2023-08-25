@@ -37,9 +37,9 @@ const generateAuthLink = async (email, firstName, lastName) => {
     };
   }
 
-  console.log("generateLink data: ", data);
+  console.log("generateLink link: ", data?.properties?.action_link);
 
-  return data.properties.action_link;
+  return data?.properties?.action_link;
 };
 
 const getFinanceApplicationEmailContent = async (
@@ -64,7 +64,6 @@ const getFinanceApplicationEmailContent = async (
       }),
     };
   }
-  console.log("emailNotification:", JSON.stringify(emailNotification));
   if (emailNotification) {
     const emailNotificationData = {
       templateId: emailNotification?.template_id || "",
@@ -121,6 +120,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
 
   let toDataCustomer = {};
   let toDataRep = {};
+  let toDataRentalRep = {};
   let toDataManager = {};
   let toDataLender = {};
   switch (sourceData.activityName) {
@@ -132,7 +132,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       // send to finance/credit manager
       toDataManager = {
         emailNotificationId: 13,
@@ -140,7 +144,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.primaryContactFirstName,
         toLastName: sourceData?.primaryContactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      await sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
     case "sales rep assigned":
       toDataRep = {
@@ -149,16 +153,20 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: application.sales_rep.first_name,
         toLastName: application.sales_rep.last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      await sendFinanceApplicationEmail(application, sourceData, toDataRep);
       break;
     case "rental rep assigned":
-      toDataRep = {
+      toDataRentalRep = {
         emailNotificationId: 7,
         toEmail: application.rental_rep.email,
         toFirstName: application.rental_rep.first_name,
         toLastName: application.rental_rep.last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataRentalRep
+      );
       break;
     case "lender approved":
     case "finance manager approved":
@@ -170,7 +178,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       // Send to sales rep
       toDataRep = {
         emailNotificationId: 12,
@@ -178,17 +190,20 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: application.sales_rep.first_name,
         toLastName: application.sales_rep.last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      await sendFinanceApplicationEmail(application, sourceData, toDataRep);
       if (sourceData.activityName !== "finance manager approved") {
         // Send to finance manager
-        sendFinanceApplicationEmail(application, sourceData, toDataRep);
         toDataManager = {
           emailNotificationId: 12,
           toEmail: sourceData?.primaryContactEmail,
           toFirstName: sourceData?.primaryContactFirstName,
           toLastName: sourceData?.primaryContactLastName,
         };
-        sendFinanceApplicationEmail(application, sourceData, toDataManager);
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
       }
       break;
     case "lender denied":
@@ -201,7 +216,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       // Send to sales rep
       toDataRep = {
         emailNotificationId: 14,
@@ -209,16 +228,20 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: application.sales_rep.first_name,
         toLastName: application.sales_rep.last_name,
       };
+      await sendFinanceApplicationEmail(application, sourceData, toDataRep);
       if (sourceData.activityName !== "finance manager denied") {
         // Send to finance manager
-        sendFinanceApplicationEmail(application, sourceData, toDataRep);
         toDataManager = {
           emailNotificationId: 14,
           toEmail: sourceData?.primaryContactEmail,
           toFirstName: sourceData?.primaryContactFirstName,
           toLastName: sourceData?.primaryContactLastName,
         };
-        sendFinanceApplicationEmail(application, sourceData, toDataManager);
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
       }
       break;
     case "credit manager approved":
@@ -230,7 +253,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       // Send to sales rep
       toDataRep = {
         emailNotificationId: 12,
@@ -238,7 +265,22 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: application.sales_rep.first_name,
         toLastName: application.sales_rep.last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      // Only send to rental rep if application type is credit
+      if (sourceData.typeId === 2) {
+        // Send to rental rep
+        toDataRentalRep = {
+          emailNotificationId: 12,
+          toEmail: application.rental_rep.email,
+          toFirstName: application.rental_rep.first_name,
+          toLastName: application.rental_rep.last_name,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataRentalRep
+        );
+      }
       break;
     case "credit manager denied":
     case "denied":
@@ -249,7 +291,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       // Send to sales rep
       toDataRep = {
         emailNotificationId: 14,
@@ -257,7 +303,22 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: application.sales_rep.first_name,
         toLastName: application.sales_rep.last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      // Only send to rental rep if application type is credit
+      if (sourceData.typeId === 2) {
+        // Send to rental rep
+        toDataRentalRep = {
+          emailNotificationId: 14,
+          toEmail: application.rental_rep.email,
+          toFirstName: application.rental_rep.first_name,
+          toLastName: application.rental_rep.last_name,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataRentalRep
+        );
+      }
       break;
     case "send to lender":
       // Send to lender
@@ -267,7 +328,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.activityMetaData?.lender_first_name,
         toLastName: sourceData?.activityMetaData?.lender_last_name,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataLender);
+      await sendFinanceApplicationEmail(application, sourceData, toDataLender);
       // Send to customer
       toDataCustomer = {
         emailNotificationId: 3,
@@ -275,7 +336,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       break;
     case "signatures requested":
       // Send to signer customer
@@ -290,7 +355,11 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           sourceData?.activityMetaData?.guarantor_last_name
         ),
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataCustomer);
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
       break;
     case "document added":
       // Send to finance/credit manager
@@ -300,7 +369,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toFirstName: primaryContactFirstName,
         toLastName: primaryContactLastName,
       };
-      sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      await sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
     default:
       throw new Error("No email notification found for this activity");
@@ -310,10 +379,14 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
 const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
   sgMail.setApiKey(SENDGRID_API_KEY);
 
+  console.log("toData:", JSON.stringify(toData));
+
   const notificationData = await getFinanceApplicationEmailContent(
     toData?.emailNotificationId,
     sourceData?.applicationId
   );
+
+  console.log("notificationData:", JSON.stringify(notificationData));
 
   const appId = sourceData?.appId;
 
@@ -348,9 +421,9 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
       ctaButtonLink: notificationData?.ctaButtonLink
         ? eval("`" + notificationData?.ctaButtonLink + "`")
         : "",
-      ctaButtonLinkAuth: notificationData?.ctaButtonLinkAuth,
-      noteText: sourceData?.activityNote,
-      contactName: toData?.contactName,
+      ctaButtonLinkAuth: toData?.ctaButtonLinkAuth || "",
+      noteText: sourceData?.activityNote || "",
+      contactName: toData?.contactName || "",
       fileName: sourceData?.activityMetaData?.fileName || "",
       primaryContactFirstName: sourceData?.primaryContactFirstName || "",
       primaryContactLastName: sourceData?.primaryContactLastName || "",

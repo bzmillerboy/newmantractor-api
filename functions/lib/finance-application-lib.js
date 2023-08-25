@@ -58,6 +58,7 @@ const sendFinanceApplicationEmail = async (data) => {
       email: SENDGRID_FROM_EMAIL,
       name: SENDGRID_FROM_NAME,
     },
+    replyTo: "financing@newmantractor.com", //TODO: update to reflect Matt or Caroll depending on type
     subject: `Complete Your Financing Application | Ref #${
       application.application_id || ""
     } | | Newman Tractor`,
@@ -67,6 +68,7 @@ const sendFinanceApplicationEmail = async (data) => {
       link: link,
       firstName: first_name,
       lastName: last_name,
+      application_id: application?.application_id || "",
     },
   };
 
