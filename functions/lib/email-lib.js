@@ -166,7 +166,9 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
       ctaButtonLink: notificationData?.ctaButtonLink
         ? eval("`" + notificationData?.ctaButtonLink + "`")
         : "",
-      ctaButtonLinkAuth: toData?.ctaButtonLinkAuth || "",
+      ctaButtonLinkAuth: `${PORTAL_URL}/magic-link-login?confirmationUrl=${encodeURIComponent(
+        toData?.ctaButtonLinkAuth
+      )}`,
       noteText: sourceData?.activityNote || "",
       contactName: toData?.contactName || "",
       fileName: sourceData?.activityMetaData?.fileName || "",
