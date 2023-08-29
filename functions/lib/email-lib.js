@@ -183,7 +183,7 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
 
   console.log("msg:", JSON.stringify(msg));
 
-  // await sgMail.send(msg);
+  await sgMail.send(msg);
 
   return;
 };
@@ -216,10 +216,36 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
   let toDataManager = {};
   let toDataLender = {};
   switch (sourceData.activityName) {
+    case "application initiated":
+      // send to customer
+      toDataCustomer = {
+        // when app submitted, if credit send from Credit Manager, if finance send from Finance Manager
+        // 1 = finance app type, 2 = credit app type
+        emailNotificationId: sourceData?.typeId === 1 ? 15 : 16,
+        toEmail: sourceData?.contactEmail,
+        toFirstName: sourceData?.contactFirstName,
+        toLastName: sourceData?.contactLastName,
+        ctaButtonLinkAuth: await generateAuthLink(sourceData?.contactEmail),
+      };
+      await sendFinanceApplicationEmail(
+        application,
+        sourceData,
+        toDataCustomer
+      );
+      // send to finance/credit manager
+      toDataManager = {
+        emailNotificationId: 17,
+        toEmail: sourceData?.primaryContactEmail,
+        toFirstName: sourceData?.primaryContactFirstName,
+        toLastName: sourceData?.primaryContactLastName,
+      };
+      await sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      break;
     case "application submitted":
       // send to customer
       toDataCustomer = {
         // when app submitted, if credit send from Credit Manager, if finance send from Finance Manager
+        // 1 = finance app type, 2 = credit app type
         emailNotificationId: sourceData?.typeId === 1 ? 1 : 2,
         toEmail: sourceData?.contactEmail,
         toFirstName: sourceData?.contactFirstName,
