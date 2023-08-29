@@ -68,11 +68,7 @@ const generateAuthLink = async (
   }
 };
 
-const getFinanceApplicationEmailContent = async (
-  emailNotificationId,
-  applicationNumber
-) => {
-  // const applicationId = applicationNumber;
+const getFinanceApplicationEmailContent = async (emailNotificationId) => {
   const { data: emailNotification, error: emailNotificationError } =
     await supabase
       .from("email_notifications")
@@ -127,8 +123,7 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
   console.log("toData:", JSON.stringify(toData));
 
   const notificationData = await getFinanceApplicationEmailContent(
-    toData?.emailNotificationId,
-    sourceData?.applicationId
+    toData?.emailNotificationId
   );
 
   console.log("notificationData:", JSON.stringify(notificationData));
@@ -168,9 +163,10 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
         : "",
       ctaButtonLinkAuth:
         toData?.ctaButtonLinkAuth &&
-        encodeURI(
-          `${PORTAL_URL}/magic-link-login?confirmationUrl=${toData?.ctaButtonLinkAuth}${notificationData?.ctaButtonLink}`
-        ),
+        `${PORTAL_URL}/magic-link-login?confirmationUrl=${encodeURIComponent(
+          toData?.ctaButtonLinkAuth +
+            eval("`" + notificationData?.ctaButtonLink + "`")
+        )}`,
       noteText: sourceData?.activityNote || "",
       contactName: toData?.contactName || "",
       fileName: sourceData?.activityMetaData?.fileName || "",
@@ -187,7 +183,7 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
 
   console.log("msg:", JSON.stringify(msg));
 
-  await sgMail.send(msg);
+  // await sgMail.send(msg);
 
   return;
 };
