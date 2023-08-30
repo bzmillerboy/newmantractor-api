@@ -78,7 +78,29 @@ const sendFinanceApplicationEmail = async (data) => {
   return "email sent";
 };
 
+const createFinanceApplicationActivity = async (appId, userId) => {
+  // console.log("createFinanceApplication props", data);
+  const applicationActivityRes = await supabase
+    .from("application_activity")
+    .insert({
+      name: "application initiated",
+      application_id: appId,
+      created_by: userId,
+    })
+    .select()
+    .single();
+
+  if (applicationActivityRes.error) {
+    console.log("create applications error", applicationActivityRes.error);
+  }
+
+  if (applicationActivityRes.data) {
+    return applicationActivityRes.data;
+  }
+};
+
 module.exports = {
   createFinanceApplication,
   sendFinanceApplicationEmail,
+  createFinanceApplicationActivity,
 };
