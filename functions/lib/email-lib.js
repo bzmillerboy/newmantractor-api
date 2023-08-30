@@ -270,35 +270,38 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       break;
     case "sales rep assigned":
       // Send to sales rep
-      toDataRep = {
-        emailNotificationId: 7,
-        toEmail: application?.sales_rep?.email,
-        toFirstName: application?.sales_rep?.first_name,
-        toLastName: application?.sales_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          sourceData?.application?.sales_rep?.email
-        ),
-      };
-      application?.sales_rep?.email &&
-        (await sendFinanceApplicationEmail(application, sourceData, toDataRep));
+      if (application?.sales_rep?.email) {
+        toDataRep = {
+          emailNotificationId: 7,
+          toEmail: application?.sales_rep?.email,
+          toFirstName: application?.sales_rep?.first_name,
+          toLastName: application?.sales_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            sourceData?.application?.sales_rep?.email
+          ),
+        };
+
+        await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      }
       break;
     case "rental rep assigned":
       // Send to rental rep
-      toDataRentalRep = {
-        emailNotificationId: 7,
-        toEmail: application?.rental_rep?.email,
-        toFirstName: application?.rental_rep?.first_name,
-        toLastName: application?.rental_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          application?.rental_rep?.email
-        ),
-      };
-      application?.rental_rep?.email &&
-        (await sendFinanceApplicationEmail(
+      if (application?.rental_rep?.email) {
+        toDataRentalRep = {
+          emailNotificationId: 7,
+          toEmail: application?.rental_rep?.email,
+          toFirstName: application?.rental_rep?.first_name,
+          toLastName: application?.rental_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            application?.rental_rep?.email
+          ),
+        };
+        await sendFinanceApplicationEmail(
           application,
           sourceData,
           toDataRentalRep
-        ));
+        );
+      }
       break;
     case "lender approved":
     case "finance manager approved":
@@ -317,33 +320,36 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toDataCustomer
       );
       // Send to sales rep
-      toDataRep = {
-        emailNotificationId: 12,
-        toEmail: application?.sales_rep?.email,
-        toFirstName: application?.sales_rep?.first_name,
-        toLastName: application?.sales_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          sourceData?.application?.sales_rep?.email
-        ),
-      };
-      application?.sales_rep?.email &&
-        (await sendFinanceApplicationEmail(application, sourceData, toDataRep));
+      if (application?.sales_rep?.email) {
+        toDataRep = {
+          emailNotificationId: 12,
+          toEmail: application?.sales_rep?.email,
+          toFirstName: application?.sales_rep?.first_name,
+          toLastName: application?.sales_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            sourceData?.application?.sales_rep?.email
+          ),
+        };
+
+        await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      }
       // Send to rental rep
-      toDataRentalRep = {
-        emailNotificationId: 12,
-        toEmail: application?.rental_rep?.email,
-        toFirstName: application?.rental_rep?.first_name,
-        toLastName: application?.rental_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          application?.rental_rep?.email
-        ),
-      };
-      application?.rental_rep?.email &&
-        (await sendFinanceApplicationEmail(
+      if (application?.rental_rep?.email) {
+        toDataRentalRep = {
+          emailNotificationId: 12,
+          toEmail: application?.rental_rep?.email,
+          toFirstName: application?.rental_rep?.first_name,
+          toLastName: application?.rental_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            application?.rental_rep?.email
+          ),
+        };
+        await sendFinanceApplicationEmail(
           application,
           sourceData,
           toDataRentalRep
-        ));
+        );
+      }
       if (sourceData.activityName !== "finance manager approved") {
         // Send to finance manager
         toDataManager = {
@@ -376,33 +382,36 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toDataCustomer
       );
       // Send to sales rep
-      toDataRep = {
-        emailNotificationId: 14,
-        toEmail: application?.sales_rep?.email,
-        toFirstName: application?.sales_rep?.first_name,
-        toLastName: application?.sales_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          sourceData?.application?.sales_rep?.email
-        ),
-      };
-      application?.sales_rep?.email &&
-        (await sendFinanceApplicationEmail(application, sourceData, toDataRep));
+      if (application?.sales_rep?.email) {
+        toDataRep = {
+          emailNotificationId: 14,
+          toEmail: application?.sales_rep?.email,
+          toFirstName: application?.sales_rep?.first_name,
+          toLastName: application?.sales_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            sourceData?.application?.sales_rep?.email
+          ),
+        };
+
+        await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      }
       // Send to rental rep
-      toDataRentalRep = {
-        emailNotificationId: 12,
-        toEmail: application?.rental_rep?.email,
-        toFirstName: application?.rental_rep?.first_name,
-        toLastName: application?.rental_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          application?.rental_rep?.email
-        ),
-      };
-      application?.rental_rep?.email &&
-        (await sendFinanceApplicationEmail(
+      if (application?.rental_rep?.email) {
+        toDataRentalRep = {
+          emailNotificationId: 14,
+          toEmail: application?.rental_rep?.email,
+          toFirstName: application?.rental_rep?.first_name,
+          toLastName: application?.rental_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            application?.rental_rep?.email
+          ),
+        };
+        await sendFinanceApplicationEmail(
           application,
           sourceData,
           toDataRentalRep
-        ));
+        );
+      }
       if (sourceData.activityName !== "finance manager denied") {
         // Send to finance manager
         toDataManager = {
@@ -434,17 +443,19 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toDataCustomer
       );
       // Send to sales rep
-      toDataRep = {
-        emailNotificationId: 12,
-        toEmail: application?.sales_rep?.email,
-        toFirstName: application?.sales_rep?.first_name,
-        toLastName: application?.sales_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          sourceData?.application?.sales_rep?.email
-        ),
-      };
-      application?.sales_rep?.email &&
-        (await sendFinanceApplicationEmail(application, sourceData, toDataRep));
+      if (application?.sales_rep?.email) {
+        toDataRep = {
+          emailNotificationId: 12,
+          toEmail: application?.sales_rep?.email,
+          toFirstName: application?.sales_rep?.first_name,
+          toLastName: application?.sales_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            sourceData?.application?.sales_rep?.email
+          ),
+        };
+
+        await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      }
       // Only send to rental rep if application type is credit
       if (sourceData.typeId === 2 && application?.rental_rep?.email) {
         // Send to rental rep
@@ -480,17 +491,19 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         toDataCustomer
       );
       // Send to sales rep
-      toDataRep = {
-        emailNotificationId: 14,
-        toEmail: application?.sales_rep?.email,
-        toFirstName: application?.sales_rep?.first_name,
-        toLastName: application?.sales_rep?.last_name,
-        ctaButtonLinkAuth: await generateAuthLink(
-          sourceData?.application?.sales_rep?.email
-        ),
-      };
-      application?.sales_rep?.email &&
-        (await sendFinanceApplicationEmail(application, sourceData, toDataRep));
+      if (application?.sales_rep?.email) {
+        toDataRep = {
+          emailNotificationId: 14,
+          toEmail: application?.sales_rep?.email,
+          toFirstName: application?.sales_rep?.first_name,
+          toLastName: application?.sales_rep?.last_name,
+          ctaButtonLinkAuth: await generateAuthLink(
+            sourceData?.application?.sales_rep?.email
+          ),
+        };
+
+        await sendFinanceApplicationEmail(application, sourceData, toDataRep);
+      }
       // Only send to rental rep if application type is credit
       if (sourceData.typeId === 2 && application?.rental_rep?.email) {
         // Send to rental rep
@@ -568,7 +581,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       await sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
     default:
-      throw new Error("No email notification found for this activity");
+      console.warn("No email notification found for this activity");
   }
 };
 
