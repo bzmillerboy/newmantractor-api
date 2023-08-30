@@ -277,7 +277,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           toFirstName: application?.sales_rep?.first_name,
           toLastName: application?.sales_rep?.last_name,
           ctaButtonLinkAuth: await generateAuthLink(
-            sourceData?.application?.sales_rep?.email
+            application?.sales_rep?.email
           ),
         };
 
@@ -327,7 +327,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           toFirstName: application?.sales_rep?.first_name,
           toLastName: application?.sales_rep?.last_name,
           ctaButtonLinkAuth: await generateAuthLink(
-            sourceData?.application?.sales_rep?.email
+            application?.sales_rep?.email
           ),
         };
 
@@ -389,7 +389,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           toFirstName: application?.sales_rep?.first_name,
           toLastName: application?.sales_rep?.last_name,
           ctaButtonLinkAuth: await generateAuthLink(
-            sourceData?.application?.sales_rep?.email
+            application?.sales_rep?.email
           ),
         };
 
@@ -450,7 +450,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           toFirstName: application?.sales_rep?.first_name,
           toLastName: application?.sales_rep?.last_name,
           ctaButtonLinkAuth: await generateAuthLink(
-            sourceData?.application?.sales_rep?.email
+            application?.sales_rep?.email
           ),
         };
 
@@ -498,7 +498,7 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
           toFirstName: application?.sales_rep?.first_name,
           toLastName: application?.sales_rep?.last_name,
           ctaButtonLinkAuth: await generateAuthLink(
-            sourceData?.application?.sales_rep?.email
+            application?.sales_rep?.email
           ),
         };
 
