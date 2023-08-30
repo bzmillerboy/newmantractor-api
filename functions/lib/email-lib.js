@@ -271,6 +271,8 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       toDataRep = {
         emailNotificationId: 7,
         toEmail: application.sales_rep.email,
+        toFirstName: application.sales_rep.first_name,
+        toLastName: application.sales_rep.last_name,
         ctaButtonLinkAuth: await generateAuthLink(
           sourceData?.application.sales_rep.email
         ),
@@ -543,9 +545,9 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       // Send to finance/credit manager
       toDataManager = {
         emailNotificationId: 11,
-        toEmail: primaryContactEmail,
-        toFirstName: primaryContactFirstName,
-        toLastName: primaryContactLastName,
+        toEmail: sourceData?.primaryContactEmail,
+        toFirstName: sourceData?.primaryContactFirstName,
+        toLastName: sourceData?.primaryContactLastName,
       };
       await sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
