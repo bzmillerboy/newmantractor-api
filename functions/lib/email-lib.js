@@ -168,7 +168,8 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
             eval("`" + notificationData?.ctaButtonLink + "`")
         )}`,
       noteText: sourceData?.activityNote || "",
-      contactName: toData?.contactName || "",
+      contactName:
+        `${sourceData?.contactFirstName} ${sourceData?.contactLastName}` || "",
       fileName: sourceData?.activityMetaData?.fileName || "",
       primaryContactFirstName: sourceData?.primaryContactFirstName || "",
       primaryContactLastName: sourceData?.primaryContactLastName || "",
@@ -208,7 +209,8 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       application?.company?.business_name ||
       "",
   };
-  // console.log("sourceData:", JSON.stringify(sourceData));
+
+  console.log("sourceData:", JSON.stringify(sourceData));
 
   let toDataCustomer = {};
   let toDataRep = {};
