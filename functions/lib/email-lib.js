@@ -290,6 +290,17 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       };
       await sendFinanceApplicationEmail(application, sourceData, toDataManager);
       break;
+    case "application derived":
+      // send to customer, clarifying that we created a separate credit application for them
+      // send to credit manager
+      toDataManager = {
+        emailNotificationId: 18,
+        toEmail: sourceData?.primaryContactEmail,
+        toFirstName: sourceData?.primaryContactFirstName,
+        toLastName: sourceData?.primaryContactLastName,
+      };
+      await sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      break;
     case "sales rep assigned":
       // Send to sales rep
       if (application?.sales_rep?.email) {
