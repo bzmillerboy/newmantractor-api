@@ -177,8 +177,9 @@ const sendFinanceApplicationEmail = async (application, sourceData, toData) => {
       lenderCompanyName:
         sourceData?.activityMetaData?.lender_company_name || "",
       lenderName:
-        `${sourceData?.activityMetaData?.lender_first_name} ${sourceData?.activityMetaData?.lender_last_name}` ||
-        "",
+        `${sourceData?.activityMetaData?.lender_first_name || ""} ${
+          sourceData?.activityMetaData?.lender_last_name || ""
+        }` || "",
     },
   };
 
@@ -538,18 +539,20 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       };
       await sendFinanceApplicationEmail(application, sourceData, toDataLender);
       // Send to customer
-      toDataCustomer = {
-        emailNotificationId: 3,
-        toEmail: sourceData?.contactEmail,
-        toFirstName: sourceData?.contactFirstName,
-        toLastName: sourceData?.contactLastName,
-        ctaButtonLinkAuth: await generateAuthLink(sourceData?.contactEmail),
-      };
-      await sendFinanceApplicationEmail(
-        application,
-        sourceData,
-        toDataCustomer
-      );
+      if (application?.status.id !== 3) {
+        toDataCustomer = {
+          emailNotificationId: 3,
+          toEmail: sourceData?.contactEmail,
+          toFirstName: sourceData?.contactFirstName,
+          toLastName: sourceData?.contactLastName,
+          ctaButtonLinkAuth: await generateAuthLink(sourceData?.contactEmail),
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataCustomer
+        );
+      }
       break;
     case "signatures requested":
       // Send to signer customer
