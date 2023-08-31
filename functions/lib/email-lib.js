@@ -68,6 +68,23 @@ const generateAuthLink = async (
   }
 };
 
+const getApplicationTypes = async () => {
+  const { data: applicationTypes, error: applicationTypesError } =
+    await supabase
+      .from("application_types")
+      .select(
+        "id, name, primary_contact_id, primary_contact:primary_contact_id(id, first_name, last_name, email)"
+      );
+  if (applicationTypesError) {
+    console.log("applicationTypesError:", applicationTypesError);
+    return [];
+  }
+  if (applicationTypes) {
+    return applicationTypes;
+  }
+  return [];
+};
+
 const getFinanceApplicationEmailContent = async (emailNotificationId) => {
   const { data: emailNotification, error: emailNotificationError } =
     await supabase
@@ -235,14 +252,70 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
         sourceData,
         toDataCustomer
       );
-      // send to finance/credit manager
-      toDataManager = {
-        emailNotificationId: 17,
-        toEmail: sourceData?.primaryContactEmail,
-        toFirstName: sourceData?.primaryContactFirstName,
-        toLastName: sourceData?.primaryContactLastName,
-      };
-      await sendFinanceApplicationEmail(application, sourceData, toDataManager);
+      // send to finance manager
+      if (sourceData.typeId === 1) {
+        toDataManager = {
+          emailNotificationId: 17,
+          toEmail: sourceData?.primaryContactEmail,
+          toFirstName: sourceData?.primaryContactFirstName,
+          toLastName: sourceData?.primaryContactLastName,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
+      }
+
+      // send to credit manager
+      if (sourceData.typeId === 2) {
+        toDataManager = {
+          emailNotificationId: 17,
+          toEmail: sourceData?.primaryContactEmail,
+          toFirstName: sourceData?.primaryContactFirstName,
+          toLastName: sourceData?.primaryContactLastName,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
+      }
+
+      // send to credt & finance manager
+      if (sourceData.typeId === 3) {
+        //fetch app types and their primary contacts
+        const appTypes = await getApplicationTypes();
+        console.log("appTypes:", JSON.stringify(appTypes));
+        const financeManager = appTypes.find((appType) => appType.id === 1);
+        const creditManager = appTypes.find((appType) => appType.id === 2);
+        // send to both finance and credit manager
+        // send to finance manager
+        toDataManager = {
+          emailNotificationId: 17,
+          toEmail: financeManager.primary_contact.email,
+          toFirstName: financeManager.primary_contact.first_name,
+          toLastName: financeManager.primary_contact.last_name,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
+        // send to credit manager
+        toDataManager = {
+          emailNotificationId: 17,
+          toEmail: creditManager.primary_contact.email,
+          toFirstName: creditManager.primary_contact.first_name,
+          toLastName: creditManager.primary_contact.last_name,
+        };
+        await sendFinanceApplicationEmail(
+          application,
+          sourceData,
+          toDataManager
+        );
+      }
+
       break;
     case "application submitted":
       // send to customer
