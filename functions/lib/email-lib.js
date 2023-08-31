@@ -36,7 +36,7 @@ const generateLink = async (email, firstName, lastName, existingUser) => {
     };
   }
 
-  // console.log("generateLink link: ", data);
+  console.log("generateLink link: ", data);
 
   return `${supabaseUrl}/auth/v1/verify?token=${
     data?.properties?.hashed_token
@@ -50,10 +50,10 @@ const generateAuthLink = async (
   knownExistingUser
 ) => {
   if (knownExistingUser) {
-    // console.log("knownExistingUser", knownExistingUser);
+    console.log("knownExistingUser", knownExistingUser);
     return generateLink(email, firstName, lastName, true);
   } else {
-    // console.log("NO knownExistingUser", knownExistingUser);
+    console.log("NO knownExistingUser", knownExistingUser);
     //1. Check if user exists
     const { data: contact, error: userError } = await supabase
       .from("contacts")
@@ -61,7 +61,7 @@ const generateAuthLink = async (
       .eq("email", email)
       .single();
 
-    // console.log("does contact exist?", contact);
+    console.log("does contact exist?", contact);
 
     //2. Generate link
     return generateLink(email, firstName, lastName, contact || false);
