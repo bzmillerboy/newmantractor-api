@@ -759,7 +759,9 @@ const createEquipment = async (erpData) => {
 
     const yearFixed = eq.ModelYear === 0 ? "" : eq.ModelYear;
     const titleFixed = eq.EquipmentDesc.replace(/(19|20)[0-9][0-9]/, "").trim();
-    const title = `${yearFixed} ${titleFixed}`;
+    const title = `${
+      eq.EquipmentType == "Attachment" ? "" : yearFixed
+    } ${titleFixed}`;
     const price = eq.ModelListPrice !== 0 && eq.ModelListPrice;
     const year = eq.ModelYear !== 0 && eq.ModelYear;
     const hoursCurrent =
