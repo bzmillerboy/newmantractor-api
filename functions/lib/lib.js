@@ -773,13 +773,14 @@ const createEquipment = async (erpData) => {
       .trim()}`;
     const specifications = JSON.stringify(eq.Specifications);
     const condition = () => (eq.Used === "Yes" ? "used" : "new");
+    const slugValue = `${yearFixed} ${titleFixed}`;
 
     return {
       _id: eq.EquipmentId,
       _type: "inventory",
       title: title.trim(),
       slug: {
-        current: `${slugify(title.trim())}-${eq.EquipmentId}`,
+        current: `${slugify(slugValue.trim())}-${eq.EquipmentId}`,
       },
       stockNumber: stockNumber,
       specification: specifications || "",
