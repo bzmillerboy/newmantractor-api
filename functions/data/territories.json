@@ -1,43 +1,27 @@
 [
   {
     "state": "Florida",
-    "county": "Baker",
-    "countyName": "Baker County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
+    "county": "Brevard",
+    "countyName": "Brevard County",
+    "contactName": "Matt Seyl",
+    "contactEmail": "mattseyl@newmantractor.com",
+    "hubSpotOwnerId": 97716895
   },
   {
     "state": "Florida",
     "county": "Charlotte",
     "countyName": "Charlotte County",
-    "contactName": "Kent Montgomery",
-    "contactEmail": "kent@newmantractor.com",
-    "hubSpotOwnerId": 158775629
+    "contactName": "Ward Dickenson",
+    "contactEmail": "ward@newmantractor.com",
+    "hubSpotOwnerId": 102704445
   },
   {
     "state": "Florida",
     "county": "Citrus",
     "countyName": "Citrus County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
-  },
-  {
-    "state": "Florida",
-    "county": "Clay",
-    "countyName": "Clay County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
-  },
-  {
-    "state": "Florida",
-    "county": "Collier",
-    "countyName": "Collier County",
-    "contactName": "Ward Dickenson",
-    "contactEmail": "ward@newmantractor.com",
-    "hubSpotOwnerId": 102704445
+    "contactName": "Kent Montgomery",
+    "contactEmail": "kent@newmantractor.com",
+    "hubSpotOwnerId": 158775629
   },
   {
     "state": "Florida",
@@ -51,14 +35,14 @@
     "state": "Florida",
     "county": "De Soto",
     "countyName": "De Soto County",
-    "contactName": "Kent Montgomery",
-    "contactEmail": "kent@newmantractor.com",
-    "hubSpotOwnerId": 158775629
+    "contactName": "Bryce Goff",
+    "contactEmail": "bryce@newmantractor.com",
+    "hubSpotOwnerId": 178964595
   },
   {
     "state": "Florida",
-    "county": "Duval",
-    "countyName": "Duval County",
+    "county": "Flagler",
+    "countyName": "Flagler County",
     "contactName": "Billy Knight",
     "contactEmail": "billy@newmantractor.com",
     "hubSpotOwnerId": 193446917
@@ -75,9 +59,9 @@
     "state": "Florida",
     "county": "Hardee",
     "countyName": "Hardee County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "contactName": "Bryce Goff",
+    "contactEmail": "bryce@newmantractor.com",
+    "hubSpotOwnerId": 178964595
   },
   {
     "state": "Florida",
@@ -91,9 +75,9 @@
     "state": "Florida",
     "county": "Hernando",
     "countyName": "Hernando County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "contactName": "Kent Montgomery",
+    "contactEmail": "kent@newmantractor.com",
+    "hubSpotOwnerId": 158775629
   },
   {
     "state": "Florida",
@@ -105,19 +89,19 @@
   },
   {
     "state": "Florida",
-    "county": "Hillsborough",
-    "countyName": "Hillsborough County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "county": "Indian River",
+    "countyName": "Indian River County",
+    "contactName": "Matt Seyl",
+    "contactEmail": "mattseyl@newmantractor.com",
+    "hubSpotOwnerId": 97716895
   },
   {
     "state": "Florida",
     "county": "Lake",
     "countyName": "Lake County",
-    "contactName": "Matt Seyl",
-    "contactEmail": "mattseyl@newmantractor.com",
-    "hubSpotOwnerId": 97716895
+    "contactName": "Kent Montgomery",
+    "contactEmail": "kent@newmantractor.com",
+    "hubSpotOwnerId": 158775629
   },
   {
     "state": "Florida",
@@ -131,25 +115,25 @@
     "state": "Florida",
     "county": "Manatee",
     "countyName": "Manatee County",
+    "contactName": "Bryce Goff",
+    "contactEmail": "bryce@newmantractor.com",
+    "hubSpotOwnerId": 178964595
+  },
+  {
+    "state": "Florida",
+    "county": "Marion",
+    "countyName": "Marion County",
     "contactName": "Kent Montgomery",
     "contactEmail": "kent@newmantractor.com",
     "hubSpotOwnerId": 158775629
   },
   {
     "state": "Florida",
-    "county": "Marion",
-    "countyName": "Marion County",
+    "county": "Martin",
+    "countyName": "Martin Coutny",
     "contactName": "Matt Seyl",
     "contactEmail": "mattseyl@newmantractor.com",
     "hubSpotOwnerId": 97716895
-  },
-  {
-    "state": "Florida",
-    "county": "Nassua",
-    "countyName": "Nassua County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
   },
   {
     "state": "Florida",
@@ -161,16 +145,24 @@
   },
   {
     "state": "Florida",
-    "county": "Pasco",
-    "countyName": "Pasco County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "county": "Okeechobee",
+    "countyName": "Okeechobee County",
+    "contactName": "Matt Seyl",
+    "contactEmail": "mattseyl@newmantractor.com",
+    "hubSpotOwnerId": 97716895
   },
   {
     "state": "Florida",
-    "county": "Pinellas",
-    "countyName": "Pinellas County",
+    "county": "Osceola",
+    "countyName": "Osceola County",
+    "contactName": "Matt Seyl",
+    "contactEmail": "mattseyl@newmantractor.com",
+    "hubSpotOwnerId": 97716895
+  },
+  {
+    "state": "Florida",
+    "county": "Pasco",
+    "countyName": "Pasco County",
     "contactName": "Kent Montgomery",
     "contactEmail": "kent@newmantractor.com",
     "hubSpotOwnerId": 158775629
@@ -179,22 +171,22 @@
     "state": "Florida",
     "county": "Polk",
     "countyName": "Polk County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "contactName": "Bryce Goff",
+    "contactEmail": "bryce@newmantractor.com",
+    "hubSpotOwnerId": 178964595
   },
   {
     "state": "Florida",
-    "county": "Polk",
-    "countyName": "Polk County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
+    "county": "Saint Lucie",
+    "countyName": "Saint Lucie County",
+    "contactName": "Matt Seyl",
+    "contactEmail": "mattseyl@newmantractor.com",
+    "hubSpotOwnerId": 97716895
   },
   {
     "state": "Florida",
-    "county": "Saint Johns",
-    "countyName": "Saint Johns County",
+    "county": "Seminole",
+    "countyName": "Seminole",
     "contactName": "Billy Knight",
     "contactEmail": "billy@newmantractor.com",
     "hubSpotOwnerId": 193446917
@@ -203,46 +195,22 @@
     "state": "Florida",
     "county": "Sarasota",
     "countyName": "Sarasota County",
+    "contactName": "Bryce Goff",
+    "contactEmail": "bryce@newmantractor.com",
+    "hubSpotOwnerId": 178964595
+  },
+  {
+    "state": "Florida",
+    "county": "Sumter",
+    "countyName": "Sumter County",
     "contactName": "Kent Montgomery",
     "contactEmail": "kent@newmantractor.com",
     "hubSpotOwnerId": 158775629
   },
   {
     "state": "Florida",
-    "county": "Sumter",
-    "countyName": "Sumter County",
-    "contactName": "Steve O'Neil",
-    "contactEmail": "steve@newmantractor.com",
-    "hubSpotOwnerId": 97717018
-  },
-  {
-    "state": "Georgia",
-    "county": "Brantley",
-    "countyName": "Brantley County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
-  },
-  {
-    "state": "Georgia",
-    "county": "Camden",
-    "countyName": "Camden County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
-  },
-  {
-    "state": "Georgia",
-    "county": "Charlton",
-    "countyName": "Charlton County",
-    "contactName": "Billy Knight",
-    "contactEmail": "billy@newmantractor.com",
-    "hubSpotOwnerId": 193446917
-  },
-  {
-    "state": "Georgia",
-    "county": "Ware",
-    "countyName": "Ware County",
+    "county": "Volusia",
+    "countyName": "Volusia County",
     "contactName": "Billy Knight",
     "contactEmail": "billy@newmantractor.com",
     "hubSpotOwnerId": 193446917
@@ -529,22 +497,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Boone",
-    "countyName": "Boone County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Bourbon",
-    "countyName": "Bourbon County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Boyd",
     "countyName": "Boyd County",
     "contactName": "Marty Malloy",
@@ -558,22 +510,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Bracken",
-    "countyName": "Bracken County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Breathitt",
-    "countyName": "Breathitt County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -617,27 +553,11 @@
   },
   {
     "state": "Kentucky",
-    "county": "Campbell",
-    "countyName": "Campbell County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Carlisle",
     "countyName": "Carlisle County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Carroll",
-    "countyName": "Carroll County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -662,22 +582,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Clark",
-    "countyName": "Clark County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Clay",
-    "countyName": "Clay County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -729,22 +633,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Estill",
-    "countyName": "Estill County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Fayette",
-    "countyName": "Fayette County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Fleming",
     "countyName": "Fleming County",
     "contactName": "Marty Malloy",
@@ -753,51 +641,11 @@
   },
   {
     "state": "Kentucky",
-    "county": "Floyd",
-    "countyName": "Floyd County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Franklin",
-    "countyName": "Franklin County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Fulton",
     "countyName": "Fulton County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Gallatin",
-    "countyName": "Gallatin County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Garrard",
-    "countyName": "Garrard County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Grant",
-    "countyName": "Grant County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -849,22 +697,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Harlan",
-    "countyName": "Harlan County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Harrison",
-    "countyName": "Harrison County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Hart",
     "countyName": "Hart County",
     "contactName": "Marty Malloy",
@@ -878,14 +710,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Henry",
-    "countyName": "Henry County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -905,59 +729,11 @@
   },
   {
     "state": "Kentucky",
-    "county": "Jackson",
-    "countyName": "Jackson County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Jefferson",
     "countyName": "Jefferson County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Jessamine",
-    "countyName": "Jessamine County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Johnson",
-    "countyName": "Johnson County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Kenton",
-    "countyName": "Kenton County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Knott",
-    "countyName": "Knott County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Knox",
-    "countyName": "Knox County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -969,43 +745,11 @@
   },
   {
     "state": "Kentucky",
-    "county": "Laurel",
-    "countyName": "Laurel County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Lawrence",
     "countyName": "Lawrence County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Lee",
-    "countyName": "Lee County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Leslie",
-    "countyName": "Leslie County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Letcher",
-    "countyName": "Letcher County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -1041,22 +785,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Madison",
-    "countyName": "Madison County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Magoffin",
-    "countyName": "Magoffin County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Marion",
     "countyName": "Marion County",
     "contactName": "Marty Malloy",
@@ -1070,22 +798,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Martin",
-    "countyName": "Martin County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Mason",
-    "countyName": "Mason County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -1161,14 +873,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Morgan",
-    "countyName": "Morgan County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Muhlenberg",
     "countyName": "Muhlenberg County",
     "contactName": "Marty Malloy",
@@ -1182,14 +886,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Nicholas",
-    "countyName": "Nicholas County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -1209,75 +905,11 @@
   },
   {
     "state": "Kentucky",
-    "county": "Owen",
-    "countyName": "Owen County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Owsley",
-    "countyName": "Owsley County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Pendleton",
-    "countyName": "Pendleton County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Perry",
-    "countyName": "Perry County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Pike",
-    "countyName": "Pike County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Powell",
-    "countyName": "Powell County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Pulaski",
     "countyName": "Pulaski County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Rockcastle",
-    "countyName": "Rockcastle County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
-    "county": "Robertson",
-    "countyName": "Robertson County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -1294,14 +926,6 @@
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
-  },
-  {
-    "state": "Kentucky",
-    "county": "Scott",
-    "countyName": "Scott County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
   },
   {
     "state": "Kentucky",
@@ -1345,14 +969,6 @@
   },
   {
     "state": "Kentucky",
-    "county": "Trimble",
-    "countyName": "Trimble County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
-  },
-  {
-    "state": "Kentucky",
     "county": "Union",
     "countyName": "Union County",
     "contactName": "Marty Malloy",
@@ -1392,28 +1008,380 @@
     "hubSpotOwnerId": 97716858
   },
   {
-    "state": "Kentucky",
-    "county": "Whitley",
-    "countyName": "Whitley County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
+    "state": "Ohio",
+    "county": "Fairfield",
+    "countyName": "Fairfield County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Ohio",
+    "county": "Franklin",
+    "countyName": "Franklin County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Ohio",
+    "county": "Pickaway",
+    "countyName": "Pickaway County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Ohio",
+    "county": "Pike",
+    "countyName": "Pike County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Ohio",
+    "county": "Ross",
+    "countyName": "Ross County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
   },
   {
     "state": "Kentucky",
-    "county": "Wolfe",
-    "countyName": "Wolfe County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
+    "county": "Boone",
+    "countyName": "Boone County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
   },
   {
     "state": "Kentucky",
-    "county": "Woodford",
-    "countyName": "Woodford County",
-    "contactName": "Tony Kelly",
-    "contactEmail": "tonyk@newmantractor.com",
-    "hubSpotOwnerId": 337258828
+    "county": "Bourbon",
+    "countyName": "Bourbon County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Bracken",
+    "countyName": "Bracken County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Breathitt",
+    "countyName": "Breathitt County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Campbell",
+    "countyName": "Campbell County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Carroll",
+    "countyName": "Carroll County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Clark",
+    "countyName": "Clark County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Clay",
+    "countyName": "Clay County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Estill",
+    "countyName": "Estill County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Fayette",
+    "countyName": "Fayette County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Floyd",
+    "countyName": "Floyd County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Franklin",
+    "countyName": "Franklin County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Gallatin",
+    "countyName": "Gallatin County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Garrard",
+    "countyName": "Garrard County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Grant",
+    "countyName": "Grant County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Harlan",
+    "countyName": "Harlan County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Harrison",
+    "countyName": "Harrison County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Henry",
+    "countyName": "Henry County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Jackson",
+    "countyName": "Jackson County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Jessamine",
+    "countyName": "Jessamine County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Johnson",
+    "countyName": "Johnson County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Kenton",
+    "countyName": "Kenton County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Knott",
+    "countyName": "Knott County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Knox",
+    "countyName": "Knox County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Laurel",
+    "countyName": "Laurel County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Lee",
+    "countyName": "Lee County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Leslie",
+    "countyName": "Leslie County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Letcher",
+    "countyName": "Letcher County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Madison",
+    "countyName": "Madison County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Magoffin",
+    "countyName": "Magoffin County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Martin",
+    "countyName": "Martin County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Mason",
+    "countyName": "Mason County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Morgan",
+    "countyName": "Morgan County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Nicholas",
+    "countyName": "Nicholas County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Owen",
+    "countyName": "Owen County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Owsley",
+    "countyName": "Owsley County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Pendleton",
+    "countyName": "Pendleton County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Perry",
+    "countyName": "Perry County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Pike",
+    "countyName": "Pike County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Powell",
+    "countyName": "Powell County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Rockcastle",
+    "countyName": "Rockcastle County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
+  },
+  {
+    "state": "Kentucky",
+    "county": "Robertson",
+    "countyName": "Robertson County",
+    "contactName": "Marty Malloy",
+    "contactEmail": "marty@newmantractor.com",
+    "hubSpotOwnerId": 97716858
   },
   {
     "state": "Ohio",
@@ -1496,9 +1464,9 @@
     "hubSpotOwnerId": 97716125
   },
   {
-    "state": "Ohio",
-    "county": "Fairfield",
-    "countyName": "Fairfield County",
+    "state": "Kentucky",
+    "county": "Scott",
+    "countyName": "Scott County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
@@ -1512,9 +1480,9 @@
     "hubSpotOwnerId": 97716125
   },
   {
-    "state": "Ohio",
-    "county": "Franklin",
-    "countyName": "Franklin County",
+    "state": "Kentucky",
+    "county": "Trimble",
+    "countyName": "Trimble County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
@@ -1664,17 +1632,17 @@
     "hubSpotOwnerId": 316061757
   },
   {
-    "state": "Ohio",
-    "county": "Pickaway",
-    "countyName": "Pickaway County",
+    "state": "Kentucky",
+    "county": "Whitley",
+    "countyName": "Whitley County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
   },
   {
-    "state": "Ohio",
-    "county": "Pike",
-    "countyName": "Pike County",
+    "state": "Kentucky",
+    "county": "Wolfe",
+    "countyName": "Wolfe County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
@@ -1688,9 +1656,9 @@
     "hubSpotOwnerId": 97716125
   },
   {
-    "state": "Ohio",
-    "county": "Ross",
-    "countyName": "Ross County",
+    "state": "Kentucky",
+    "county": "Woodford",
+    "countyName": "Woodford County",
     "contactName": "Marty Malloy",
     "contactEmail": "marty@newmantractor.com",
     "hubSpotOwnerId": 97716858
