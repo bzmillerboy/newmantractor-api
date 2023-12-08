@@ -7,8 +7,6 @@ const {
   E_EMPHASYS_API_USERNAME,
   E_EMPHASYS_API_PASSWORD,
   GOOGLE_MAPS_API_KEY,
-  SALES_FALLBACK_FL,
-  SALES_FALLBACK_KY,
   SALES_FALLBACK,
   RENTAL_FALLBACK,
   TERRITORIES_FILE,
@@ -1074,23 +1072,19 @@ const geocodeAddress = async (address) => {
 const salesContact = (county, state, cartType) => {
   const territories =
     TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
+  // console.log("TERRITORIES_FILE:", TERRITORIES_FILE);
   // console.log("territories:", JSON.stringify(territories));
 
   const salesPersonMatch =
     county &&
+    state &&
     territories.find((c) => c.countyName === county && c.state === state);
   if (salesPersonMatch) {
-    // console.log("found matching sales rep");
+    // console.log("found matching sales rep", salesPersonMatch);
     return salesPersonMatch;
   } else if (cartType === "rental") {
     // console.log("fallback to rental sales rep");
     return JSON.parse(RENTAL_FALLBACK);
-  } else if (state === "Florida") {
-    // console.log("fallback to fl sales rep");
-    return JSON.parse(SALES_FALLBACK_FL);
-  } else if (state === "Kentucky") {
-    // console.log("fallback to ky sales rep");
-    return JSON.parse(SALES_FALLBACK_KY);
   } else {
     // console.log("no sales contact found");
     return JSON.parse(SALES_FALLBACK);

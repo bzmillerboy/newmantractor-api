@@ -15,7 +15,7 @@ Sentry.AWSLambda.init({
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     const payload = JSON.parse(event.body);
-    console.log("event:", event);
+    // console.log("event:", event);
 
     // const apiKey = JSON.parse(event.headers["x-api-key"]);
     // if ( !headers.hasOwnProperty('x-api-key') || (headers.hasOwnProperty('x-api-key') && headers['x-api-key'][0].value!="mykey")) {
@@ -58,8 +58,13 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
           (res) => res.types[0] === "administrative_area_level_1"
         )?.long_name || "";
 
-      const salesContact = lib.salesContact(county, state) || "";
+      const salesContact = lib.salesContact(county, state, "", true) || "";
       console.log("salesContact:", salesContact);
+
+      const crmCompanyId = await crmLib.doesCompanyExist(
+        company.BusinessPartnerId
+      );
+      console.log("crmCompanyId:", JSON.stringify(crmCompanyId?.id, null, 2));
 
       const companyData = {
         name: company.LongName,
@@ -78,12 +83,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         ownerId: salesContact?.hubSpotOwnerId || "",
       };
 
-      console.log("companyData:", JSON.stringify(companyData, null, 2));
-
-      const crmCompanyId = await crmLib.doesCompanyExist(
-        company.BusinessPartnerId
-      );
-      console.log("crmCompanyId:", JSON.stringify(crmCompanyId?.id, null, 2));
+      console.log("companyData: ", JSON.stringify(companyData, null, 2));
 
       if (crmCompanyId) {
         console.log("updating company");
@@ -121,12 +121,13 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         lifecyclestage: "customer",
         companyId: businessPartnerId && companyInfo ? companyInfo?.id : "",
         erp_id: contact.ContactCode,
+        ownerId: salesContactOwnerId,
       };
 
       console.log("contactData:", JSON.stringify(contactData, null, 2));
       console.log("creating/updating contact");
 
-      await crmLib.createContact(contactData, salesContactOwnerId);
+      await crmLib.createContact(contactData);
     }
 
     // sgMail.setApiKey(SENDGRID_API_KEY);

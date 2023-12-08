@@ -18,7 +18,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     if (!payload) {
       return {
         statusCode: 400,
-        body: "No product in body.",
+        body: "No data was provided in the body.",
       };
     }
     // console.log("payload", payload);

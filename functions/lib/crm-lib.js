@@ -33,8 +33,8 @@ const cmsLib = require("../lib/cms-lib");
 
 // const fs = require('fs')
 
-const createContact = async (contact, salesContactOwnerId) => {
-  // console.log('createContact contact:', contact)
+const createContact = async (contact) => {
+  // console.log("createContact contact:", contact);
   const addressComponents =
     contact.addressComponents && JSON.parse(contact.addressComponents);
   const properties = {
@@ -44,7 +44,7 @@ const createContact = async (contact, salesContactOwnerId) => {
     phone: contact.phone || "",
     erp_id: contact.erp_id || "",
     ...(contact.county && { county: contact.county }),
-    ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
+    ...(contact?.ownerId && { hubspot_owner_id: contact?.ownerId }),
     ...(addressComponents && {
       address: addressComponents.streetAddress || contact.addressPoBoxStreet,
     }),
@@ -82,7 +82,10 @@ const createContact = async (contact, salesContactOwnerId) => {
       const contactIdSplit = e.body.message.split("Existing ID: ");
       const contactId = contactIdSplit[1];
       // console.log("contactId:", contactId[1]);
-      return await updateContact(contact, contactId, salesContactOwnerId);
+
+      // TODO: first check to see if the contact has an owner, if so, do not overwrite
+
+      return await updateContact(contact, contactId);
     } else {
       // console.log("e:", JSON.stringify(e));
       e.message === "HTTP request failed"
@@ -92,7 +95,7 @@ const createContact = async (contact, salesContactOwnerId) => {
   }
 };
 
-const updateContact = async (contact, contactId, salesContactOwnerId) => {
+const updateContact = async (contact, contactId) => {
   const addressComponents =
     contact.addressComponents && JSON.parse(contact.addressComponents);
   const properties = {
@@ -102,7 +105,7 @@ const updateContact = async (contact, contactId, salesContactOwnerId) => {
     phone: contact.phone || "",
     erp_id: contact.erp_id || "",
     ...(contact.county && { county: contact.county }),
-    ...(salesContactOwnerId && { hubspot_owner_id: salesContactOwnerId }),
+    ...(contact?.ownerId && { hubspot_owner_id: contact?.ownerId }),
     ...(addressComponents && {
       address: addressComponents.streetAddress || contact.addressPoBoxStreet,
     }),
@@ -782,6 +785,7 @@ const updateCompany = async (company, companyId) => {
     country: company.country || "",
     county: company.county || "",
     lifecyclestage: company.lifecyclestage || "lead",
+    // ownerId is skipped on updates
   };
   const input = { properties };
   const idProperty = undefined;
@@ -829,12 +833,8 @@ const doesCompanyExist = async (erpId) => {
       input
     );
     console.log(
-      JSON.stringify(
-        "hubspotClient.crm.companies.searchApi.doSearch:",
-        apiResponse,
-        null,
-        2
-      )
+      "hubspotClient.crm.companies.searchApi.doSearch: ",
+      JSON.stringify(apiResponse.results[0], null, 2)
     );
     return apiResponse.results[0] || null;
   } catch (e) {

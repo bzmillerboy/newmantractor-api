@@ -1,7 +1,11 @@
 const sgMail = require("@sendgrid/mail");
 const Sentry = require("@sentry/serverless");
-const { SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME } =
-  process.env;
+const {
+  SENDGRID_API_KEY,
+  SENDGRID_FROM_EMAIL,
+  SENDGRID_FROM_NAME,
+  SALES_FALLBACK,
+} = process.env;
 const crmLib = require("../lib/crm-lib.js");
 const lib = require("../lib/lib.js");
 const dayjs = require("dayjs");
@@ -27,7 +31,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     Sentry.setContext("character", {
       payload: payload,
     });
-    // console.log('payload:', payload)
+    // console.log("payload:", payload);
     const { cart, contact, cartType } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
 
@@ -41,8 +45,10 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       contact.state,
       cartType
     );
+    // console.log("salesContact:", salesContact);
 
     const notification = {
+      // If the contact is not in the salesContact list, send to the fallback email
       to: salesContact.contactEmail,
       from: {
         email: SENDGRID_FROM_EMAIL,
@@ -80,15 +86,20 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       },
     };
 
+    // console.log("notification:", notification);
+    // console.log("confirmation:", confirmation);
+
     try {
       // 1) Send notification message
       await sgMail.send(notification);
       await sgMail.send(confirmation);
       // 2) Send data to CRM
-      const contactID = await crmLib.createContact(
-        { ...contact, source: source, lifecyclestage: "lead" },
-        salesContact.hubSpotOwnerId
-      );
+      contact.ownerId = salesContact?.hubSpotOwnerId;
+      const contactID = await crmLib.createContact({
+        ...contact,
+        source: source,
+        lifecyclestage: "lead",
+      });
       // console.log("request-notification createContact contactID:", contactID);
       await crmLib.createDeal(payload, salesContact, contactID);
 
