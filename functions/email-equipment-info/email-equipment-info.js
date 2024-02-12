@@ -40,21 +40,23 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       stockNumber,
       hoursCurrent,
       mainImage,
-      descriptionBlock,
+      image,
+      description: descriptionBlock,
       closeout,
       videoURL,
       slug,
       imageGallery,
+      categorySlug,
     } = payload;
-    const imageGalleryArray = imageGallery.split(",");
     const priceFormatted = price
       ? price.toLocaleString("en-US", { style: "currency", currency: "USD" })
       : null;
-    const subject = `Newman Tractor Quote | ${year} ${equipmentMakeTitle} ${model} - ${stockNumber}`;
+    const subject = `Info on ${year} ${equipmentMakeTitle} ${model} - ${stockNumber} | Newman Tractor`;
     const replyToEmailValue =
       fromEmail !== "" ? fromEmail : SENDGRID_FROM_EMAIL;
     const fromNameValue = fromName !== "" ? fromName : SENDGRID_FROM_NAME;
     const ccEmail = fromEmail !== "" ? fromEmail : "";
+    const slugPath = `/equipment/${categorySlug}/${slug}`;
 
     sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -77,12 +79,12 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         price: priceFormatted === "$0" ? null : priceFormatted,
         stockNumber: stockNumber,
         hoursCurrent: hoursCurrent,
-        mainImage: mainImage,
+        mainImage: mainImage || image,
         descriptionBlock: descriptionBlock,
         closeout: closeout,
         videoURL: videoURL,
-        slug: slug,
-        imageGallery: imageGalleryArray,
+        slug: slugPath,
+        imageGallery: imageGallery,
       },
     };
 
@@ -96,7 +98,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         model: model,
         price: price,
         stocknumber: stockNumber,
-        url: WEBSITE_URL + slug,
+        url: WEBSITE_URL + slugPath,
         fromemail: replyToEmailValue,
       },
     };
