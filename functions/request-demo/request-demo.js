@@ -2,8 +2,11 @@ const {
   HUBSPOT_PRIVATE_APP_TOKEN,
   HUBSPOT_PORTAL_ID,
   HUBSPOT_FORM_DEMO_REQUEST,
+  TERRITORIES_FILE,
 } = process.env;
-const rentalTerritories = require("../data/territories.json");
+const territories = require("../data/territories.json");
+const territoriesDev = require(`../data/territories-dev.json`);
+
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
   accessToken: HUBSPOT_PRIVATE_APP_TOKEN,
@@ -13,17 +16,18 @@ const hubspot = new Hubspot({
 exports.handler = async (event) => {
   const payload = JSON.parse(event.body);
   const { url, contact } = payload;
-  const fullName = contact.name.split(" ");
-  const firstName = fullName[0];
-  const lastName = contact.name.substring(fullName[0].length).trim();
+  const firstName = contact.firstName;
+  const lastName = contact.lastName;
 
   const defaultSalesContact = {
     contactName: "Unassigned",
     contactEmail: "marketing@newmantractor.com",
     hubSpotOwnerId: 91564072,
   };
+  const territories =
+    TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
   const salesContact =
-    rentalTerritories.find((c) => c.countyName === contact.county) ||
+    territories.find((c) => c.countyName === contact.county) ||
     defaultSalesContact;
 
   // console.log(salesContact)
