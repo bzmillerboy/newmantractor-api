@@ -306,27 +306,15 @@ const equipmentFetchSold = async (pageNo, pageSize) => {
   ];
   const erpDataFiltered = await erpData.equipmentData.filter((d) => {
     return (
-      !excludedCategories.includes(d.ProductCategoryDesc) &&
-      d.EquipmentStatus === "Sold"
+      (!excludedCategories.includes(d.ProductCategoryDesc) &&
+        d.EquipmentStatus === "Sold") ||
+      d.EquipmentStatus === "Purchase Return"
     );
   });
 
   console.log("erpDataFiltered count:", erpDataFiltered.length);
 
   return erpDataFiltered;
-};
-
-const triggerBuild = async () => {
-  const url = "https://api.netlify.com/build_hooks/5fa766fba4fba86fdd418617";
-  try {
-    await fetch(url, {
-      method: "POST",
-    });
-  } catch (err) {
-    console.log(err);
-    return { statusCode: 500, body: err.toString() };
-  }
-  return;
 };
 
 const createCategories = async (erpData) => {
@@ -1121,7 +1109,6 @@ module.exports = {
   fetchEquipmentPhotos,
   uploadImages,
   addInventoryPhotos,
-  triggerBuild,
   createModels,
   slugify,
   productFetch,
