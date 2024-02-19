@@ -124,16 +124,16 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         // Commenting out for now until we reolsve the GDPR settings in HubSpot. Users are not getting subscribed automatically through API, the only way to subscribe is through workflows.
         // await hubspot.contacts.create(contact)
         // await hubspot.subscriptions.subscribeToAll(email)
-        await hubspot.forms.submit(
-          HUBSPOT_PORTAL_ID,
-          HUBSPOT_FORM_EQUIPMENT_INFO,
-          data
-        );
-        await hubspot.apiRequest({
-          method: "POST",
-          path: `/events/v3/send/`,
-          body: eventData,
-        });
+        // await hubspot.forms.submit(
+        //   HUBSPOT_PORTAL_ID,
+        //   HUBSPOT_FORM_EQUIPMENT_INFO,
+        //   data
+        // );
+        // await hubspot.apiRequest({
+        //   method: "POST",
+        //   path: `/events/v3/send/`,
+        //   body: eventData,
+        // });
         await sgMail.send(msg);
         // Sentry.captureMessage("Quote email sent successfully");
         return {
