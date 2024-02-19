@@ -56,7 +56,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       fromEmail !== "" ? fromEmail : SENDGRID_FROM_EMAIL;
     const fromNameValue = fromName !== "" ? fromName : SENDGRID_FROM_NAME;
     const ccEmail = fromEmail !== "" ? fromEmail : "";
-    const slugPath = `/equipment/${categorySlug}/${slug}`;
+    const slugPath = `${slug}`;
 
     sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -64,7 +64,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       to: email,
       from: {
         email: SENDGRID_FROM_EMAIL,
-        name: fromNameValue,
+        name: fromNameValue || SENDGRID_FROM_NAME,
       },
       replyTo: replyToEmailValue,
       bcc: [ccEmail],
