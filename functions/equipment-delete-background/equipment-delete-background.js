@@ -18,12 +18,13 @@ exports.handler = async (event, context) => {
   const pageNo = event.queryStringParameters.pageno || 1;
   const pageSize = event.queryStringParameters.pagesize || 10;
 
+  // !!! WARNING !!! You likely don't want to do this in a production system. This will delete all inventory documents.
   // 1. Fetch the ERP Data
-  let erpData = await lib.equipmentFetch(pageNo, pageSize);
-  console.log("erpData fetched");
+  // let erpData = await lib.equipmentFetch(pageNo, pageSize);
+  // console.log("erpData fetched");
   // 2. Delete records removed from ERP
-  let equipmentDeletes = await lib.deleteEquipment(erpData);
-  console.log("equipment inventory items deleted");
+  // let equipmentDeletes = await lib.deleteEquipment(erpData);
+  // console.log("equipment inventory items deleted");
 
   return {
     statusCode: 200,
