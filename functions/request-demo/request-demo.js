@@ -25,6 +25,9 @@ exports.handler = async (event) => {
     contactEmail: "marketing@newmantractor.com",
     hubSpotOwnerId: 91564072,
   };
+
+  const territoriesProd = require(`../data/territories.json`);
+  const territoriesDev = require(`../data/territories-dev.json`);
   const territories =
     TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
   const salesContact =
