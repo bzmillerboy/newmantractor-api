@@ -8,6 +8,8 @@ const hubspot = new Hubspot({
 exports.handler = async (event) => {
   const payload = JSON.parse(event.body);
   const { email, formId, hs_context } = payload;
+  const ipAddress = event.headers["x-forwarded-for"].split(",")[0];
+
   // console.log(payload);
   const data = {
     fields: [
