@@ -18,10 +18,13 @@ Sentry.AWSLambda.init({
   dsn: "https://5b66d0cf46fe489bbcc7bbe1a03ba78a@o469784.ingest.sentry.io/5499762",
   tracesSampleRate: 1.0,
   debug: true,
+  ignoreSentryErrors: true,
 });
 
 exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
+    // console.log(JSON.stringify(event, null, 2));
+
     const payload = JSON.parse(event.body);
     Sentry.setContext("character", {
       payload: payload,
@@ -47,6 +50,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       slug,
       imageGallery,
       categorySlug,
+      hs_context,
     } = payload;
     const priceFormatted = price
       ? price.toLocaleString("en-US", { style: "currency", currency: "USD" })
@@ -88,21 +92,6 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       },
     };
 
-    const eventData = {
-      email: email,
-      eventName: `pe${HUBSPOT_PORTAL_ID}_email_equipment_info`,
-      properties: {
-        year: year,
-        equipmentmaketitle: equipmentMakeTitle,
-        equipmentcategoriestitle: equipmentCategoriesTitle,
-        model: model,
-        price: price,
-        stocknumber: stockNumber,
-        url: WEBSITE_URL + slugPath,
-        fromemail: replyToEmailValue,
-      },
-    };
-
     // const contact = { properties: [{ property: 'email', value: email }] }
     const data = {
       fields: [
@@ -111,7 +100,16 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
           value: email,
         },
       ],
+      context: {
+        hutk: hs_context?.hutk,
+        ipAddress:
+          event.headers["x-forwarded-for"] || event.headers[client - ip],
+        pageUri: hs_context?.pageUrl,
+        pageName: hs_context?.pageName,
+      },
     };
+
+    console.log("HubSpot Form Data:", JSON.stringify(data, null, 2));
 
     try {
       if (email === "bzmiller82+error@gmail.com") {
@@ -121,20 +119,12 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
           response: { body: { errors: "" } },
         };
       } else {
-        // Commenting out for now until we reolsve the GDPR settings in HubSpot. Users are not getting subscribed automatically through API, the only way to subscribe is through workflows.
-        // await hubspot.contacts.create(contact)
-        // await hubspot.subscriptions.subscribeToAll(email)
-        // await hubspot.forms.submit(
-        //   HUBSPOT_PORTAL_ID,
-        //   HUBSPOT_FORM_EQUIPMENT_INFO,
-        //   data
-        // );
-        // await hubspot.apiRequest({
-        //   method: "POST",
-        //   path: `/events/v3/send/`,
-        //   body: eventData,
-        // });
         await sgMail.send(msg);
+        await hubspot.forms.submit(
+          HUBSPOT_PORTAL_ID,
+          HUBSPOT_FORM_EQUIPMENT_INFO,
+          data
+        );
         // Sentry.captureMessage("Quote email sent successfully");
         return {
           statusCode: 200,
@@ -160,5 +150,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         )}`,
       };
     }
+  },
+  {
+    ignoreSentryErrors: true,
   }
 );
