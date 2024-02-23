@@ -40,6 +40,7 @@ exports.handler = async (event) => {
 
   const referring_url = event.headers.referer;
   const { email, firstName, lastName, phone, type, hs_context } = payload;
+  const ipAddress = event.headers["x-forwarded-for"].split(",")[0];
 
   const hubSpotFormData = {
     fields: [

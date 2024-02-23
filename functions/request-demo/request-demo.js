@@ -15,9 +15,10 @@ const hubspot = new Hubspot({
 
 exports.handler = async (event) => {
   const payload = JSON.parse(event.body);
-  const { url, contact } = payload;
+  const { url, contact, hs_context } = payload;
   const firstName = contact.firstName;
   const lastName = contact.lastName;
+  const ipAddress = event.headers["x-forwarded-for"].split(",")[0];
 
   const defaultSalesContact = {
     contactName: "Unassigned",
@@ -67,6 +68,12 @@ exports.handler = async (event) => {
         value: salesContact.contactEmail,
       },
     ],
+    context: {
+      hutk: hs_context?.hutk,
+      ipAddress: ipAddress,
+      pageUri: hs_context?.pageUrl || event.headers.referer || "",
+      pageName: hs_context?.pageName,
+    },
   };
 
   const contactOwnerData = {

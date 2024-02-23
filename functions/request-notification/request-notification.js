@@ -33,7 +33,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       payload: payload,
     });
     // console.log("payload:", payload);
-    const { cart, contact, cartType, hs_context } = payload;
+    const { cart, contact, cartType } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
 
     const source =
