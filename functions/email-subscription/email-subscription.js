@@ -7,8 +7,8 @@ const hubspot = new Hubspot({
 
 exports.handler = async (event) => {
   const payload = JSON.parse(event.body);
-  const { email, formId } = payload;
-  console.log(payload);
+  const { email, formId, hs_context } = payload;
+  // console.log(payload);
   const data = {
     fields: [
       {
@@ -16,6 +16,12 @@ exports.handler = async (event) => {
         value: email,
       },
     ],
+    context: {
+      hutk: hs_context?.hutk,
+      ipAddress: ipAddress,
+      pageUri: hs_context?.pageUrl || event.headers.referer || "",
+      pageName: hs_context?.pageName,
+    },
   };
 
   try {

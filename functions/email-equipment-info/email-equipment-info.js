@@ -104,7 +104,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       context: {
         hutk: hs_context?.hutk,
         ipAddress: ipAddress,
-        pageUri: hs_context?.pageUrl,
+        pageUri: hs_context?.pageUrl || event.headers.referer || "",
         pageName: hs_context?.pageName,
       },
     };
