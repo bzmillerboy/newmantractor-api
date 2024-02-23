@@ -39,7 +39,7 @@ exports.handler = async (event) => {
   console.log("payload", payload);
 
   const referring_url = event.headers.referer;
-  const { email, firstName, lastName, phone, type, hutk } = payload;
+  const { email, firstName, lastName, phone, type, hs_context } = payload;
 
   const hubSpotFormData = {
     fields: [
@@ -65,8 +65,10 @@ exports.handler = async (event) => {
       },
     ],
     context: {
-      hutk: hutk && hutk, // include this parameter and set it to the hubspotutk cookie value to enable cookie tracking on your submission
-      pageUri: event.headers.referer || "",
+      hutk: hs_context?.hutk,
+      ipAddress: ipAddress,
+      pageUri: hs_context?.pageUrl || event.headers.referer || "",
+      pageName: hs_context?.pageName,
     },
   };
 
@@ -95,7 +97,7 @@ exports.handler = async (event) => {
       },
     });
 
-  console.log("generateLinkData", generateLinkData);
+  // console.log("generateLinkData", generateLinkData);
 
   if (error) {
     console.log("generateLink error: ", error);
@@ -122,12 +124,11 @@ exports.handler = async (event) => {
       contact?.id || generateLinkData.user.id
     );
 
-    hutk &&
-      (await hubspot.forms.submit(
-        HUBSPOT_PORTAL_ID,
-        HUBSPOT_FORM_APPLY_FOR_FINANCING,
-        hubSpotFormData
-      ));
+    await hubspot.forms.submit(
+      HUBSPOT_PORTAL_ID,
+      HUBSPOT_FORM_APPLY_FOR_FINANCING,
+      hubSpotFormData
+    );
 
     return {
       statusCode: 200,

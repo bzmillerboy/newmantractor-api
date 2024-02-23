@@ -14,6 +14,7 @@ Sentry.AWSLambda.init({
   dsn: "https://5b66d0cf46fe489bbcc7bbe1a03ba78a@o469784.ingest.sentry.io/5499762",
   tracesSampleRate: 1.0,
   debug: true,
+  ignoreSentryErrors: true,
 });
 
 function titleCase(str) {
@@ -32,7 +33,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       payload: payload,
     });
     // console.log("payload:", payload);
-    const { cart, contact, cartType } = payload;
+    const { cart, contact, cartType, hs_context } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
 
     const source =
@@ -121,5 +122,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         body: `${e.message} - ${JSON.stringify(e.response.body.errors)}`,
       };
     }
+  },
+  {
+    ignoreSentryErrors: true,
   }
 );
