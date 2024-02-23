@@ -61,6 +61,9 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     const fromNameValue = fromName !== "" ? fromName : SENDGRID_FROM_NAME;
     const ccEmail = fromEmail !== "" ? fromEmail : "";
     const slugPath = `${slug}`;
+    console.log("x-forwarded-for", slugPath);
+    console.log("event.headers[client - ip]", event.headers["client-ip"]);
+    const ipAddress = event.headers["x-forwarded-for"]; //|| event.headers[client - ip]
 
     sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -102,8 +105,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       ],
       context: {
         hutk: hs_context?.hutk,
-        ipAddress:
-          event.headers["x-forwarded-for"] || event.headers[client - ip],
+        ipAddress: ipAddress,
         pageUri: hs_context?.pageUrl,
         pageName: hs_context?.pageName,
       },
