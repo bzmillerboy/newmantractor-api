@@ -61,9 +61,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     const fromNameValue = fromName !== "" ? fromName : SENDGRID_FROM_NAME;
     const ccEmail = fromEmail !== "" ? fromEmail : "";
     const slugPath = `${slug}`;
-    console.log("x-forwarded-for", slugPath);
-    console.log("event.headers[client - ip]", event.headers["client-ip"]);
-    const ipAddress = event.headers["x-forwarded-for"]; //|| event.headers[client - ip]
+    const ipAddress = event.headers["x-forwarded-for"].split(",")[0];
 
     sgMail.setApiKey(SENDGRID_API_KEY);
 
