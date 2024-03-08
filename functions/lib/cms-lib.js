@@ -23,14 +23,38 @@ const writeHubSpotProductIds = async (hubSpotProductIds) => {
         ),
       client.transaction()
     );
-  const commitTransaction = (tx) => tx.commit();
+  const commitTransaction = (tx) =>
+    tx
+      .commit()
+      .then((res) => {
+        console.log(
+          "HubSpot Product Ids written to Sanity",
+          hubSpotProductIds.length
+        );
+      })
+      .catch((err) => {
+        console.error("Error: ", err.message);
+        return err;
+      });
   const transaction = createTransaction(hubSpotProductIds);
   await commitTransaction(transaction);
-  console.log(
-    "HubSpot Product Ids written to Sanity",
-    hubSpotProductIds.length
-  );
+
   return transaction;
+};
+
+const writeHubSpotProductId = async ({ cms_id, hubSpotProductId }) => {
+  await client
+    .patch(cms_id)
+    .setIfMissing({ hubSpotProductId: hubSpotProductId })
+    .commit()
+    .then((res) => {
+      console.log("HubSpot Product Ids written to Sanity: ", res);
+    })
+    .catch((err) => {
+      console.error("Error: ", err.message);
+    });
+
+  return;
 };
 
 const clearHubSpotId = async () => {
@@ -105,6 +129,7 @@ const addInventoryPhotos = async (imageAssets) => {
 
 module.exports = {
   writeHubSpotProductIds,
+  writeHubSpotProductId,
   clearHubSpotId,
   addInventoryPhotos,
 };

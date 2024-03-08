@@ -1,4 +1,5 @@
 const Sentry = require("@sentry/serverless");
+
 const {
   SENTRY_CLIENT_KEY,
   ENV_NAME,
@@ -12,9 +13,9 @@ const crmLib = require("../lib/crm-lib");
 const lib = require("../lib/lib");
 
 Sentry.AWSLambda.init({
-  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/5499762`,
+  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/4506876114698240`,
   environment: ENV_NAME,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.5,
 });
 
 function buildHubSpotProductObject(items) {
@@ -98,7 +99,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
   async (event, context, callback) => {
     const payload = event.body && JSON.parse(event.body);
 
-    // Check if data is passed, otherwise fetch all products
+    // Check if data is passed, otherwise fetch all products. Note: this will fetch all products, you may want to
+    // limit this to only those without a hubSpotProductId or those that have been updated since the last sync.
     const allProducts = payload ? [payload] : await lib.productFetch();
     const existingProducts = allProducts.filter((p) => p.hubSpotProductId);
     const newProducts = allProducts.filter((p) => !p.hubSpotProductId);
@@ -117,8 +119,8 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         body: `Request to sync inventory equipment received.`,
       };
     } catch (e) {
-      console.error(e);
-      return { statusCode: 500, body: e.toString() };
+      // console.error(e);
+      return { statusCode: 500 }; //body: e.toString()
     }
   }
 );

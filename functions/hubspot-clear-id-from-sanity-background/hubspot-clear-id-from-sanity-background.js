@@ -1,4 +1,4 @@
-// Use this function to delete ALL products from HubSpot
+// Use this function to delete ALL product IDs from Sanity
 // NOTE: this function only runs locally, it will timeout on Netlify
 
 const Sentry = require("@sentry/serverless");

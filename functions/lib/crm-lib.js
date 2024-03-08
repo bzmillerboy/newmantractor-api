@@ -554,35 +554,56 @@ const updateBatchProductFolder = async (products, folderId) => {
 
 async function createProducts(products) {
   const limit = 100;
+  let productArray = products;
   let batchStart = 0;
   let batchEnd = limit;
 
   do {
-    const batch = products.slice(batchStart, batchEnd);
+    const batch = productArray.slice(batchStart, batchEnd);
     const batchToCreate = {
       inputs: batch,
     };
-    console.log("Batch to create:", batch.length);
     try {
       const apiResponse = await hubspotClient.crm.products.batchApi.create(
         batchToCreate
       );
-      // console.log("createProducts res:", JSON.stringify(apiResponse, null, 2));
-      console.log("Batch created:", apiResponse.results.length);
+      // update cms with new HubSpot product Ids
+      cmsLib.writeHubSpotProductIds(apiResponse.results);
+      console.log("Batch updated:", apiResponse.results.length);
       console.log(
         `Create loop ran through ${batchStart} - ${batchEnd} products`
       );
-      cmsLib.writeHubSpotProductIds(apiResponse.results);
       batchStart = batchStart + limit;
       batchEnd = batchEnd + limit;
     } catch (e) {
-      // TODO: handle if product already exists
-      e.message === "HTTP request failed"
-        ? console.error(JSON.stringify(e.response, null, 2))
-        : console.error(e);
-      return;
+      if (e.body.message.includes("already has that value")) {
+        const existingHSId = e.body.message.split(" on ")[1].split(" ")[1];
+        const cmsIdToUpdate = e.body.message.split("value=")[1].split("}")[0];
+        console.log("Value that already exists:", existingHSId);
+        console.log("Update the HS field on:", cmsIdToUpdate);
+
+        cmsItemToUpdateWithHubspotId = productArray.filter(
+          (product) => product.properties.cms_id == cmsIdToUpdate
+        );
+
+        cmsLib.writeHubSpotProductId({
+          cms_id: cmsIdToUpdate,
+          hubSpotProductId: existingHSId,
+        });
+
+        productArray = productArray.filter(
+          (product) => product.properties.cms_id !== cmsIdToUpdate
+        );
+
+        batchStart = batchStart;
+        batchEnd = batchEnd;
+        continue;
+      } else {
+        console.error("Error Message:", e.body.message);
+        return;
+      }
     }
-  } while (products.length >= batchEnd - limit);
+  } while (productArray.length >= batchEnd - limit);
 
   return;
 }
@@ -602,7 +623,6 @@ async function updateProducts(products) {
       const apiResponse = await hubspotClient.crm.products.batchApi.update(
         batchToUpdate
       );
-      // console.log("updateProducts res:", JSON.stringify(apiResponse, null, 2));
       console.log("Batch updated:", apiResponse.results.length);
       console.log(
         `Create loop ran through ${batchStart} - ${batchEnd} products`
@@ -610,7 +630,6 @@ async function updateProducts(products) {
       batchStart = batchStart + limit;
       batchEnd = batchEnd + limit;
     } catch (e) {
-      // TODO: handle if product id is in CMS but does not exist in HubSpot
       e.message === "HTTP request failed"
         ? console.error(JSON.stringify(e.response, null, 2))
         : console.error(e);
