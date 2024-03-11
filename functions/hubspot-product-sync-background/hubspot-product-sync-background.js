@@ -15,7 +15,8 @@ const lib = require("../lib/lib");
 Sentry.AWSLambda.init({
   dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/4506876114698240`,
   environment: ENV_NAME,
-  tracesSampleRate: 0.5,
+  tracesSampleRate: 1.0,
+  ignoreSentryErrors: true,
 });
 
 function buildHubSpotProductObject(items) {

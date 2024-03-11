@@ -7,9 +7,10 @@ const crmLib = require("../lib/crm-lib.js");
 const lib = require("../lib/lib.js");
 
 Sentry.AWSLambda.init({
-  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/5499762`,
+  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/4506876114698240`,
   environment: ENV_NAME,
   tracesSampleRate: 1.0,
+  ignoreSentryErrors: true,
 });
 
 exports.handler = Sentry.AWSLambda.wrapHandler(

@@ -8,6 +8,8 @@ const {
   HUBSPOT_PORTAL_ID,
   HUBSPOT_FORM_EQUIPMENT_INFO,
   WEBSITE_URL,
+  ENV_NAME,
+  SENTRY_CLIENT_KEY,
 } = process.env;
 const Hubspot = require("hubspot");
 const hubspot = new Hubspot({
@@ -15,9 +17,10 @@ const hubspot = new Hubspot({
   checkLimit: false,
 });
 Sentry.AWSLambda.init({
-  dsn: "https://5b66d0cf46fe489bbcc7bbe1a03ba78a@o469784.ingest.sentry.io/5499762",
+  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/4506876114698240`,
   tracesSampleRate: 1.0,
-  debug: true,
+  // debug: true,
+  environment: ENV_NAME,
   ignoreSentryErrors: true,
 });
 

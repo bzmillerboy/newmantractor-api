@@ -5,15 +5,17 @@ const {
   SENDGRID_FROM_EMAIL,
   SENDGRID_FROM_NAME,
   SALES_FALLBACK,
+  ENV_NAME,
+  SENTRY_CLIENT_KEY,
 } = process.env;
 const crmLib = require("../lib/crm-lib.js");
 const lib = require("../lib/lib.js");
 const dayjs = require("dayjs");
 
 Sentry.AWSLambda.init({
-  dsn: "https://5b66d0cf46fe489bbcc7bbe1a03ba78a@o469784.ingest.sentry.io/5499762",
-  tracesSampleRate: 1.0,
-  debug: true,
+  dsn: `https://${SENTRY_CLIENT_KEY}.ingest.sentry.io/4506876114698240`,
+  tracesSampleRate: 0.5,
+  environment: ENV_NAME,
   ignoreSentryErrors: true,
 });
 
@@ -87,13 +89,17 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       },
     };
 
-    // console.log("notification:", notification);
-    // console.log("confirmation:", confirmation);
+    // console.log("notification:", JSON.stringify(notification, null, 2));
+    // console.log("confirmation:", JSON.stringify(confirmation, null, 2));
 
     try {
       // 1) Send notification message
-      await sgMail.send(notification);
-      await sgMail.send(confirmation);
+      await sgMail
+        .send(notification)
+        .then((res) => console.log("Notification sent"));
+      await sgMail
+        .send(confirmation)
+        .then((res) => console.log("Confirmation sent"));
       // 2) Send data to CRM
       contact.ownerId = salesContact?.hubSpotOwnerId;
       const contactID = await crmLib.createContact({
@@ -101,7 +107,6 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         source: source,
         lifecyclestage: "lead",
       });
-      // console.log("request-notification createContact contactID:", contactID);
       await crmLib.createDeal(payload, salesContact, contactID);
 
       Sentry.captureMessage("Quote/Rental request successful");
