@@ -307,7 +307,7 @@ const equipmentFetchSold = async (pageNo, pageSize) => {
   const erpDataFiltered = await erpData.equipmentData.filter((d) => {
     return (
       !excludedCategories.includes(d.ProductCategoryDesc) &&
-      d.EquipmentStatus === "Sold"
+      (d.EquipmentStatus === "Sold" || d.EquipmentStatus === "Purchase Return")
     );
   });
 
