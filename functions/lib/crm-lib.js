@@ -281,10 +281,12 @@ const getProductIds = async (cart) => {
 };
 
 const createDealLineItems = async (cart, deal) => {
-  console.log("createDealLineItems cart:", cart);
-  console.log("createDealLineItems deal:", deal);
+  // console.log("createDealLineItems cart:", cart);
+  // console.log("createDealLineItems deal:", deal);
 
   const producIds = await getProductIds(cart);
+
+  // console.log("createDealLineItems producIds:", producIds);
 
   const cartArr = cart.map(async (item) => {
     // Map rental options
@@ -292,11 +294,13 @@ const createDealLineItems = async (cart, deal) => {
       createDealLineItems(item.options, deal);
     }
 
+    const hsProductId = producIds.find(
+      (product) => product?.properties?.cms_id === item._id
+    ).id;
+
     return {
       properties: {
-        hs_product_id: producIds.find(
-          (product) => product?.properties?.cms_id === item._id
-        ).id,
+        hs_product_id: hsProductId,
         quantity: item.quantity || 1,
         price: item.price || 0,
       },
@@ -304,7 +308,7 @@ const createDealLineItems = async (cart, deal) => {
   });
   const cartItems = await Promise.all(cartArr);
 
-  console.log("cartItems:", cartItems);
+  // console.log("cartItems:", cartItems);
 
   const BatchInputSimplePublicObjectInput = { inputs: cartItems };
 
@@ -312,10 +316,10 @@ const createDealLineItems = async (cart, deal) => {
     const apiResponse = await hubspotClient.crm.lineItems.batchApi.create(
       BatchInputSimplePublicObjectInput
     );
-    console.log(
-      "hubspotClient.crm.lineItems.batchApi.create:",
-      JSON.stringify(apiResponse, null, 2)
-    );
+    // console.log(
+    //   "hubspotClient.crm.lineItems.batchApi.create:",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
     await createDealLineItemAssociation(apiResponse.results, deal);
   } catch (e) {
     e.message === "HTTP request failed"
@@ -325,7 +329,7 @@ const createDealLineItems = async (cart, deal) => {
 };
 
 const createDealLineItemAssociation = async (lineItems, deal) => {
-  console.log("createDealLineItemAssociation:", lineItems);
+  // console.log("createDealLineItemAssociation:", lineItems);
   await Promise.all(
     lineItems.map(async (item) => {
       console.log("creating association for line item: ", item.id);
@@ -355,7 +359,7 @@ const createDealLineItemAssociations = async (id, deal) => {
         toObjectId,
         AssociationSpec
       );
-    console.log("createAssociation", JSON.stringify(apiResponse, null, 2));
+    // console.log("createAssociation", JSON.stringify(apiResponse, null, 2));
     return "createAssociation complete";
   } catch (e) {
     e.message === "HTTP request failed"
@@ -383,10 +387,10 @@ const createDealContactAssociation = async (contactId, dealId) => {
       toObjectId,
       AssociationSpec
     );
-    console.log(
-      "hubspotClient.crm.contacts.associationsApi.create:",
-      JSON.stringify(apiResponse, null, 2)
-    );
+    // console.log(
+    //   "hubspotClient.crm.contacts.associationsApi.create:",
+    //   JSON.stringify(apiResponse, null, 2)
+    // );
   } catch (e) {
     e.message === "HTTP request failed"
       ? console.error(JSON.stringify(e.response, null, 2))
@@ -402,7 +406,7 @@ const get100ProductIds = async (next) => {
   const propertiesWithHistory = undefined;
   const associations = undefined;
 
-  console.log("get100ProductIds after: ", after);
+  // console.log("get100ProductIds after: ", after);
 
   try {
     const apiResponse = await hubspotClient.crm.products.basicApi.getPage(

@@ -8,6 +8,8 @@ const {
   E_EMPHASYS_API_PASSWORD,
   GOOGLE_MAPS_API_KEY,
   SALES_FALLBACK,
+  SALES_USED_FALLBACK,
+  SALES_ATTACHMENT_FALLBACK,
   RENTAL_FALLBACK,
   TERRITORIES_FILE,
 } = process.env;
@@ -1056,7 +1058,7 @@ const geocodeAddress = async (address) => {
   return data;
 };
 
-const salesContact = (county, state, cartType) => {
+const salesContact = (county, state, cartType, condition, categoryType) => {
   const territories =
     TERRITORIES_FILE === "territoriesDev" ? territoriesDev : territoriesProd;
   // console.log("TERRITORIES_FILE:", TERRITORIES_FILE);
@@ -1066,13 +1068,28 @@ const salesContact = (county, state, cartType) => {
     county &&
     state &&
     territories.find((c) => c.countyName === county && c.state === state);
+
+  // if the county is in the territories file, return the sales rep assigned to that territory
   if (salesPersonMatch) {
     // console.log("found matching sales rep", salesPersonMatch);
     return salesPersonMatch;
-  } else if (cartType === "rental") {
+  }
+  // If it's an attachment then send to attachment sales rep (e.g. Nathan)
+  else if (categoryType === "attachment") {
+    // console.log("fallback to attachment sales rep");
+    return JSON.parse(SALES_ATTACHMENT_FALLBACK);
+  }
+  // If used then send to used sales rep (e.g. Scott)
+  else if (condition === "used") {
+    return JSON.parse(SALES_USED_FALLBACK);
+  }
+  // If rental then send to rental traffic corrdinator (e.g. Shawna)
+  else if (cartType === "rental") {
     // console.log("fallback to rental sales rep");
     return JSON.parse(RENTAL_FALLBACK);
-  } else {
+  }
+  // If no match found, send to default sales rep (e.g. Matt)
+  else {
     // console.log("no sales contact found");
     return JSON.parse(SALES_FALLBACK);
   }

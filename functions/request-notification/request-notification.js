@@ -37,6 +37,12 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     // console.log("payload:", payload);
     const { cart, contact, cartType } = payload;
     const data = dayjs(contact.startDate).format("ddd, MMM D, YYYY h:mm A");
+    // set condition only if Sales Quote and base it off the first item in the cart.
+    // if cart has a mix of conditions, we'll just use the first one and the sales rep can adjust as needed.
+    const condition = cartType === "rental" ? null : cart[0].condition;
+    // set categoryType only if Sales Quote and base it off the first item in the cart.
+    const categoryType =
+      cartType === "rental" ? "rental" : cart[0].categoryType;
 
     const source =
       cartType === "rental"
@@ -46,7 +52,9 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     const salesContact = lib.salesContact(
       contact.county,
       contact.state,
-      cartType
+      cartType,
+      condition,
+      categoryType
     );
     // console.log("salesContact:", salesContact);
 
