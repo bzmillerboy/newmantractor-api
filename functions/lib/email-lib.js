@@ -224,7 +224,9 @@ const compileFinanceApplicationEmail = async (activityRecord, application) => {
       toDataCustomer = {
         // when app submitted, if credit send from Credit Manager, if finance send from Finance Manager
         // 1 = finance app type, 2 = credit app type
-        emailNotificationId: sourceData?.typeId === 1 ? 15 : 16,
+        // 3 = both therefore come from Matt S.
+        emailNotificationId:
+          sourceData?.typeId === 1 || sourceData.typeId === 3 ? 15 : 16,
         toEmail: sourceData?.contactEmail,
         toFirstName: sourceData?.contactFirstName,
         toLastName: sourceData?.contactLastName,
