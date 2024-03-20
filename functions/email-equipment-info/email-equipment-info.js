@@ -7,6 +7,7 @@ const {
   HUBSPOT_PRIVATE_APP_TOKEN,
   HUBSPOT_PORTAL_ID,
   HUBSPOT_FORM_EQUIPMENT_INFO,
+  HUBSPOT_FORM_EQUIPMENT_INFO_INTERNAL,
   WEBSITE_URL,
   ENV_NAME,
   SENTRY_CLIENT_KEY,
@@ -33,7 +34,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
       payload: payload,
     });
 
-    // console.log(payload)
+    // console.log(payload);
     const {
       fromEmail,
       fromName,
@@ -123,11 +124,19 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         };
       } else {
         await sgMail.send(msg);
-        await hubspot.forms.submit(
-          HUBSPOT_PORTAL_ID,
-          HUBSPOT_FORM_EQUIPMENT_INFO,
-          data
-        );
+        if (fromEmail) {
+          await hubspot.forms.submit(
+            HUBSPOT_PORTAL_ID,
+            HUBSPOT_FORM_EQUIPMENT_INFO_INTERNAL,
+            data
+          );
+        } else {
+          await hubspot.forms.submit(
+            HUBSPOT_PORTAL_ID,
+            HUBSPOT_FORM_EQUIPMENT_INFO,
+            data
+          );
+        }
         // Sentry.captureMessage("Quote email sent successfully");
         return {
           statusCode: 200,
