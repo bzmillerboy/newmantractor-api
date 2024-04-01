@@ -134,7 +134,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     // sgMail.setApiKey(SENDGRID_API_KEY);
 
     // const msg = {
-    //   to: "bzmiller82@gmail.com",
+    //   to: "brian+ntbcc@newmantractor.com",
     //   from: {
     //     email: SENDGRID_FROM_EMAIL,
     //     name: "Notifications",

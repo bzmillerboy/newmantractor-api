@@ -92,7 +92,7 @@ exports.handler = async (event, context) => {
   ).format("MM/DD/YYYY")} | newmantractor.com`;
 
   const notification = {
-    to: "bzmiller82+mpr@gmail.com",
+    to: "brian+mpr@newmantractor.com",
     from: {
       email: SENDGRID_FROM_EMAIL,
       name: SENDGRID_FROM_NAME,

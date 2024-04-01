@@ -65,7 +65,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         email: SENDGRID_FROM_EMAIL,
         name: SENDGRID_FROM_NAME,
       },
-      bcc: ["bzmiller82+ntbcc@gmail.com"],
+      bcc: ["brian+ntbcc@newmantractor.com"],
       replyTo: contact.email,
       templateId: "d-348a8c69b7a04007a48c29c650eab991",
       dynamic_template_data: {
@@ -85,7 +85,7 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         name: SENDGRID_FROM_NAME,
       },
       replyTo: salesContact.contactEmail,
-      bcc: ["bzmiller82+ntbcc@gmail.com"],
+      bcc: ["brian+ntbcc@newmantractor.com"],
       templateId: "d-323aec4e28d4421f8b315b23f7fadde9",
       dynamic_template_data: {
         cart: cart,

@@ -116,10 +116,10 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
     console.log("HubSpot Form Data:", JSON.stringify(data, null, 2));
 
     try {
-      if (email === "bzmiller82+error@gmail.com") {
+      if (email === "brian+error@newmantractor.com") {
         throw {
           code: 500,
-          message: "Failed because email is bzmiller82+error@gmail.com",
+          message: "Failed because email is brian+error@newmantractor.com",
           response: { body: { errors: "" } },
         };
       } else {
