@@ -247,10 +247,13 @@ const equipmentFetch = async (pageNo, pageSize) => {
     "CCF",
     "FIXED ASSETS",
     "FIXED ASSETS PRODUCT CATEGORY",
+    "FA",
   ];
+  const excludedCategoryId = ["FA"];
   const erpDataFiltered = await erpData.equipmentData.filter((d) => {
     return (
       !excludedCategories.includes(d.ProductCategoryDesc) &&
+      !excludedCategoryId.includes(d.ProductCategoryId) &&
       d.EquipmentStatus !== "Sold" &&
       d.EquipmentStatus !== "Customer Stock" &&
       d.EquipmentStatus !== "Purchase Return" &&
