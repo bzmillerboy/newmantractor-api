@@ -249,7 +249,7 @@ const equipmentFetch = async (pageNo, pageSize) => {
     "FIXED ASSETS PRODUCT CATEGORY",
     "FA",
   ];
-  const excludedCategoryId = ["FA"];
+  const excludedCategoryId = ["FA", "ZFAS"];
   const erpDataFiltered = await erpData.equipmentData.filter((d) => {
     return (
       !excludedCategories.includes(d.ProductCategoryDesc) &&
