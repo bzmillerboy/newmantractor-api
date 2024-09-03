@@ -28,8 +28,10 @@ function buildHubSpotProductObject(items) {
     let price = "";
     let image = "";
     let description = "";
+    let name = "";
     if (p._type === "inventory") {
       sku = p.sku;
+      name = p.title || "Unknown";
       type = "inventory";
       folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_INVENTORY;
       price = p.price;
@@ -40,6 +42,7 @@ function buildHubSpotProductObject(items) {
       }`;
     } else if (p._type === "equipmentSubCategory") {
       sku = p.sku;
+      name = `${p.title || "Unknown"} ${p.equipmentCategories?.title}`;
       type = "rental";
       folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_RENTAL;
       price = p.price;
@@ -48,6 +51,7 @@ function buildHubSpotProductObject(items) {
       description = `Rental | ${p.equipmentCategories?.title}`;
     } else if (p._type === "equipmentOptions") {
       sku = p.sku;
+      name = p.title || "Unknown";
       type = "rental-option";
       folder = HUBSPOT_PRODUCT_FOLDER_EQUIPMENT_RENTAL;
       price = p.price;
@@ -56,12 +60,14 @@ function buildHubSpotProductObject(items) {
       description = `Rental Option | ${p.equipmentCategories?.title}`;
     } else if (p._type === "ecommerceProduct") {
       sku = p.defaultProductVariant?.sku;
+      name = p.title || "Unknown";
       type = "product";
       folder = HUBSPOT_PRODUCT_FOLDER_PRODUCT;
       price = p.defaultProductVariant?.price;
       image = p.productImage?.image?.asset?.url || "";
     } else if (p._type === "models") {
       sku = p.sku;
+      name = p.title || "Unknown";
       type = "model";
       folder = HUBSPOT_PRODUCT_FOLDER_MODEL;
       price = p.price;
@@ -72,6 +78,7 @@ function buildHubSpotProductObject(items) {
       url = `${WEBSITE_URL}/${p.make?.slug?.current}/${p.equipmentCategories?.slug?.current}/${p.slug?.current}`;
     } else {
       sku = p.sku;
+      name = p.title || "Unknown";
       type = "";
       folder = "";
       price = "";
@@ -83,7 +90,7 @@ function buildHubSpotProductObject(items) {
       id: p.hubSpotProductId,
       properties: {
         ...(price && { price: price }),
-        name: p.title || "Unknown",
+        name: name,
         description: description,
         hs_images: image,
         hs_url: url,
