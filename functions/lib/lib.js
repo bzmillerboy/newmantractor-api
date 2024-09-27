@@ -765,6 +765,12 @@ const createEquipment = async (erpData) => {
     const condition = () => (eq.Used === "Yes" ? "used" : "new");
     const slugValue = `${yearFixed} ${titleFixed}`;
 
+    const status =
+      new Date(eq.OEMSpecialProgramExpiryDate) > new Date() &&
+      eq.OEMSpecialProgram === "JBR"
+        ? "stock-not-for-sale"
+        : "stock";
+
     return {
       _id: eq.EquipmentId,
       _type: "inventory",
@@ -798,7 +804,7 @@ const createEquipment = async (erpData) => {
         _type: "reference",
         _ref: currentLocation._id,
       },
-      ...(eq.EquipmentStatus && { status: "stock" }),
+      ...(eq.EquipmentStatus && { status: status }),
       ...(eq.ExpectedDelDate && { deliveryDate: eq.ExpectedDelDate }),
       ...(eq.MovementDate && { movementDate: eq.MovementDate }),
     };
