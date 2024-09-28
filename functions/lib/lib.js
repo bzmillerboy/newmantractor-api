@@ -755,7 +755,9 @@ const createEquipment = async (erpData) => {
     const price = eq.ModelListPrice !== 0 && eq.ModelListPrice;
     const year = eq.ModelYear !== 0 && eq.ModelYear;
     const hoursCurrent =
-      eq.CurrentMeterReading1 !== 0 && eq.CurrentMeterReading1;
+      eq.CurrentMeterReading1 + eq.CurrentMeterReading2 !== 0
+        ? eq.CurrentMeterReading2 || eq.CurrentMeterReading1
+        : undefined;
     const serial = eq.SerialNo;
     const stockNumber = `EQ${eq.EquipmentId.replace(/^(EQ)+/gm, "")
       .trim()
