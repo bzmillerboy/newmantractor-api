@@ -769,7 +769,7 @@ const createEquipment = async (erpData) => {
 
     const status =
       new Date(eq.OEMSpecialProgramExpiryDate) > new Date() &&
-      eq.OEMSpecialProgram === "JBR"
+      (eq.OEMSpecialProgram === "JBR" || eq.OEMSpecialProgram === "KUB")
         ? "stock-not-for-sale"
         : "stock";
 
