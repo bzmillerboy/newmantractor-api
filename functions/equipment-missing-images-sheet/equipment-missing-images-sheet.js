@@ -21,7 +21,7 @@ const client = sanityClient({
 });
 
 exports.handler = async (event, context) => {
-  const query = `*[_type == 'inventory' && status == "stock" && !defined(mainImage) && !defined(imageGallery) && (!(deliveryDate > now()) || deliveryDate == "" || deliveryDate == null)]{_id, _createdAt, deliveryDate, stockNumber, title, 'slug': slug.current, 'location': location->title, 'type': equipmentCategories->categoryType, 'categorySlug': equipmentCategories->slug.current } | order(location asc)`;
+  const query = `*[_type == 'inventory' && status == "stock" && !defined(mainImage) && !defined(imageGallery) && (!(deliveryDate > now()) || deliveryDate == "" || deliveryDate == null)]{_id, _createdAt, deliveryDate, stockNumber, serial, title, 'slug': slug.current, 'location': location->title, 'type': equipmentCategories->categoryType, 'categorySlug': equipmentCategories->slug.current } | order(location asc)`;
 
   const data = await client.fetch(query);
 
@@ -42,6 +42,7 @@ exports.handler = async (event, context) => {
     header: [
       { id: "title", title: "Title" },
       { id: "stockNumber", title: "EQ" },
+      { id: "serial", title: "Serial Number" },
       { id: "location", title: "Location" },
       { id: "type", title: "Type" },
       { id: "deliveryDate", title: "Delivery Date" },
