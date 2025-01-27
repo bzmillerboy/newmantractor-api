@@ -688,7 +688,19 @@ const createEquipment = async (erpData) => {
       '*[_type == "inventory" && !(_id in path("drafts.**"))]{_id, _type, title, slug, stockNumber, specification, price, condition, year, model, modelReference, hoursCurrent, serial, equipmentMake, equipmentCategories, location, status, deliveryDate, movementDate }'
     )
     .then((currEq) => {
+      console.log("Fetched equipment count:", currEq?.length);
+      if (currEq?.length === 0) {
+        console.log("Warning: No existing equipment found in Sanity");
+      }
       return currEq.map((eq) => {
+        if (
+          !eq.slug ||
+          !eq.equipmentCategories?._ref ||
+          !eq.equipmentMake?._ref ||
+          !eq.location?._ref
+        ) {
+          console.log("Warning: Equipment missing reference:", eq._id);
+        }
         return {
           _id: eq._id,
           _type: "inventory",
@@ -705,26 +717,30 @@ const createEquipment = async (erpData) => {
           ...(eq.modelReference && {
             modelReference: {
               _type: "reference",
-              _ref: eq.modelReference._ref,
+              _ref: eq.modelReference?._ref,
             },
           }),
           equipmentMake: {
             _type: "reference",
-            _ref: eq.equipmentMake._ref,
+            _ref: eq.equipmentMake?._ref,
           },
           equipmentCategories: {
             _type: "reference",
-            _ref: eq.equipmentCategories._ref,
+            _ref: eq.equipmentCategories?._ref,
           },
           location: {
             _type: "reference",
-            _ref: eq.location._ref,
+            _ref: eq.location?._ref,
           },
           ...(eq.status && { status: eq.status }),
           ...(eq.deliveryDate && { deliveryDate: eq.deliveryDate }),
           ...(eq.movementDate && { movementDate: eq.movementDate }),
         };
       });
+    })
+    .catch((err) => {
+      console.error("Error fetching equipment:", err);
+      return [];
     });
 
   const equipmentErp = data.map((eq) => {
@@ -841,7 +857,7 @@ const createEquipment = async (erpData) => {
     const newEquipment = () => {
       if (
         !equipmentSanity.find(
-          (eqSan) => eqSan.slug.current === eqErp.slug.current
+          (eqSan) => eqSan?.slug?.current === eqErp?.slug?.current
         )
       ) {
         console.log("New items: ", eqErp);
