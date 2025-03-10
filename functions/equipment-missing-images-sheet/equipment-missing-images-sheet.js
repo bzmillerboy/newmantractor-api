@@ -30,7 +30,7 @@ exports.handler = async (event, context) => {
     return {
       ...item,
       link: `${WEBSITE_URL}/equipment/${item.categorySlug}/${item.slug}`,
-      cmsLink: `${CMS_URL}/desk/equipment;inventory;${item._id}`,
+      cmsLink: `${WEBSITE_URL}/studio/structure/equipment;inventory;${item._id}`,
       deliveryDate: item.deliveryDate
         ? dayjs(item.deliveryDate).format(format)
         : "",
