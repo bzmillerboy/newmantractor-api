@@ -85,7 +85,6 @@ exports.handler = Sentry.AWSLambda.wrapHandler(
         name: SENDGRID_FROM_NAME,
       },
       replyTo: salesContact.contactEmail,
-      bcc: ["brian+ntbcc@newmantractor.com"],
       templateId: "d-323aec4e28d4421f8b315b23f7fadde9",
       dynamic_template_data: {
         cart: cart,
