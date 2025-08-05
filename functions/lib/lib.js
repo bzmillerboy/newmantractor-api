@@ -347,14 +347,16 @@ const createCategories = async (erpData) => {
       (obj) => obj.ProductCategoryDesc === c.ProductCategoryDesc
     ).length;
     if (count > 1) {
-      console.log("Duplicate Found: ", c);
+      console.log("Duplicate Found: ", c.EquipmentId);
     }
     return;
   });
 
   const categoriesErp = uniqueCategories.map((cat) => {
     const slug = slugify(cat.ProductCategoryDesc);
-    const current = categoriesSanity.find((c) => c.slug.current === slug);
+    const current = categoriesSanity.find(
+      (c) => c.slug && c.slug.current === slug
+    );
     return {
       _id: current ? current._id : uuidv4(),
       _type: "equipmentCategory",
@@ -381,7 +383,7 @@ const createCategories = async (erpData) => {
     const newCategories = () => {
       if (
         !categoriesSanity.find(
-          (catSan) => catSan.slug.current === catErp.slug.current
+          (catSan) => catSan.slug && catSan.slug.current === catErp.slug.current
         )
       ) {
         return catErp;
@@ -433,8 +435,21 @@ const createLocations = async (erpData) => {
   );
 
   const locationsErp = uniqueLocationsErp.map((loc) => {
-    const slug = slugify(loc.CurrentEquipmentOfficeDesc);
-    const current = locationsSanity.find((c) => c.slug.current === slug);
+    let location = loc;
+    if (location.CurrentEquipmentOfficeDesc.includes("EQUIPMENT ")) {
+      location = {
+        ...location,
+        CurrentEquipmentOfficeDesc: location.CurrentEquipmentOfficeDesc.replace(
+          "EQUIPMENT ",
+          ""
+        ).trim(),
+      };
+    }
+
+    const slug = slugify(location.CurrentEquipmentOfficeDesc.trim());
+    const current = locationsSanity.find(
+      (c) => c.slug && c.slug.current === slug
+    );
     return {
       _id: current ? current._id : uuidv4(),
       _type: "location",
@@ -442,7 +457,7 @@ const createLocations = async (erpData) => {
         current: slug,
       },
       erpId: loc.CurrentEquipmentOffice,
-      title: toTitleCase(loc.CurrentEquipmentOfficeDesc.toLowerCase()),
+      title: toTitleCase(location.CurrentEquipmentOfficeDesc.toLowerCase()),
       generalPhone: loc.AddressTelephone,
       address1: toTitleCase(loc.AddressName.toLowerCase()),
       city: toTitleCase(loc.AddressCity.toLowerCase()),
@@ -467,7 +482,7 @@ const createLocations = async (erpData) => {
     const newLocations = () => {
       if (
         !locationsSanity.find(
-          (locSan) => locSan.slug.current === locErp.slug.current
+          (locSan) => locSan.slug && locSan.slug.current === locErp.slug.current
         )
       ) {
         return locErp;
@@ -509,7 +524,7 @@ const createMakes = async (erpData) => {
 
   const makesErp = uniqueMakesErp.map((mak) => {
     const slug = slugify(mak);
-    const current = makesSanity.find((m) => m.slug.current === slug);
+    const current = makesSanity.find((m) => m.slug && m.slug.current === slug);
     return {
       _id: current ? current._id : uuidv4(),
       _type: "equipmentMake",
@@ -533,7 +548,7 @@ const createMakes = async (erpData) => {
     const newMakes = () => {
       if (
         !makesSanity.find(
-          (makSan) => makSan.slug.current === makErp.slug.current
+          (makSan) => makSan.slug && makSan.slug.current === makErp.slug.current
         )
       ) {
         return makErp;
@@ -588,12 +603,12 @@ const createModels = async (erpData) => {
       `${mod.ManufacturerDesc}-${mod.Model}--${mod.ProductCategoryDesc}`
     );
     const currentCategory = currentCategoriesNew.find(
-      (c) => c.slug.current === slugify(mod.ProductCategoryDesc)
+      (c) => c.slug && c.slug.current === slugify(mod.ProductCategoryDesc)
     );
     const currentMake = currentMakesNew.find(
-      (c) => c.slug.current === slugify(mod.ManufacturerDesc)
+      (c) => c.slug && c.slug.current === slugify(mod.ManufacturerDesc)
     );
-    const current = modelsSanity.find((c) => c.slug.current === slug);
+    const current = modelsSanity.find((c) => c.slug && c.slug.current === slug);
     return {
       _id: current ? current._id : uuidv4(),
       _type: "models",
@@ -629,7 +644,7 @@ const createModels = async (erpData) => {
     const newModels = () => {
       if (
         !modelsSanity.find(
-          (modSan) => modSan.slug.current === modErp.slug.current
+          (modSan) => modSan.slug && modSan.slug.current === modErp.slug.current
         )
       ) {
         return modErp;
@@ -745,22 +760,30 @@ const createEquipment = async (erpData) => {
 
   const equipmentErp = data.map((eq) => {
     const currentCategory = currentCategoriesNew.find(
-      (c) => c.slug.current === slugify(eq.ProductCategoryDesc)
+      (c) => c.slug && c.slug.current === slugify(eq.ProductCategoryDesc)
     );
     const currentMake = currentMakesNew.find(
-      (c) => c.slug.current === slugify(eq.ManufacturerDesc)
+      (c) => c.slug && c.slug.current === slugify(eq.ManufacturerDesc)
     );
     const currentModel = currentModelNew.find(
       (c) =>
+        c.slug &&
         c.slug.current ===
-        slugify(`${eq.ManufacturerDesc}-${eq.Model}--${eq.ProductCategoryDesc}`)
+          slugify(
+            `${eq.ManufacturerDesc}-${eq.Model}--${eq.ProductCategoryDesc}`
+          )
     );
     if (currentModel === undefined) {
       console.log("undefined currentModel: ", eq);
     }
 
     const currentLocation = currentLocationNew.find(
-      (c) => c.slug.current === slugify(eq.CurrentEquipmentOfficeDesc)
+      (c) =>
+        c.slug &&
+        c.slug.current ===
+          slugify(
+            eq.CurrentEquipmentOfficeDesc.replace("EQUIPMENT ", "").trim()
+          )
     );
 
     const yearFixed = eq.ModelYear === 0 ? "" : eq.ModelYear;
@@ -837,8 +860,8 @@ const createEquipment = async (erpData) => {
     const matchingEquipment = equipmentSanity.find((eqSan) => {
       if (eqErp._id === eqSan._id) {
         if (!objectsEqual(eqSan, eqErp)) {
-          console.log("Item changed from:", eqSan);
-          console.log("Item changed to:", eqErp);
+          console.log("Item changed from:", JSON.stringify(eqSan));
+          console.log("Item changed to:", JSON.stringify(eqErp));
         }
         if (!eqErp.year && eqSan.year >= 0) {
           console.log("Year needs unset");
