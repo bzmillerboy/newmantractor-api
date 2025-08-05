@@ -332,25 +332,44 @@ const createCategories = async (erpData) => {
       return currCat;
     });
 
-  // This reduces the array to unique values to remove duplicate categories in the dataset.
-  const uniqueCategories = data.filter(
-    (v, i, a) =>
-      a.findIndex(
-        (t) =>
-          t.ProductCategoryDesc === v.ProductCategoryDesc &&
-          t.EquipmentType === v.EquipmentType
-      ) === i
-  );
-
-  const dupeCategories = uniqueCategories.map((c) => {
-    const count = uniqueCategories.filter(
-      (obj) => obj.ProductCategoryDesc === c.ProductCategoryDesc
-    ).length;
-    if (count > 1) {
-      console.log("Duplicate Found: ", c.EquipmentId);
+  // Group by ProductCategoryDesc and find the most common EquipmentType for each category
+  const categoryGroups = data.reduce((acc, item) => {
+    const categoryDesc = item.ProductCategoryDesc;
+    if (!acc[categoryDesc]) {
+      acc[categoryDesc] = {
+        ProductCategoryDesc: categoryDesc,
+        EquipmentTypeCounts: {},
+      };
     }
-    return;
+
+    const equipmentType = item.EquipmentType;
+    acc[categoryDesc].EquipmentTypeCounts[equipmentType] =
+      (acc[categoryDesc].EquipmentTypeCounts[equipmentType] || 0) + 1;
+
+    return acc;
+  }, {});
+
+  // Convert to array and determine the most common EquipmentType for each category
+  const uniqueCategories = Object.values(categoryGroups).map((category) => {
+    const mostCommonEquipmentType = Object.entries(
+      category.EquipmentTypeCounts
+    ).reduce((a, b) =>
+      category.EquipmentTypeCounts[a[0]] > category.EquipmentTypeCounts[b[0]]
+        ? a
+        : b
+    )[0];
+
+    return {
+      ProductCategoryDesc: category.ProductCategoryDesc,
+      EquipmentType: mostCommonEquipmentType,
+    };
   });
+
+  // console.log("Category groups with EquipmentType counts:", categoryGroups);
+  // console.log(
+  //   "Unique categories with most common EquipmentType:",
+  //   uniqueCategories
+  // );
 
   const categoriesErp = uniqueCategories.map((cat) => {
     const slug = slugify(cat.ProductCategoryDesc);
@@ -361,7 +380,7 @@ const createCategories = async (erpData) => {
       _id: current ? current._id : uuidv4(),
       _type: "equipmentCategory",
       title: cat.ProductCategoryDesc,
-      categoryType: cat.EquipmentType.toLowerCase(), // TODO: Set actual type
+      categoryType: cat.EquipmentType.toLowerCase(),
       slug: {
         current: slug,
       },
