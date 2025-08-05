@@ -407,14 +407,39 @@ const createCategories = async (erpData) => {
   return null;
 };
 
-const objectsEqual = (o1, o2) =>
-  o1 !== null &&
-  o2 !== null &&
-  typeof o1 === "object" &&
-  Object.keys(o1).length > 0
-    ? Object.keys(o1).length === Object.keys(o2).length &&
-      Object.keys(o1).every((p) => objectsEqual(o1[p], o2[p]))
-    : o1 === o2;
+const objectsEqual = (o1, o2) => {
+  // Handle null/undefined cases
+  if (o1 === null || o2 === null) {
+    return o1 === o2;
+  }
+
+  // Handle undefined cases
+  if (o1 === undefined || o2 === undefined) {
+    return o1 === o2;
+  }
+
+  // Handle non-object types
+  if (typeof o1 !== "object" || typeof o2 !== "object") {
+    return o1 === o2;
+  }
+
+  // Handle arrays
+  if (Array.isArray(o1) !== Array.isArray(o2)) {
+    return false;
+  }
+
+  // Get keys safely
+  const keys1 = Object.keys(o1 || {});
+  const keys2 = Object.keys(o2 || {});
+
+  // Check if they have the same number of keys
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  // Check if all keys in o1 exist in o2 and have the same values
+  return keys1.every((key) => objectsEqual(o1[key], o2[key]));
+};
 
 const createLocations = async (erpData) => {
   const data = erpData;
